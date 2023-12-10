@@ -8,6 +8,6 @@ variable "cloudflare_zone_name" {
 }
 
 variable "maven_name" {
-  type = string
+  type    = string
   default = "kotori316-maven"
 }

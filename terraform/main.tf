@@ -50,9 +50,9 @@ EOF
 }
 
 resource "cloudflare_worker_domain" "maven_viewer" {
-  account_id = data.cloudflare_zone.zone.account_id
-  hostname   = "maven.${var.cloudflare_zone_name}"
-  service    = cloudflare_worker_script.maven_viewer.name
-  zone_id    = data.cloudflare_zone.zone.id
+  account_id  = data.cloudflare_zone.zone.account_id
+  hostname    = "maven.${var.cloudflare_zone_name}"
+  service     = cloudflare_worker_script.maven_viewer.name
+  zone_id     = data.cloudflare_zone.zone.id
   environment = "production"
 }
