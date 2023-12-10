@@ -57,7 +57,7 @@ jobs:
           secrets: |-
             cloudflare_token:kotori316-mods-resources/cloudflare_token
       - name: Deploy
-        run: npm run deploy
+        run: npm run deploy >/dev/null && echo "Published successfully" || (echo "Failed to publish"; false)
         working-directory: 'workers'
         env:
           CLOUDFLARE_API_TOKEN: ${{steps.get-secrets.outputs.cloudflare_token}}
