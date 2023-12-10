@@ -13,6 +13,5 @@
       "automerge": true
     }
   ],
-  "automergeStrategy": "merge-commit",
-  "platformAutomerge": true,
+  "automergeStrategy": "fast-forward",
 }
