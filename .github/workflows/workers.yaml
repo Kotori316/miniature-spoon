@@ -1,0 +1,26 @@
+name: Workers validation
+on:
+  push:
+    paths:
+      - 'workers/**'
+      - '.github/workflows/workers.yaml'
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'workers/**'
+      - '.github/workflows/workers.yaml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+        working-directory: 'workers'
+      - run: npm run ci
+        working-directory: 'workers'
