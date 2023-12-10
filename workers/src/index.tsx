@@ -18,8 +18,9 @@ const Page: FC<{ title: string }> = (props) => {
   return html`<!doctype html>
     <html lang="en">
       <head>
+        <meta charset="utf-8">
         <title>${props.title}</title>
-        <link href="/static/output.css" rel="stylesheet" />
+        <link href="/static/output.css" rel="stylesheet"/>
       </head>
       <body>
         ${props.children}

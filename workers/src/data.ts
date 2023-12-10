@@ -8,6 +8,10 @@ export class PathObject {
     private readonly createdDate?: Date
   ) {}
 
+  static createDir(basename: string, absolutePath: string): PathObject {
+    return new PathObject(basename, absolutePath, undefined, undefined);
+  }
+
   get size(): string {
     if (this.fileSize === undefined) {
       return "-";
@@ -39,6 +43,7 @@ export class ScanListResult {
   ) {}
 
   isEmpty(): boolean {
+    // Ignore first entry as it is link to parent directory
     return this.directories.length < 2 && this.files.length === 0;
   }
 }

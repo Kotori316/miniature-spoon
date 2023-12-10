@@ -30,9 +30,9 @@ export async function getFiles(bucket: R2Bucket, currentPath: string): Promise<S
   const files = objects.objects.map((o) => {
     return new PathObject(path.basename(o.key), o.key, o.size, o.uploaded);
   });
-  const upper = isRoot ? [] : [new PathObject("..", path.dirname(`/${currentPath}`), undefined, undefined)];
+  const upper = isRoot ? [] : [PathObject.createDir("..", path.dirname(`/${currentPath}`))];
   const directories = objects.delimitedPrefixes.map((o) => {
-    return new PathObject(path.basename(o), o, undefined, undefined);
+    return PathObject.createDir(path.basename(o), o);
   });
   return new ScanListResult(upper.concat(directories), files);
 }
