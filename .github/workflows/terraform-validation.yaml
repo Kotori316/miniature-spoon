@@ -33,6 +33,6 @@ jobs:
   plan:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: (github.event_name == 'push' || (github.event_name == 'pull_request' && contains(fromJSON('["Kotori316", "renovate"]'), github.actor)))
+    if: (github.event_name == 'push' || (github.event_name == 'pull_request' && contains(fromJSON('["Kotori316", "renovate[bot]"]'), github.actor)))
     steps:
       - run: echo "${{ github.actor }}"
