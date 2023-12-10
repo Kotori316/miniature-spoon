@@ -24,3 +24,40 @@ jobs:
         working-directory: 'workers'
       - run: npm run ci
         working-directory: 'workers'
+
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: (github.event_name == 'push')
+    needs:
+      - test
+    permissions:
+      id-token: write
+      contents: read
+    concurrency:
+      group: workers
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+        working-directory: 'workers'
+      - run: npm run css
+        working-directory: 'workers'
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{secrets.GCP_IDENTITY_PROVIDER}}
+          service_account: ${{secrets.GCP_SERVICE_ACCOUNT}}
+      - name: Get credentials
+        id: get-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            cloudflare_token:kotori316-mods-resources/cloudflare_token
+      - name: Deploy
+        run: npm run deploy
+        working-directory: 'workers'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{steps.get-secrets.outputs.cloudflare_token}}
