@@ -47,6 +47,13 @@ EOF
     bucket_name = cloudflare_r2_bucket.maven_bucket.name
     name        = "MAVEN_BUCKET"
   }
+
+  lifecycle {
+    ignore_changes = [
+      content,
+      kv_namespace_binding,
+    ]
+  }
 }
 
 resource "cloudflare_worker_domain" "maven_viewer" {
