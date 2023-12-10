@@ -34,5 +34,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: (github.event_name == 'push' || (github.event_name == 'pull_request' && contains(fromJSON('["Kotori316", "renovate[bot]"]'), github.actor)))
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - run: echo "${{ github.actor }}"
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{secrets.GCP_IDENTITY_PROVIDER}}
+          service_account: ${{secrets.GCP_SERVICE_ACCOUNT}}
+      - name: Get credentials
+        id: get-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v1
+        with:
+          secrets: |-
+            cloudflare_token:kotori316-mods-resources/cloudflare_token
+      - name: Check plan
+        run: terraform plan -detailed-exitcode
+        working-directory: terraform
+        env:
+          TF_VAR_cloudflare_token: ${{steps.get-secrets.outputs.cloudflare_token}}
