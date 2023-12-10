@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":prHourlyLimitNone",
+  ],
+  "packageRules": [
+    {
+      "matchManagers": [
+        "github-actions",
+        "tflint-plugin",
+      ],
+      "automerge": true
+    }
+  ],
+  "automergeStrategy": "merge-commit"
+}
