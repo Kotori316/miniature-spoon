@@ -1,0 +1,24 @@
+name = "kotori316-maven"
+compatibility_date = "2023-01-01"
+workers_dev = false
+main = "src/index.tsx"
+
+# [vars]
+# MY_VARIABLE = "production_value"
+
+# [[kv_namespaces]]
+# binding = "MY_KV_NAMESPACE"
+# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+[site]
+bucket = "./assets"
+
+[[r2_buckets]]
+binding = "MAVEN_BUCKET"
+bucket_name = "kotori316-maven"
+preview_bucket_name = "kotori316-maven"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = ""

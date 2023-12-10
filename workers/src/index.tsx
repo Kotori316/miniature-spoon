@@ -42,9 +42,10 @@ const DirContents: FC<{
         <h1 class="font-sans text-2xl">Index of {prefix}</h1>
         <div class="my-4 border-b-2 border-dashed border-indigo-500"></div>
         <ol>
-          <div class="grid grid-cols-5 gap-2">
+          <div class="grid grid-cols-6 gap-2">
             <div class="col-span-3 text-lg">File</div>
-            <div class="col-auto text-lg">Size</div>
+            <div class="col-auto text-lg text-right">Size</div>
+            <div class="col-auto"></div>
             <div class="col-auto text-lg">CreatedAt</div>
           </div>
           <div class="my-3"></div>
@@ -65,13 +66,14 @@ const Files: FC<{ files: PathObject[]; postfix: string }> = (props) => {
         const nextPath = path.resolve("/", o.absolutePath);
         return (
           <li>
-            <div class="grid grid-cols-5 gap-2">
+            <div class="grid grid-cols-6 gap-2">
               <div class="col-span-3">
-                <a href={nextPath} class="font-mono text-cyan-600 hover:text-indigo-600 visited:text-purple-600">
+                <a href={nextPath} class="font-mono text-emerald-700 hover:text-indigo-700 visited:text-purple-700">
                   {o.basename + postfix}
                 </a>
               </div>
-              <div class="col-auto">{o.size}</div>
+              <div class="col-auto text-right">{o.size}</div>
+              <div class="col-auto"></div>
               <div class="col-auto">{o.created}</div>
             </div>
           </li>
@@ -94,7 +96,7 @@ app.get("/:prefix{.+$}", async (c) => {
   await getFiles(bucket, prefix);
   if (bucketObject !== null) {
     c.header("etag", '"' + bucketObject.etag + '"');
-    c.header("Content-Type", getMimeType(bucketObject.key));
+    c.header("Content-Type", getMimeType(bucketObject.key, bucketObject.httpMetadata?.contentType));
     return c.stream(async (stream) => {
       await stream.pipe(bucketObject.body);
     });

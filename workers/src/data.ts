@@ -4,8 +4,8 @@ export class PathObject {
   constructor(
     public readonly basename: string,
     public readonly absolutePath: string,
-    private readonly fileSize: number | undefined,
-    private readonly createdDate: Date | undefined
+    private readonly fileSize?: number,
+    private readonly createdDate?: Date
   ) {}
 
   get size(): string {

@@ -15,7 +15,8 @@ const knownMimeTypes = new Map([
   [".txt", "text/plain"],
 ]);
 
-export function getMimeType(filePath: string) {
+export function getMimeType(filePath: string, typeInBucket?: string): string {
+  if (typeInBucket !== undefined && typeInBucket !== "application/octet-stream") return typeInBucket;
   const parsed = path.extname(filePath);
   return knownMimeTypes.get(parsed) || "application/octet-stream";
 }
