@@ -1,0 +1,40 @@
+name: Terraform Validation
+
+on:
+  push:
+    paths:
+      - '**.tf'
+      - '.github/workflows/terraform-validation.yaml'
+    branches:
+      - main
+  pull_request:
+    paths:
+      - '**.tf'
+      - '.github/workflows/terraform-validation.yaml'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Terraform Format
+        run: terraform fmt -recursive -check ./
+        continue-on-error: true
+        working-directory: terraform
+      - uses: terraform-linters/setup-tflint@v4
+      - name: Init tflint
+        run: tflint --init
+        working-directory: terraform
+      - name: Run tflint
+        run: tflint -f compact
+        working-directory: terraform
+        continue-on-error: true
+
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: (github.event_name == 'push' || (github.event_name == 'pull_request' && contains(fromJSON('["Kotori316", "renovate"]'), github.author)))
+    steps:
+      - run: echo "${{ github.author }}"
