@@ -5,3 +5,4 @@ node_modules
 dist
 build
 .wrangler
+workers/assets/static/output.css
