@@ -10,8 +10,8 @@
         "github-actions",
         "tflint-plugin",
       ],
-      "automerge": true
+      "automerge": true,
+      "automergeStrategy": "fast-forward",
     }
   ],
-  "automergeStrategy": "fast-forward",
 }
