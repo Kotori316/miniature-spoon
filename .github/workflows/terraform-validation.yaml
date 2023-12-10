@@ -54,7 +54,7 @@ jobs:
         run: terraform init
         working-directory: terraform
       - name: Check plan
-        run: terraform plan -detailed-exitcode
+        run: terraform plan -detailed-exitcode >/dev/null && echo "No changes" || (echo "Plan detected changes"; false)
         working-directory: terraform
         env:
           TF_VAR_cloudflare_token: ${{steps.get-secrets.outputs.cloudflare_token}}
