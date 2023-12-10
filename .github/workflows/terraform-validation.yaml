@@ -38,6 +38,9 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    concurrency:
+      group: terraform
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
       - uses: google-github-actions/auth@v1
