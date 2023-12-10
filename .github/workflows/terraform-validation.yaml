@@ -50,6 +50,9 @@ jobs:
         with:
           secrets: |-
             cloudflare_token:kotori316-mods-resources/cloudflare_token
+      - name: Init
+        run: terraform init
+        working-directory: terraform
       - name: Check plan
         run: terraform plan -detailed-exitcode
         working-directory: terraform
