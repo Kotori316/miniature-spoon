@@ -34,6 +34,9 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    environment:
+      name: workers
+      url: 'https://maven.kotori316.com'
     concurrency:
       group: workers
       cancel-in-progress: true

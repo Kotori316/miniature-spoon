@@ -4,6 +4,10 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "~> 4.0"
     }
+    github = {
+      source  = "integrations/github"
+      version = "~> 5.42"
+    }
   }
 
   backend "gcs" {
@@ -15,6 +19,10 @@ terraform {
 
 provider "cloudflare" {
   api_token = var.cloudflare_token
+}
+
+provider "github" {
+  owner = var.github_owner
 }
 
 data "cloudflare_zone" "zone" {
@@ -62,4 +70,23 @@ resource "cloudflare_worker_domain" "maven_viewer" {
   service     = cloudflare_worker_script.maven_viewer.name
   zone_id     = data.cloudflare_zone.zone.id
   environment = "production"
+}
+
+data "github_repository" "repo" {
+  full_name = "${var.github_owner}/${var.github_repo}"
+}
+
+resource "github_repository_environment" "workers_env" {
+  environment = "workers"
+  repository  = data.github_repository.repo.name
+  deployment_branch_policy {
+    custom_branch_policies = true
+    protected_branches     = false
+  }
+}
+
+resource "github_repository_environment_deployment_policy" "policy" {
+  branch_pattern = "main"
+  environment    = github_repository_environment.workers_env.environment
+  repository     = data.github_repository.repo.name
 }
