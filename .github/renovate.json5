@@ -12,6 +12,12 @@
       ],
       "automerge": true,
       "automergeStrategy": "fast-forward",
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "automerge": true,
+      "automergeStrategy": "fast-forward"
     }
   ],
+  "dependencyDashboard": false,
 }
