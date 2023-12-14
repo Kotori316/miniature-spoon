@@ -17,15 +17,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - run: npm ci
-        working-directory: 'workers'
-      - run: npm run ci
-        working-directory: 'workers'
-      - run: npm run test
-        working-directory: 'workers'
+      - run: docker compose run -w /root/work node npm ci
+      - run: docker compose run -w /root/work node npm run ci
+      - run: docker compose run -w /root/work node npm run test
 
   publish:
     runs-on: ubuntu-latest

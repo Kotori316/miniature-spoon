@@ -1,7 +1,7 @@
 name = "kotori316-maven"
 compatibility_date = "2023-01-01"
 workers_dev = false
-main = "src/index.tsx"
+main = "src/index.ts"
 
 # [vars]
 # MY_VARIABLE = "production_value"
