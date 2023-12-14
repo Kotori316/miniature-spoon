@@ -1,0 +1,11 @@
+services:
+  node:
+    image: node:18
+    volumes:
+      - ./workers:/root/work
+      - container_node_modules:/root/work/node_modules
+    init: true
+    command: sleep inf
+
+volumes:
+  container_node_modules:

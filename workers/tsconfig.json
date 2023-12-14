@@ -13,6 +13,7 @@
       "esnext"
     ],
     "types": [
+      "vitest/globals",
       "@cloudflare/workers-types"
     ],
     "jsx": "react-jsx",
@@ -20,7 +21,9 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/**/*.tsx",
+    "test/**/*.ts",
+    "test/**/*.tsx"
   ],
   "exclude": [
     "dist",

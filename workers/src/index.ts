@@ -1,4 +1,4 @@
-import { DirContents } from "./component";
+import { createDirContents } from "./component";
 import { getFiles, getMimeType } from "./files";
 import { Hono } from "hono";
 import { serveStatic } from "hono/cloudflare-workers";
@@ -14,7 +14,7 @@ app.get("/static/*", serveStatic({ root: "./" }));
 app.get("/", async (c) => {
   const bucket = c.env.MAVEN_BUCKET;
   const result = await getFiles(bucket, "");
-  return c.html(<DirContents files={result.files} dirs={result.directories} prefix="/"></DirContents>);
+  return c.html(createDirContents(result.files, result.directories, "/"));
 });
 
 app.get("/:prefix{(com/?(kotori316(/.+)?)?)$}", async (c) => {
@@ -32,7 +32,7 @@ app.get("/:prefix{(com/?(kotori316(/.+)?)?)$}", async (c) => {
     if (result.isEmpty()) {
       return c.notFound();
     }
-    return c.html(<DirContents files={result.files} dirs={result.directories} prefix={`/${prefix}`}></DirContents>);
+    return c.html(createDirContents(result.files, result.directories, `/${prefix}`));
   }
 });
 

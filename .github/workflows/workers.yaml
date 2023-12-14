@@ -24,6 +24,8 @@ jobs:
         working-directory: 'workers'
       - run: npm run ci
         working-directory: 'workers'
+      - run: npm run test
+        working-directory: 'workers'
 
   publish:
     runs-on: ubuntu-latest

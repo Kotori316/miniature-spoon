@@ -6,3 +6,4 @@ dist
 build
 .wrangler
 workers/assets/static/output.css
+test-persist

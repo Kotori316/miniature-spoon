@@ -16,6 +16,7 @@ export const Page: FC<{ title: string }> = (props) => {
       </body>
     </html>`;
 };
+
 export const DirContents: FC<{
   files: PathObject[];
   dirs: PathObject[];
@@ -67,3 +68,7 @@ const Files: FC<{ files: PathObject[]; postfix: string }> = (props) => {
     </div>
   );
 };
+
+export function createDirContents(files: PathObject[], dirs: PathObject[], prefix: string) {
+  return <DirContents dirs={dirs} files={files} prefix={prefix}></DirContents>;
+}
