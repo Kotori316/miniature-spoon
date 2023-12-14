@@ -17,7 +17,7 @@ app.get("/", async (c) => {
   return c.html(<DirContents files={result.files} dirs={result.directories} prefix="/"></DirContents>);
 });
 
-app.get("/:prefix{.+$}", async (c) => {
+app.get("/:prefix{(com/?(kotori316(/.+)?)?)$}", async (c) => {
   const bucket = c.env.MAVEN_BUCKET;
   const { prefix } = c.req.param();
   const bucketObject = await bucket.get(prefix);
