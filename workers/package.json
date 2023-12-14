@@ -8,7 +8,7 @@
     "format": "npx prettier --write '{src,test}/**/*.{ts,tsx}'",
     "lint": "npx eslint --fix --ext .ts --ext .tsx src test",
     "test": "npx vitest --run",
-    "ci": "npx tsc --noEmit && npx prettier --check 'src/**/*.{ts,tsx}' && npx eslint --max-warnings=0 --ext .ts --ext .tsx src"
+    "ci": "npx tsc --noEmit && npx prettier --check '{src,test}/**/*.{ts,tsx}' && npx eslint --max-warnings=0 --ext .ts --ext .tsx src test"
   },
   "dependencies": {
     "hono": "^3.9.2",

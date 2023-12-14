@@ -11,7 +11,7 @@ describe("app access", () => {
     worker = await unstable_dev("src/index.ts", {
       experimental: { disableExperimentalWarning: true },
       config: "wrangler.toml",
-      persistTo: "./test-persist"
+      persistTo: "./test-persist",
     });
   });
 
