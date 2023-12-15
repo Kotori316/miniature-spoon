@@ -2,9 +2,10 @@ name = "kotori316-maven"
 compatibility_date = "2023-01-01"
 workers_dev = false
 main = "src/index.ts"
+send_metrics = false
 
-# [vars]
-# MY_VARIABLE = "production_value"
+[vars]
+ENVIRONMENT = "production"
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"

@@ -5,6 +5,7 @@ import { serveStatic } from "hono/cloudflare-workers";
 
 type Bindings = {
   MAVEN_BUCKET: R2Bucket;
+  ENVIRONMENT: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -34,6 +35,18 @@ app.get("/:prefix{(com/?(kotori316(/.+)?)?)$}", async (c) => {
     }
     return c.html(createDirContents(result.files, result.directories, `/${prefix}`));
   }
+});
+
+app.put("/put-object", async (c) => {
+  // This is convinience endpoint to add test objects. Not available in deployed environment.
+  if (c.env.ENVIRONMENT !== "unit-test") {
+    return c.notFound();
+  }
+  const body = await c.req.json();
+  const key = body["key"];
+  const content = body["content"];
+  const result = await c.env.MAVEN_BUCKET.put(key, content);
+  return c.json({ key: result?.key, content: content, etag: result?.etag }, 201);
 });
 
 export default app;
