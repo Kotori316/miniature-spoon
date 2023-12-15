@@ -7,7 +7,7 @@
     "css:watch": "npx tailwindcss -i ./src/input.css -o ./assets/static/output.css --watch",
     "format": "npx prettier --write '{src,test}/**/*.{ts,tsx}'",
     "lint": "npx eslint --fix --ext .ts --ext .tsx src test",
-    "test": "npx vitest run test/index.test.ts && npx vitest run test/production.test.ts",
+    "test": "npx vitest run && npx vitest run -c vitest.production.config.ts",
     "ci": "npx tsc --noEmit && npx prettier --check '{src,test}/**/*.{ts,tsx}' && npx eslint --max-warnings=0 --ext .ts --ext .tsx src test"
   },
   "dependencies": {
