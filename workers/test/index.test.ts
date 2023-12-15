@@ -12,6 +12,14 @@ describe("app access", () => {
       experimental: { disableExperimentalWarning: true },
       config: "wrangler.toml",
       persistTo: "./test-persist",
+      vars: {
+        ENVIRONMENT: "unit-test",
+      },
+    });
+
+    await worker.fetch("/put-object", {
+      method: "PUT",
+      body: '{"key": "com/kotori316/test/a.txt", "content": "a"}',
     });
   });
 
@@ -19,15 +27,15 @@ describe("app access", () => {
     await worker.stop();
   });
 
-  ["/"].forEach((element) => {
-    test("GET " + element, async () => {
+  ["/", "/com", "/com/kotori316"].forEach((element) => {
+    test(`GET ${element} must be 200`, async () => {
       const res = await worker.fetch(element);
       expect(res.status).toBe(200);
     });
   });
 
   ["/hoge", "/co", "/com/ko", "/com/kotiri3161"].forEach((element) => {
-    test("GET " + element, async () => {
+    test(`GET ${element} must be 404`, async () => {
       const res = await worker.fetch(element);
       expect(res.status).toBe(404);
     });
