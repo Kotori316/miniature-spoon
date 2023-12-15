@@ -23,6 +23,6 @@ describe.concurrent("file mime type", () => {
 });
 
 test("mime is given", () => {
-  const mime = file.getMimeType("a.txt", "application/xml")
-  expect(mime).toBe("application/xml")
-})
+  const mime = file.getMimeType("a.txt", "application/xml");
+  expect(mime).toBe("application/xml");
+});

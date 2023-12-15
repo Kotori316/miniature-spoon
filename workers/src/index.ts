@@ -2,6 +2,7 @@ import { createDirContents } from "./component";
 import { getFiles, getMimeType } from "./files";
 import { Hono } from "hono";
 import { serveStatic } from "hono/cloudflare-workers";
+import { secureHeaders } from "hono/secure-headers";
 
 type Bindings = {
   MAVEN_BUCKET: R2Bucket;
@@ -9,6 +10,7 @@ type Bindings = {
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
+app.use("*", secureHeaders());
 app.get("/favicon.ico", serveStatic({ path: "./favicon.ico" }));
 app.get("/static/*", serveStatic({ root: "./" }));
 
