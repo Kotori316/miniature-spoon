@@ -1,6 +1,7 @@
 import { createDirContents } from "./component";
 import { getFiles, getMimeType } from "./files";
 import { Hono } from "hono";
+import { cache } from "hono/cache";
 import { serveStatic } from "hono/cloudflare-workers";
 import { secureHeaders } from "hono/secure-headers";
 
@@ -11,8 +12,18 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 app.use("*", secureHeaders());
-app.get("/favicon.ico", serveStatic({ path: "./favicon.ico" }));
-app.get("/static/*", serveStatic({ root: "./" }));
+const staticCacheName = "static-resources";
+const staticCacheControl = "max-age=3600";
+app.get(
+  "/favicon.ico",
+  cache({ cacheName: staticCacheName, cacheControl: staticCacheControl }),
+  serveStatic({ path: "./favicon.ico" })
+);
+app.get(
+  "/static/*",
+  cache({ cacheName: staticCacheName, cacheControl: staticCacheControl }),
+  serveStatic({ root: "./" })
+);
 
 app.get("/", async (c) => {
   const bucket = c.env.MAVEN_BUCKET;

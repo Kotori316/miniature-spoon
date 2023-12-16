@@ -27,17 +27,25 @@ describe("app access", () => {
     await worker.stop();
   });
 
-  ["/", "/com", "/com/kotori316"].forEach((element) => {
+  ["/", "/com", "/com/kotori316", "/com/kotori316/test", "/com/kotori316/test/a.txt"].forEach((element) => {
     test(`GET ${element} must be 200`, async () => {
       const res = await worker.fetch(element);
       expect(res.status).toBe(200);
     });
   });
 
-  ["/hoge", "/co", "/com/ko", "/com/kotiri3161"].forEach((element) => {
-    test(`GET ${element} must be 404`, async () => {
-      const res = await worker.fetch(element);
-      expect(res.status).toBe(404);
-    });
+  ["/hoge", "/co", "/com/ko", "/com/kotiri3161", "/com/kotori316/test2", "/com/kotori316/test/b.txt"].forEach(
+    (element) => {
+      test(`GET ${element} must be 404`, async () => {
+        const res = await worker.fetch(element);
+        expect(res.status).toBe(404);
+      });
+    }
+  );
+
+  test("GET favicon", async () => {
+    const res = await worker.fetch("/favicon.ico");
+    expect(res.status).toBe(200);
+    expect(res.headers.get("cache-control")).toBeDefined();
   });
 });
