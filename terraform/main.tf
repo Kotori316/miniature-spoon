@@ -60,6 +60,7 @@ EOF
     ignore_changes = [
       content,
       kv_namespace_binding,
+      plain_text_binding,
     ]
   }
 }
