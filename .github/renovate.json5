@@ -11,12 +11,12 @@
         "tflint-plugin",
       ],
       "automerge": true,
-      "automergeStrategy": "auto",
+      "automergeStrategy": "fast-forward",
     },
     {
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
-      "automergeStrategy": "auto",
+      "automergeStrategy": "fast-forward",
     }
   ],
   "dependencyDashboard": false,
