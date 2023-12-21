@@ -11,14 +11,13 @@
         "tflint-plugin",
       ],
       "automerge": true,
-      "automergeStrategy": "merge",
     },
     {
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
-      "automergeStrategy": "merge",
     }
   ],
+  "automergeStrategy": "merge-commit",
   "dependencyDashboard": false,
   "platformAutomerge": true,
   "platformCommit": true,
