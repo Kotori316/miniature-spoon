@@ -3,6 +3,9 @@
   "extends": [
     "config:recommended",
     ":prHourlyLimitNone",
+    ":automergePr",
+    ":automergeTesters",
+    ":disableDependencyDashboard",
   ],
   "packageRules": [
     {
