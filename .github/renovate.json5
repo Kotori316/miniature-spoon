@@ -5,6 +5,7 @@
     ":prHourlyLimitNone",
     ":automergePr",
     ":automergeTesters",
+    ":automergeMinor",
     ":disableDependencyDashboard",
   ],
   "packageRules": [
@@ -20,8 +21,5 @@
       "automerge": true,
     }
   ],
-  "automergeStrategy": "merge-commit",
-  "dependencyDashboard": false,
-  "platformAutomerge": true,
   "platformCommit": true,
 }

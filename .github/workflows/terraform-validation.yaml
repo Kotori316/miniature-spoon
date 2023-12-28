@@ -4,12 +4,14 @@ on:
   push:
     paths:
       - '**.tf'
+      - '**.lock.hcl'
       - '.github/workflows/terraform-validation.yaml'
     branches:
       - main
   pull_request:
     paths:
       - '**.tf'
+      - '**.lock.hcl'
       - '.github/workflows/terraform-validation.yaml'
 
 jobs:
