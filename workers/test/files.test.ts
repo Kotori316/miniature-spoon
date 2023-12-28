@@ -26,3 +26,26 @@ test("mime is given", () => {
   const mime = file.getMimeType("a.txt", "application/xml");
   expect(mime).toBe("application/xml");
 });
+
+describe.concurrent("available path", () => {
+  it("com", async () => {
+    const path = file.availablePaths(["com"]).matches;
+    expect(path).toEqual(["com"]);
+  });
+  it("com.kotori316", async () => {
+    const path = file.availablePaths(["com.kotori316"]).matches;
+    expect(path).toEqual(["com", "com/kotori316"]);
+  });
+  it("com.kotori316.test", async () => {
+    const path = file.availablePaths(["com.kotori316.test"]).matches;
+    expect(path).toEqual(["com", "com/kotori316", "com/kotori316/test"]);
+  });
+  it("com.kotori316 and org.kotori316", async () => {
+    const path = file.availablePaths(["com.kotori316", "org.kotori316"]).matches;
+    expect(path).toEqual(["com", "com/kotori316", "org", "org/kotori316"]);
+  });
+  it("prefix of com.kotori316 and org.kotori316", async () => {
+    const path = file.availablePaths(["com.kotori316", "org.kotori316"]).prefixes;
+    expect(path).toEqual(["com/kotori316/", "org/kotori316/"]);
+  });
+});

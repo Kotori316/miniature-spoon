@@ -1,5 +1,5 @@
 import { createDirContents } from "./component";
-import { getFiles, getMimeType } from "./files";
+import { getFiles, getMimeType, availablePaths } from "./files";
 import { Hono } from "hono";
 import { cache } from "hono/cache";
 import { serveStatic } from "hono/cloudflare-workers";
@@ -31,9 +31,14 @@ app.get("/", async (c) => {
   return c.html(createDirContents(result.files, result.directories, "/"));
 });
 
-app.get("/:prefix{(com/?(kotori316(/.+)?)?)$}", async (c) => {
-  const bucket = c.env.MAVEN_BUCKET;
+const { matches, prefixes } = availablePaths(["com.kotori316", "org.typelevel"]);
+
+app.get("/:prefix{.+$}", async (c) => {
   const { prefix } = c.req.param();
+  if (!matches.includes(prefix) && prefixes.find((p) => prefix.startsWith(p)) === undefined) {
+    return c.notFound();
+  }
+  const bucket = c.env.MAVEN_BUCKET;
   const bucketObject = await bucket.get(prefix);
   if (bucketObject !== null) {
     c.header("etag", bucketObject.httpEtag);

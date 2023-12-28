@@ -32,3 +32,15 @@ export async function getFiles(bucket: R2Bucket, currentPath: string): Promise<S
   });
   return new ScanListResult(upper.concat(directories), files);
 }
+
+export function availablePaths(packages: string[]): { prefixes: string[]; matches: string[] } {
+  return {
+    matches: packages.flatMap((p) => {
+      const splited = p.split(".");
+      return splited.map((_, index, array) => {
+        return array.slice(0, index + 1).join("/");
+      });
+    }),
+    prefixes: packages.map((p) => p.replace(".", "/") + "/"),
+  };
+}
