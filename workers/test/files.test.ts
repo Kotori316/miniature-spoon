@@ -12,6 +12,7 @@ describe.concurrent("file mime type", () => {
     sha1: "text/plain",
     sha256: "text/plain",
     sha512: "text/plain",
+    asc: "text/plain",
     hoge: "application/octet-stream",
   };
   for (const [key, value] of Object.entries(pairs)) {
