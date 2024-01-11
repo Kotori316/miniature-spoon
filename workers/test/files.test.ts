@@ -49,4 +49,8 @@ describe.concurrent("available path", () => {
     const path = file.availablePaths(["com.kotori316", "org.kotori316"]).prefixes;
     expect(path).toEqual(["com/kotori316/", "org/kotori316/"]);
   });
+  it("prefix of com", async () => {
+    const path = file.availablePaths(["com"]).prefixes;
+    expect(path).toEqual(["com/"]);
+  });
 });
