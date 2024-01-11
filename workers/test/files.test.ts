@@ -12,6 +12,7 @@ describe.concurrent("file mime type", () => {
     sha1: "text/plain",
     sha256: "text/plain",
     sha512: "text/plain",
+    asc: "text/plain",
     hoge: "application/octet-stream",
   };
   for (const [key, value] of Object.entries(pairs)) {
@@ -47,5 +48,9 @@ describe.concurrent("available path", () => {
   it("prefix of com.kotori316 and org.kotori316", async () => {
     const path = file.availablePaths(["com.kotori316", "org.kotori316"]).prefixes;
     expect(path).toEqual(["com/kotori316/", "org/kotori316/"]);
+  });
+  it("prefix of com", async () => {
+    const path = file.availablePaths(["com"]).prefixes;
+    expect(path).toEqual(["com/"]);
   });
 });
