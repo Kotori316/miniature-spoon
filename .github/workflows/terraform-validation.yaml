@@ -59,8 +59,21 @@ jobs:
         run: terraform init
         working-directory: terraform
       - name: Check plan
-        run: terraform plan -detailed-exitcode >/dev/null && echo "No changes" || (echo "Plan detected changes"; false)
+        id: action
+        run: |
+          log_name="$(date "+%Y%m%d-%H%M%S")-terraform.log"
+          echo "${{ github.actor }}" >> "/tmp/${log_name}"
+          echo "name=${log_name}" >> $GITHUB_OUTPUT
+          echo "repo=$(basename "${{github.repository}}")" >> $GITHUB_OUTPUT
+          terraform plan -detailed-exitcode -no-color >>"/tmp/${log_name}" 2>&1 && echo "No changes" || (echo "Plan detected changes"; false)
         working-directory: terraform
         env:
           TF_VAR_cloudflare_token: ${{steps.get-secrets.outputs.cloudflare_token}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload log
+        if: ${{ !cancelled() }}
+        uses: google-github-actions/upload-cloud-storage@v2
+        with:
+          path: /tmp/${{steps.action.outputs.name}}
+          destination: kotori316-logs/${{steps.action.outputs.repo}}
+          process_gcloudignore: false
