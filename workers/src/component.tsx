@@ -14,6 +14,13 @@ export const Page: FC<{ title: string }> = (props) => {
       <body>
         ${props.children}
       </body>
+      <!-- Cloudflare Web Analytics -->
+      <script
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "dabfdf6280104203b71d2771ac5b6ba9"}'
+      ></script>
+      <!-- End Cloudflare Web Analytics -->
     </html>`;
 };
 

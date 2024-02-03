@@ -3,6 +3,7 @@ import { getFiles, getMimeType, availablePaths } from "./files";
 import { Hono } from "hono";
 import { cache } from "hono/cache";
 import { serveStatic } from "hono/cloudflare-workers";
+import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 
 type Bindings = {
@@ -12,6 +13,12 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 app.use("*", secureHeaders());
+app.use(
+  "*",
+  cors({
+    origin: ["https://static.cloudflareinsights.com", "https://cloudflareinsights.com"],
+  })
+);
 const staticCacheName = "static-resources";
 const staticCacheControl = "max-age=3600";
 app.get(
