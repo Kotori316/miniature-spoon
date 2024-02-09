@@ -10,6 +10,7 @@ const knownMimeTypes = new Map([
   [".sha256", "text/plain"],
   [".sha512", "text/plain"],
   [".asc", "text/plain"],
+  [".jar", "application/java-archive"],
 ]);
 
 export function getMimeType(filePath: string, typeInBucket?: string): string {

@@ -1,9 +1,9 @@
 import { PathObject, pathPairSort } from "./data";
 import { html } from "hono/html";
-import { FC } from "hono/jsx";
+import { FC, PropsWithChildren } from "hono/jsx";
 import path from "path-browserify";
 
-export const Page: FC<{ title: string }> = (props) => {
+export const Page: FC<PropsWithChildren<{ title: string }>> = (props) => {
   return html`<!doctype html>
     <html lang="en">
       <head>

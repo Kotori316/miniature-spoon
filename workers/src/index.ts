@@ -1,10 +1,13 @@
 import { createDirContents } from "./component";
 import { getFiles, getMimeType, availablePaths } from "./files";
+// @ts-expect-error Cloudflare specification
+import manifest from "__STATIC_CONTENT_MANIFEST";
 import { Hono } from "hono";
 import { cache } from "hono/cache";
 import { serveStatic } from "hono/cloudflare-workers";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
+import { stream } from "hono/streaming";
 
 type Bindings = {
   MAVEN_BUCKET: R2Bucket;
@@ -24,12 +27,12 @@ const staticCacheControl = "max-age=3600";
 app.get(
   "/favicon.ico",
   cache({ cacheName: staticCacheName, cacheControl: staticCacheControl }),
-  serveStatic({ path: "./favicon.ico" })
+  serveStatic({ path: "./favicon.ico", manifest })
 );
 app.get(
   "/static/*",
   cache({ cacheName: staticCacheName, cacheControl: staticCacheControl }),
-  serveStatic({ root: "./" })
+  serveStatic({ root: "./", manifest })
 );
 
 app.get("/", async (c) => {
@@ -50,7 +53,7 @@ app.get("/:prefix{.+$}", async (c) => {
   if (bucketObject !== null) {
     c.header("etag", bucketObject.httpEtag);
     c.header("Content-Type", getMimeType(bucketObject.key, bucketObject.httpMetadata?.contentType));
-    return c.stream(async (stream) => {
+    return stream(c, async (stream) => {
       await stream.pipe(bucketObject.body);
     });
   } else {
