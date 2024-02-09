@@ -2,8 +2,8 @@ services:
   node:
     image: node:20
     volumes:
-      - ./workers:/root/work
-      - container_node_modules:/root/work/node_modules
+      - ./workers:/root/workers
+      - container_node_modules:/root/workers/node_modules
     init: true
     command: sleep inf
 
