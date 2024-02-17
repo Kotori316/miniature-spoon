@@ -21,15 +21,28 @@ export function getMimeType(filePath: string, typeInBucket?: string): string {
 
 export async function getFiles(bucket: R2Bucket, currentPath: string): Promise<ScanListResult> {
   const isRoot = currentPath === "";
-  const objects = await bucket.list({
+  const options = {
     delimiter: "/",
     prefix: currentPath + (isRoot ? "" : "/"),
-  });
-  const files = objects.objects.map((o) => {
+  };
+
+  let list = await bucket.list(options);
+  const objects = list.objects;
+  const delimitedPrefixes = list.delimitedPrefixes;
+  while (list.truncated) {
+    list = await bucket.list({
+      ...options,
+      cursor: list.cursor,
+    });
+    objects.push(...list.objects);
+    delimitedPrefixes.push(...list.delimitedPrefixes);
+  }
+
+  const files = objects.map((o) => {
     return new PathObject(path.basename(o.key), o.key, o.size, o.uploaded);
   });
   const upper = isRoot ? [] : [PathObject.createDir("..", path.dirname(`/${currentPath}`))];
-  const directories = objects.delimitedPrefixes.map((o) => {
+  const directories = delimitedPrefixes.map((o) => {
     return PathObject.createDir(path.basename(o), o);
   });
   return new ScanListResult(upper.concat(directories), files);
