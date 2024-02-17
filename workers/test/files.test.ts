@@ -1,3 +1,4 @@
+import { PathObject, ScanListResult } from "../src/data";
 import * as file from "../src/files";
 
 describe.concurrent("file mime type", () => {
@@ -52,5 +53,55 @@ describe.concurrent("available path", () => {
   it("prefix of com", async () => {
     const path = file.availablePaths(["com"]).prefixes;
     expect(path).toEqual(["com/"]);
+  });
+});
+
+describe.concurrent("createScanListResult", () => {
+  it("root", () => {
+    const result = file.createScanListResult([], [], "", true);
+    expect(result).toEqual(new ScanListResult([], []));
+    expect(result.isEmpty()).toEqual(true);
+  });
+  it("with a child directory", () => {
+    const result = file.createScanListResult([], ["parent/child"], "parent", false);
+    expect(result.isEmpty()).toBe(false);
+    expect(result.files).toEqual([]);
+    expect(result.directories).toEqual([
+      PathObject.createDir("..", "/"),
+      PathObject.createDir("child", "parent/child"),
+    ]);
+  });
+  it("with 2 children directory", () => {
+    const result = file.createScanListResult(
+      [],
+      ["grandparent/parent/child1", "grandparent/parent/child2"],
+      "grandparent/parent",
+      false
+    );
+    expect(result.isEmpty()).toBe(false);
+    expect(result.files).toEqual([]);
+    expect(result.directories).toEqual([
+      PathObject.createDir("..", "/grandparent"),
+      PathObject.createDir("child1", "grandparent/parent/child1"),
+      PathObject.createDir("child2", "grandparent/parent/child2"),
+    ]);
+  });
+  it("with a file", () => {
+    const date = new Date(2024, 2, 17, 17, 20, 0);
+    const result = file.createScanListResult(
+      [
+        {
+          key: "parent/child",
+          size: 10,
+          uploaded: date,
+        },
+      ],
+      [],
+      "parent",
+      true
+    );
+    expect(result.isEmpty()).toBe(false);
+    expect(result.directories).toEqual([]);
+    expect(result.files).toEqual([new PathObject("child", "parent/child", 10, date)]);
   });
 });

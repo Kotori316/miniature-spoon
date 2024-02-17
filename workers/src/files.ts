@@ -38,6 +38,15 @@ export async function getFiles(bucket: R2Bucket, currentPath: string): Promise<S
     delimitedPrefixes.push(...list.delimitedPrefixes);
   }
 
+  return createScanListResult(objects, delimitedPrefixes, currentPath, isRoot);
+}
+
+export function createScanListResult(
+  objects: Array<{ key: string; size: number; uploaded: Date }>,
+  delimitedPrefixes: string[],
+  currentPath: string,
+  isRoot: boolean
+): ScanListResult {
   const files = objects.map((o) => {
     return new PathObject(path.basename(o.key), o.key, o.size, o.uploaded);
   });
