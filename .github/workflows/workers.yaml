@@ -36,15 +36,16 @@ jobs:
     concurrency:
       group: workers
       cancel-in-progress: true
+    defaults:
+      run:
+        working-directory: 'workers'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - run: npm ci
-        working-directory: 'workers'
       - run: npm run css
-        working-directory: 'workers'
       - uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{secrets.GCP_IDENTITY_PROVIDER}}
@@ -63,7 +64,6 @@ jobs:
           echo "name=${log_name}" >> $GITHUB_OUTPUT
           echo "repo=$(basename "${{github.repository}}")" >> $GITHUB_OUTPUT
           npm run deploy >>"/tmp/${log_name}" 2>&1 && echo "Published successfully" || (echo "Failed to publish"; false)
-        working-directory: 'workers'
         env:
           CLOUDFLARE_API_TOKEN: ${{steps.get-secrets.outputs.cloudflare_token}}
       - name: Upload log
