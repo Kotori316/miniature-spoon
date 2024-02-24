@@ -68,3 +68,21 @@ export function availablePaths(packages: string[]): { prefixes: string[]; matche
     prefixes: packages.map((p) => p.replace(".", "/") + "/"),
   };
 }
+
+export async function getAllFiles(bucket: R2Bucket): Promise<R2Object[]> {
+  const options: R2ListOptions = {
+    prefix: "",
+  };
+  let list = await bucket.list(options);
+  const objects = list.objects;
+  console.log(objects.length);
+  while (list.truncated) {
+    list = await bucket.list({
+      ...options,
+      cursor: list.cursor,
+    });
+    objects.push(...list.objects);
+    console.log(objects.length);
+  }
+  return objects;
+}

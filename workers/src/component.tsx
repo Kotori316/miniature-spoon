@@ -79,3 +79,26 @@ const Files: FC<{ files: PathObject[]; postfix: string }> = (props) => {
 export function createDirContents(files: PathObject[], dirs: PathObject[], prefix: string) {
   return <DirContents dirs={dirs} files={files} prefix={prefix}></DirContents>;
 }
+
+export function createRepositoryIndex(repositoryPathes: string[]) {
+  return (
+    <Page title="Repositories">
+      <div class="m-4">
+        <h1 class="font-sans text-2xl">List of Repositories</h1>
+        <div class="my-4 border-b-2 border-dashed border-indigo-500"></div>
+        <div class="flex flex-col gap-1 ">
+          {repositoryPathes.map((path) => {
+            const lastSlash = path.lastIndexOf("/");
+            const group = path.substring(0, lastSlash).replaceAll("/", ".");
+            const name = path.substring(lastSlash + 1);
+            return (
+              <a class="block font-mono text-emerald-700 hover:text-indigo-700 visited:text-purple-700" href={path}>
+                {group + ":" + name}
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </Page>
+  );
+}
