@@ -3,6 +3,7 @@ services:
     image: node:20
     volumes:
       - ./workers:/root/workers
+      - .ssg/:/root/ssg
       - container_node_modules:/root/workers/node_modules
     init: true
     command: sleep inf
