@@ -6,5 +6,6 @@ dist
 build
 .wrangler
 workers/assets/static/output.css
+workers/assets/ssg
 test-persist
 work

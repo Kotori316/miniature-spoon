@@ -35,11 +35,11 @@ app.get(
   serveStatic({ root: "./", manifest })
 );
 
-app.get("/", async (c) => {
-  const bucket = c.env.MAVEN_BUCKET;
-  const result = await getFiles(bucket, "");
-  return c.html(createDirContents(result.files, result.directories, "/"));
-});
+app.get(
+  "/",
+  cache({ cacheName: staticCacheName, cacheControl: staticCacheControl }),
+  serveStatic({ path: "./ssg/index.html", manifest })
+);
 
 const { matches, prefixes } = availablePaths(["com.kotori316", "org.typelevel"]);
 

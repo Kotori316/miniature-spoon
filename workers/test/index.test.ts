@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import * as fs from "node:fs/promises";
 import type { UnstableDevWorker } from "wrangler";
 import { unstable_dev } from "wrangler";
 
@@ -21,6 +23,11 @@ describe("app access", () => {
       method: "PUT",
       body: '{"key": "com/kotori316/test/a.txt", "content": "a"}',
     });
+
+    if (!existsSync("assets/ssg/index.html")) {
+      await fs.mkdir("assets/ssg/", { recursive: true });
+      await fs.writeFile("assets/ssg/index.html", "<h1>Repository</h1>");
+    }
   });
 
   afterAll(async () => {
