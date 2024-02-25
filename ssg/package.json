@@ -1,9 +1,10 @@
 {
   "type": "module",
   "scripts": {
-    "format": "npx prettier --write '{src,test}/**/*.{ts,tsx}'",
+    "format": "prettier --write '{src,test}/**/*.{ts,tsx}'",
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "ci": "prettier --check '{src,test}/**/*.{ts,tsx}'"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.521.0",
