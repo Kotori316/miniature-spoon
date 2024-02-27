@@ -3,12 +3,14 @@ on:
   push:
     paths:
       - 'workers/**'
+      - 'ssg/**'
       - '.github/workflows/workers.yaml'
     branches:
       - main
   pull_request:
     paths:
       - 'workers/**'
+      - 'ssg/**'
       - '.github/workflows/workers.yaml'
 
 jobs:
