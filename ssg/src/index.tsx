@@ -68,7 +68,10 @@ function createRepositoryIndex(repositoryPathes: string[]) {
             const name = path.substring(lastSlash + 1);
             return (
               <li>
-                <a class="font-mono underline-offset-auto text-emerald-700 hover:text-indigo-700 hover:underline decoration-indigo-400" href={path}>
+                <a
+                  class="font-mono underline-offset-auto text-emerald-700 hover:text-indigo-700 hover:underline decoration-indigo-400"
+                  href={path}
+                >
                   {group + ":" + name}
                 </a>
               </li>
