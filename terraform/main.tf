@@ -50,6 +50,7 @@ async function handleRequest(request) {
 }
 EOF
   name       = var.maven_name
+  tags       = []
 
   r2_bucket_binding {
     bucket_name = cloudflare_r2_bucket.maven_bucket.name
