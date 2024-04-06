@@ -2,7 +2,7 @@ import { createDirContents } from "./component";
 import { getFiles, getMimeType, availablePaths } from "./files";
 // @ts-expect-error Cloudflare specification
 import manifest from "__STATIC_CONTENT_MANIFEST";
-import { Hono } from "hono";
+import { Hono, MiddlewareHandler } from "hono";
 import { cache } from "hono/cache";
 import { serveStatic } from "hono/cloudflare-workers";
 import { cors } from "hono/cors";
@@ -15,31 +15,29 @@ type Bindings = {
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
-app.use("*", secureHeaders());
 app.use(
   "*",
+  secureHeaders(),
   cors({
     origin: ["https://static.cloudflareinsights.com", "https://cloudflareinsights.com"],
   })
 );
 const staticCacheName = "static-resources";
 const staticCacheControl = "max-age=3600";
-app.get(
-  "/favicon.ico",
-  cache({ cacheName: staticCacheName, cacheControl: staticCacheControl }),
-  serveStatic({ path: "./favicon.ico", manifest })
-);
-app.get(
-  "/static/*",
-  cache({ cacheName: staticCacheName, cacheControl: staticCacheControl }),
-  serveStatic({ root: "./", manifest })
-);
+const cacheMiddleware: MiddlewareHandler<{ Bindings: Bindings }> = async (c, next) => {
+  if (c.env.ENVIRONMENT === "unit-test") {
+    // Don't use cache in test as it cause freeze.
+    return await next();
+  } else {
+    const m = cache({ cacheName: staticCacheName, cacheControl: staticCacheControl });
+    return m(c, next);
+  }
+};
 
-app.get(
-  "/",
-  cache({ cacheName: staticCacheName, cacheControl: staticCacheControl }),
-  serveStatic({ path: "./ssg/index.html", manifest })
-);
+app.get("/favicon.ico", cacheMiddleware, serveStatic({ path: "./favicon.ico", manifest }));
+app.get("/static/*", cacheMiddleware, serveStatic({ root: "./", manifest }));
+
+app.get("/", cacheMiddleware, serveStatic({ path: "./ssg/index.html", manifest }));
 
 const { matches, prefixes } = availablePaths(["com.kotori316", "org.typelevel"]);
 
