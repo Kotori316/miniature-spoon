@@ -1,7 +1,5 @@
 import "../src/index";
 import { SELF } from "cloudflare:test";
-import { existsSync } from "node:fs";
-import * as fs from "node:fs/promises";
 import { TestOptions } from "vitest";
 
 test("simple test", () => {
@@ -17,10 +15,6 @@ describe("app access", () => {
       method: "PUT",
       body: '{"key": "com/kotori316/test/a.txt", "content": "a"}',
     });
-    if (!existsSync("assets/ssg/index.html")) {
-      await fs.mkdir("assets/ssg/", { recursive: true });
-      await fs.writeFile("assets/ssg/index.html", "<h1>Repository</h1>");
-    }
   });
 
   ["/", "/com", "/com/kotori316", "/com/kotori316/test", "/com/kotori316/test/a.txt"].forEach((element) => {

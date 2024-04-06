@@ -42,17 +42,17 @@ app.get("/", (c) => {
 });
 
 const Page: FC<PropsWithChildren<{ title: string }>> = (props) => {
-  return html`<!doctype html>
+  const content = (
     <html lang="en">
       <head>
         <meta charset="utf-8" />
-        <title>${props.title}</title>
+        <title>{props.title}</title>
         <link href="/static/output.css" rel="stylesheet" />
       </head>
-      <body>
-        ${props.children}
-      </body>
-    </html>`;
+      <body>{props.children}</body>
+    </html>
+  );
+  return html`<!doctype html>${content}`;
 };
 
 function createRepositoryIndex(repositoryPathes: string[]) {
