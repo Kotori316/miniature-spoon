@@ -1,9 +1,22 @@
 /// <reference types="vitest" />
-import { defineConfig, configDefaults } from 'vitest/config'
+import { defineWorkersConfig } from "@cloudflare/vitest-pool-workers/config";
+import { configDefaults } from 'vitest/config';
 
-export default defineConfig({
+export default defineWorkersConfig({
   test: {
     globals: true,
-    exclude: [...configDefaults.exclude, "test/production.test.ts"]
+    exclude: [...configDefaults.exclude, "test/production.test.ts"],
+    poolOptions: {
+      workers: {
+        wrangler: { configPath: "./wrangler.toml" },
+        miniflare: {
+          compatibilityFlags: ["nodejs_compat"],
+          sitePath: "./assets/",
+          bindings: {
+            "ENVIRONMENT": "unit-test",
+          },
+        }
+      }
+    },
   }
 })

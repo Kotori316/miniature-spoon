@@ -1,7 +1,7 @@
 import * as data from "../src/data";
 
-describe.concurrent("PathObject", () => {
-  describe.concurrent("createDir", () => {
+describe("PathObject", () => {
+  describe("createDir", () => {
     const dir = data.PathObject.createDir("Miracle dir", "/a/b/c");
     it("name", async ({ expect }) => {
       expect(dir.basename).toBe("Miracle dir");
