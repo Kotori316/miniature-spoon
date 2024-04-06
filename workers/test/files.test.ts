@@ -1,7 +1,7 @@
 import { PathObject, ScanListResult } from "../src/data";
 import * as file from "../src/files";
 
-describe.concurrent("file mime type", () => {
+describe("file mime type", () => {
   const pairs = {
     txt: "text/plain; charset=utf-8",
     xml: "application/xml",
@@ -29,7 +29,7 @@ test("mime is given", () => {
   expect(mime).toBe("application/xml");
 });
 
-describe.concurrent("available path", () => {
+describe("available path", () => {
   it("com", async () => {
     const path = file.availablePaths(["com"]).matches;
     expect(path).toEqual(["com"]);
@@ -56,7 +56,7 @@ describe.concurrent("available path", () => {
   });
 });
 
-describe.concurrent("createScanListResult", () => {
+describe("createScanListResult", () => {
   it("root", () => {
     const result = file.createScanListResult([], [], "", true);
     expect(result).toEqual(new ScanListResult([], []));
