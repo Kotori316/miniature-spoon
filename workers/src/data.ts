@@ -5,7 +5,7 @@ export class PathObject {
     public readonly basename: string,
     public readonly absolutePath: string,
     private readonly fileSize?: number,
-    private readonly createdDate?: Date
+    private readonly createdDate?: Date,
   ) {}
 
   static createDir(basename: string, absolutePath: string): PathObject {
@@ -15,17 +15,15 @@ export class PathObject {
   get size(): string {
     if (this.fileSize === undefined) {
       return "-";
-    } else {
-      return prettyBytes(this.fileSize);
     }
+    return prettyBytes(this.fileSize);
   }
 
   get created(): string {
     if (this.createdDate === undefined) {
       return "-";
-    } else {
-      return this.createdDate.toISOString();
     }
+    return this.createdDate.toISOString();
   }
 }
 
@@ -39,7 +37,7 @@ export function pathPairSort(a: PathObject, b: PathObject): number {
 export class ScanListResult {
   constructor(
     public readonly directories: PathObject[],
-    public readonly files: PathObject[]
+    public readonly files: PathObject[],
   ) {}
 
   isEmpty(): boolean {

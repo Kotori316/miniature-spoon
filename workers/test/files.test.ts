@@ -43,11 +43,17 @@ describe("available path", () => {
     expect(path).toEqual(["com", "com/kotori316", "com/kotori316/test"]);
   });
   it("com.kotori316 and org.kotori316", async () => {
-    const path = file.availablePaths(["com.kotori316", "org.kotori316"]).matches;
+    const path = file.availablePaths([
+      "com.kotori316",
+      "org.kotori316",
+    ]).matches;
     expect(path).toEqual(["com", "com/kotori316", "org", "org/kotori316"]);
   });
   it("prefix of com.kotori316 and org.kotori316", async () => {
-    const path = file.availablePaths(["com.kotori316", "org.kotori316"]).prefixes;
+    const path = file.availablePaths([
+      "com.kotori316",
+      "org.kotori316",
+    ]).prefixes;
     expect(path).toEqual(["com/kotori316/", "org/kotori316/"]);
   });
   it("prefix of com", async () => {
@@ -63,7 +69,12 @@ describe("createScanListResult", () => {
     expect(result.isEmpty()).toEqual(true);
   });
   it("with a child directory", () => {
-    const result = file.createScanListResult([], ["parent/child"], "parent", false);
+    const result = file.createScanListResult(
+      [],
+      ["parent/child"],
+      "parent",
+      false,
+    );
     expect(result.isEmpty()).toBe(false);
     expect(result.files).toEqual([]);
     expect(result.directories).toEqual([
@@ -76,7 +87,7 @@ describe("createScanListResult", () => {
       [],
       ["grandparent/parent/child1", "grandparent/parent/child2"],
       "grandparent/parent",
-      false
+      false,
     );
     expect(result.isEmpty()).toBe(false);
     expect(result.files).toEqual([]);
@@ -98,10 +109,12 @@ describe("createScanListResult", () => {
       ],
       [],
       "parent",
-      true
+      true,
     );
     expect(result.isEmpty()).toBe(false);
     expect(result.directories).toEqual([]);
-    expect(result.files).toEqual([new PathObject("child", "parent/child", 10, date)]);
+    expect(result.files).toEqual([
+      new PathObject("child", "parent/child", 10, date),
+    ]);
   });
 });

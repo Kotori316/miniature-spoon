@@ -1,6 +1,6 @@
-import { PathObject, ScanListResult } from "./data";
 import * as mime from "hono/utils/mime";
 import path from "path-browserify";
+import { PathObject, ScanListResult } from "./data";
 
 const knownMimeTypes = new Map([
   [".module", "application/json"],
@@ -14,12 +14,20 @@ const knownMimeTypes = new Map([
 ]);
 
 export function getMimeType(filePath: string, typeInBucket?: string): string {
-  if (typeInBucket !== undefined && typeInBucket !== "application/octet-stream") return typeInBucket;
+  if (typeInBucket !== undefined && typeInBucket !== "application/octet-stream")
+    return typeInBucket;
   const parsed = path.extname(filePath);
-  return knownMimeTypes.get(parsed) || mime.getMimeType(filePath) || "application/octet-stream";
+  return (
+    knownMimeTypes.get(parsed) ||
+    mime.getMimeType(filePath) ||
+    "application/octet-stream"
+  );
 }
 
-export async function getFiles(bucket: R2Bucket, currentPath: string): Promise<ScanListResult> {
+export async function getFiles(
+  bucket: R2Bucket,
+  currentPath: string,
+): Promise<ScanListResult> {
   const isRoot = currentPath === "";
   const options = {
     delimiter: "/",
@@ -45,19 +53,24 @@ export function createScanListResult(
   objects: Array<{ key: string; size: number; uploaded: Date }>,
   delimitedPrefixes: string[],
   currentPath: string,
-  isRoot: boolean
+  isRoot: boolean,
 ): ScanListResult {
   const files = objects.map((o) => {
     return new PathObject(path.basename(o.key), o.key, o.size, o.uploaded);
   });
-  const upper = isRoot ? [] : [PathObject.createDir("..", path.dirname(`/${currentPath}`))];
+  const upper = isRoot
+    ? []
+    : [PathObject.createDir("..", path.dirname(`/${currentPath}`))];
   const directories = delimitedPrefixes.map((o) => {
     return PathObject.createDir(path.basename(o), o);
   });
   return new ScanListResult(upper.concat(directories), files);
 }
 
-export function availablePaths(packages: string[]): { prefixes: string[]; matches: string[] } {
+export function availablePaths(packages: string[]): {
+  prefixes: string[];
+  matches: string[];
+} {
   return {
     matches: packages.flatMap((p) => {
       const splited = p.split(".");
@@ -65,7 +78,7 @@ export function availablePaths(packages: string[]): { prefixes: string[]; matche
         return array.slice(0, index + 1).join("/");
       });
     }),
-    prefixes: packages.map((p) => p.replace(".", "/") + "/"),
+    prefixes: packages.map((p) => `${p.replace(".", "/")}/`),
   };
 }
 
