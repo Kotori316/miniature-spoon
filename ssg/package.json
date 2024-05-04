@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "format": "npx @biomejs/biome check --apply-unsafe ./src ./test",
+    "format": "npx @biomejs/biome check --apply-unsafe ./src",
     "dev": "vite",
     "build": "vite build",
     "ci": "npx @biomejs/biome ci ./src"

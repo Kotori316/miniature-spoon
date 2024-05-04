@@ -1,8 +1,12 @@
-import { ListObjectsV2Command, ListObjectsV2CommandInput, S3Client } from "@aws-sdk/client-s3";
+import {
+  ListObjectsV2Command,
+  type ListObjectsV2CommandInput,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import * as dotenv from "dotenv";
 import { Hono } from "hono";
 import { html } from "hono/html";
-import { FC, PropsWithChildren } from "hono/jsx";
+import type { FC, PropsWithChildren } from "hono/jsx";
 
 const app = new Hono();
 
@@ -26,12 +30,13 @@ while (list.IsTruncated) {
     new ListObjectsV2Command({
       ...option,
       ContinuationToken: list.NextContinuationToken,
-    })
+    }),
   );
   objects.push(...(list.Contents ?? []));
 }
 const repositoryPathes = objects
-  .map((o) => o.Key!)
+  .map((o) => o.Key || "")
+  .filter((o) => o !== "")
   .filter((o) => o.endsWith("maven-metadata.xml"))
   .filter((o) => !o.includes("SNAPSHOT"))
   .map((o) => o.replace("/maven-metadata.xml", ""));
@@ -60,7 +65,7 @@ function createRepositoryIndex(repositoryPathes: string[]) {
     <Page title="Repositories">
       <div class="m-4">
         <h1 class="font-sans text-2xl">List of Repositories</h1>
-        <div class="my-4 border-b-2 border-dashed border-indigo-500"></div>
+        <div class="my-4 border-b-2 border-dashed border-indigo-500" />
         <ul class="list-disc list-inside flex flex-col gap-1">
           {repositoryPathes.map((path) => {
             const lastSlash = path.lastIndexOf("/");
@@ -72,7 +77,7 @@ function createRepositoryIndex(repositoryPathes: string[]) {
                   class="font-mono underline-offset-auto text-emerald-700 hover:text-indigo-700 hover:underline decoration-indigo-400"
                   href={path}
                 >
-                  {group + ":" + name}
+                  {`${group}:${name}`}
                 </a>
               </li>
             );
