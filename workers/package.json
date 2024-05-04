@@ -6,9 +6,8 @@
     "css": "npx tailwindcss -i ./src/input.css -o ./assets/static/output.css",
     "css:watch": "npx tailwindcss -i ./src/input.css -o ./assets/static/output.css --watch",
     "format": "npx @biomejs/biome check --apply-unsafe ./src ./test",
-    "lint": "npx eslint --fix --ext .ts --ext .tsx src test",
     "test": "mkdir -p ./assets/ssg && touch ./assets/ssg/index.html && npx vitest run && npx vitest run -c vitest.production.config.ts",
-    "ci": "npx @biomejs/biome ci ./src && tsc --noEmit"
+    "ci": "npx @biomejs/biome ci ./src ./test && tsc --noEmit"
   },
   "dependencies": {
     "hono": "^4.0.0",

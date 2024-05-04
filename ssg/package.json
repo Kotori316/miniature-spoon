@@ -1,10 +1,10 @@
 {
   "type": "module",
   "scripts": {
-    "format": "prettier --write '{src,test}/**/*.{ts,tsx}'",
+    "format": "npx @biomejs/biome check --apply-unsafe ./src ./test",
     "dev": "vite",
     "build": "vite build",
-    "ci": "prettier --check '{src,test}/**/*.{ts,tsx}'"
+    "ci": "npx @biomejs/biome ci ./src"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.521.0",
@@ -12,11 +12,10 @@
     "hono": "^4.0.6"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.7.2",
     "@hono/vite-dev-server": "^0.12.0",
     "@hono/vite-ssg": "^0.1.0",
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^20.11.17",
-    "prettier": "^3.2.5",
     "vite": "^5.1.4"
   }
 }
