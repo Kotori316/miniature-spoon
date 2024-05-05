@@ -84,6 +84,7 @@ jobs:
           npm run deploy >>"/tmp/${log_name}" 2>&1 && echo "Published successfully" || (echo "Failed to publish"; false)
         env:
           CLOUDFLARE_API_TOKEN: ${{steps.get-secrets.outputs.cloudflare_token}}
+          NO_COLOR: true
         working-directory: workers
       - name: Upload log
         if: ${{ !cancelled() }}
