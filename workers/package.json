@@ -4,7 +4,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "$npm_execpath run css && $npm_execpath run build && wrangler pages dev dist",
-    "deploy": "$npm_execpath run css && $npm_execpath run build && wrangler pages deploy dist",
+    "deploy": "$npm_execpath run css && $npm_execpath run build && wrangler pages deploy dist --commit-dirty=true",
     "css": "npx tailwindcss -i ./src/input.css -o ./public/static/output.css",
     "css:watch": "npx tailwindcss -i ./src/input.css -o ./public/static/output.css --watch",
     "format": "npx @biomejs/biome check --apply-unsafe ./src ./test",

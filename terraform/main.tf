@@ -97,7 +97,7 @@ resource "cloudflare_pages_project" "main" {
     }
   }
   build_config {
-    build_caching = false
+    build_caching   = false
     destination_dir = "dist"
   }
 }
