@@ -161,7 +161,17 @@ export function getDirectoryComponents(
   for (const directories of Object.values(directoriesByDepth)) {
     for (const directory of directories) {
       const files = getFilesInDirectory(objects, directory);
-      const dirs = getDirectoriesInDirectory(allDirectories, directory);
+
+      const parentPath = path.resolve(directory, "..");
+      const parentDir = PathObject.createDir(
+        "..",
+        parentPath === "/" ? "/index" : parentPath,
+      );
+      const dirs = [
+        parentDir,
+        ...getDirectoriesInDirectory(allDirectories, directory),
+      ];
+
       const component: DirectoryComponent = {
         files,
         dirs,

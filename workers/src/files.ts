@@ -1,7 +1,6 @@
 import * as mime from "hono/utils/mime";
-import path from "path-browserify";
 
-const knownMimeTypes = new Map([
+export const knownMimeTypes = new Map([
   [".module", "application/json"],
   [".pom", "application/xml"],
   [".md5", "text/plain"],
@@ -15,7 +14,11 @@ const knownMimeTypes = new Map([
 export function getMimeType(filePath: string, typeInBucket?: string): string {
   if (typeInBucket !== undefined && typeInBucket !== "application/octet-stream")
     return typeInBucket;
-  const parsed = path.extname(filePath);
+  const lastDot = filePath.lastIndexOf(".");
+  if (lastDot < 0) {
+    return "application/octet-stream";
+  }
+  const parsed = filePath.slice(lastDot);
   return (
     knownMimeTypes.get(parsed) ||
     mime.getMimeType(filePath) ||

@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { stream } from "hono/streaming";
-import { availablePaths, getMimeType } from "./files";
+import { notFoundPage } from "./components";
+import { availablePaths, getMimeType, knownMimeTypes } from "./files";
 
 type Bindings = {
   MAVEN_BUCKET: R2Bucket;
@@ -36,10 +37,15 @@ app.get("/:prefix{.+$}", async (c) => {
       await stream.pipe(bucketObject.body);
     });
   }
-  return c.notFound();
+
+  if (Array.from(knownMimeTypes.keys()).find((e) => c.req.path.endsWith(e))) {
+    return c.notFound();
+  }
+  // Redirect to SSG page, as user want to see the index page.
+  return c.redirect(`/static/ssg${c.req.path}.html`);
 });
 
-app.get("/", (c) => c.redirect("/static/ssg/"));
+app.get("/", (c) => c.redirect("/static/ssg/index.html"));
 
 app.put("/put-object", async (c) => {
   // This is convinience endpoint to add test objects. Not available in deployed environment.
@@ -55,5 +61,7 @@ app.put("/put-object", async (c) => {
     201,
   );
 });
+
+app.notFound((c) => c.html(notFoundPage()));
 
 export default app;

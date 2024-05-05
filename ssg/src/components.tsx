@@ -17,6 +17,7 @@ const Page: FC<PropsWithChildren<{ title: string }>> = (props) => {
 };
 
 export function createRepositoryIndex(repositoryPathes: string[]) {
+  const extention = ".html";
   return (
     <Page title="Repositories">
       <div class="m-4">
@@ -31,7 +32,7 @@ export function createRepositoryIndex(repositoryPathes: string[]) {
               <li>
                 <a
                   class="font-mono underline-offset-auto text-emerald-700 hover:text-indigo-700 hover:underline decoration-indigo-400"
-                  href={path}
+                  href={`${path}${extention}`}
                 >
                   {`${group}:${name}`}
                 </a>
@@ -68,42 +69,47 @@ const DirContents: FC<{
           </div>
           <Files
             files={sortedDirs}
-            postfix="/"
             pagePrefix={directoryPagePrefix || ""}
+            isDirectory={true}
           />
-          <Files files={sortedFiles} postfix="" pagePrefix="" />
+          <Files files={sortedFiles} pagePrefix="" isDirectory={false} />
         </div>
       </div>
     </Page>
   );
 };
 
-const Files: FC<{ files: PathObject[]; postfix: string; pagePrefix: string }> =
-  (props) => {
-    const { files, postfix, pagePrefix } = props;
-    return (
-      <div>
-        {files.map((o) => {
-          const nextPath = (pagePrefix || "") + o.absolutePath;
-          return (
-            <div class="grid grid-cols-6 gap-2">
-              <div class="col-span-3">
-                <a
-                  href={nextPath}
-                  class="font-mono text-emerald-700 hover:text-indigo-700 visited:text-purple-700"
-                >
-                  {o.basename + postfix}
-                </a>
-              </div>
-              <div class="col-auto text-right">{o.size}</div>
-              <div class="col-auto" />
-              <div class="col-auto">{o.created}</div>
+const Files: FC<{
+  files: PathObject[];
+  pagePrefix: string;
+  isDirectory: boolean;
+}> = (props) => {
+  const { files, pagePrefix, isDirectory } = props;
+  const postfix = isDirectory ? "/" : "";
+  const extension = isDirectory ? ".html" : "";
+  return (
+    <div>
+      {files.map((o) => {
+        const nextPath = (pagePrefix || "") + o.absolutePath + extension;
+        return (
+          <div class="grid grid-cols-6 gap-2">
+            <div class="col-span-3">
+              <a
+                href={nextPath}
+                class="font-mono text-emerald-700 hover:text-indigo-700 visited:text-purple-700"
+              >
+                {o.basename + postfix}
+              </a>
             </div>
-          );
-        })}
-      </div>
-    );
-  };
+            <div class="col-auto text-right">{o.size}</div>
+            <div class="col-auto" />
+            <div class="col-auto">{o.created}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export function createDirContents(
   files: PathObject[],
