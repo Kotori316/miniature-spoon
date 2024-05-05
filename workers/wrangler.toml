@@ -1,6 +1,7 @@
-name = "test-maven-kotori316"
+name = "kotori316-maven-page"
 compatibility_date = "2024-05-03"
 pages_build_output_dir = "./dist"
+send_metrics = false
 
 [vars]
 ENVIRONMENT = "staging"
