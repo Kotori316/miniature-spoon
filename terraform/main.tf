@@ -34,46 +34,6 @@ resource "cloudflare_r2_bucket" "maven_bucket" {
   name       = var.maven_name
 }
 
-resource "cloudflare_worker_script" "maven_viewer" {
-  account_id = data.cloudflare_zone.zone.account_id
-  content    = <<EOF
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request));
-});
-async function handleRequest(request) {
-  return new Response("No content", {
-    status: 400,
-    headers: {
-      'content-type': 'text/plain',
-    },
-  });
-}
-EOF
-  name       = var.maven_name
-  tags       = []
-
-  r2_bucket_binding {
-    bucket_name = cloudflare_r2_bucket.maven_bucket.name
-    name        = "MAVEN_BUCKET"
-  }
-
-  lifecycle {
-    ignore_changes = [
-      content,
-      kv_namespace_binding,
-      plain_text_binding,
-    ]
-  }
-}
-
-resource "cloudflare_worker_domain" "maven_viewer" {
-  account_id  = data.cloudflare_zone.zone.account_id
-  hostname    = "maven.${var.cloudflare_zone_name}"
-  service     = cloudflare_worker_script.maven_viewer.name
-  zone_id     = data.cloudflare_zone.zone.id
-  environment = "production"
-}
-
 resource "cloudflare_pages_project" "main" {
   account_id        = data.cloudflare_zone.zone.account_id
   name              = "${var.maven_name}-page"
@@ -104,16 +64,17 @@ resource "cloudflare_pages_project" "main" {
 
 resource "cloudflare_pages_domain" "main" {
   account_id   = data.cloudflare_zone.zone.account_id
-  domain       = "staging.maven.${var.cloudflare_zone_name}"
+  domain       = "maven.${var.cloudflare_zone_name}"
   project_name = cloudflare_pages_project.main.name
 }
 
 resource "cloudflare_record" "page" {
-  name    = "staging.maven"
+  name    = "maven"
   type    = "CNAME"
   zone_id = data.cloudflare_zone.zone.zone_id
   value   = cloudflare_pages_project.main.subdomain
   proxied = true
+  ttl     = 1
 }
 
 data "github_repository" "repo" {
