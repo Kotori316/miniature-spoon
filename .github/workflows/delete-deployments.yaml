@@ -1,0 +1,62 @@
+name: Delete Deployments
+on:
+  schedule:
+    - cron: "40 2 * * MON" # 11:40 on Monday in JST
+
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      id-token: write
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{secrets.GCP_IDENTITY_PROVIDER}}
+          service_account: ${{secrets.GCP_SERVICE_ACCOUNT}}
+      - name: Get credentials
+        id: get-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            cloudflare_token:kotori316-mods-resources/cloudflare_token
+      - name: Prepare log
+        id: log
+        run: |
+          log_name="$(date "+%Y%m%d-%H%M%S")-delete-deployment.log"
+          echo "${{ github.actor }}" >> "/tmp/${log_name}"
+          echo "name=${log_name}" >> $GITHUB_OUTPUT
+          echo "repo=$(basename "${{github.repository}}")" >> $GITHUB_OUTPUT
+      - name: Delete deployments
+        run: |
+          LATEST_DEPLOYMENTS=$(\
+            curl --request GET \
+              --header 'Content-Type: application/json' \
+              --header "Authorization: Bearer ${CLOUDFLARE_TOKEN}" \
+              --url "https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}" | \
+            jq -r '.result | .canonical_deployment | .id')
+          OLD_DEPLOYMENTS=$(\
+            curl --request GET \
+              --header 'Content-Type: application/json' \
+              --header "Authorization: Bearer ${CLOUDFLARE_TOKEN}" \
+              --url "https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/deployments" | \
+            jq --arg latest "${LATEST_DEPLOYMENTS}" -r '.result | .[] | .id | select(. != $latest)')
+          for d in $OLD_DEPLOYMENTS ; do
+            echo "ID: $d" | tee "/tmp/${{steps.log.outputs.name}}"
+            curl --request DELETE \
+              --header "Authorization: Bearer ${CLOUDFLARE_TOKEN}" \
+              --header 'Content-Type: application/json' \
+              --url "https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/deployments/${d}?force=true" \
+              >>"/tmp/${{steps.log.outputs.name}}"
+          done
+        env:
+          CLOUDFLARE_TOKEN: ${{steps.get-secrets.outputs.cloudflare_token}}
+          ACCOUNT_ID: ${{secrets.CLOUDFLARE_ACCOUNT_ID}}
+          PROJECT: 'kotori316-maven-page'
+      - name: Upload log
+        if: ${{ !cancelled() }}
+        uses: google-github-actions/upload-cloud-storage@v2
+        with:
+          path: /tmp/${{steps.log.outputs.name}}
+          destination: kotori316-logs/${{steps.log.outputs.repo}}
+          process_gcloudignore: false
