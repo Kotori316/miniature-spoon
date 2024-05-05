@@ -11,7 +11,7 @@ export default defineConfig({
     devServer(option),
   ],
   build: {
-    outDir: "../workers/assets/ssg",
+    outDir: "../workers/public/static/ssg",
     emptyOutDir: true,
   }
 })

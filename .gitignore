@@ -9,3 +9,6 @@ workers/assets/static/output.css
 workers/assets/ssg
 test-persist
 work
+cache.json
+workers/public/static/output.css
+workers/public/static/ssg

@@ -74,6 +74,48 @@ resource "cloudflare_worker_domain" "maven_viewer" {
   environment = "production"
 }
 
+resource "cloudflare_pages_project" "main" {
+  account_id        = data.cloudflare_zone.zone.account_id
+  name              = "${var.maven_name}-page"
+  production_branch = "main"
+  deployment_configs {
+    preview {
+      environment_variables = {
+        ENVIRONMENT = "staging"
+      }
+      r2_buckets = {
+        MAVEN_BUCKET = cloudflare_r2_bucket.maven_bucket.name
+      }
+    }
+    production {
+      environment_variables = {
+        ENVIRONMENT = "production"
+      }
+      r2_buckets = {
+        MAVEN_BUCKET = cloudflare_r2_bucket.maven_bucket.name
+      }
+    }
+  }
+  build_config {
+    build_caching   = false
+    destination_dir = "dist"
+  }
+}
+
+resource "cloudflare_pages_domain" "main" {
+  account_id   = data.cloudflare_zone.zone.account_id
+  domain       = "staging.maven.${var.cloudflare_zone_name}"
+  project_name = cloudflare_pages_project.main.name
+}
+
+resource "cloudflare_record" "page" {
+  name    = "staging.maven"
+  type    = "CNAME"
+  zone_id = data.cloudflare_zone.zone.zone_id
+  value   = cloudflare_pages_project.main.subdomain
+  proxied = true
+}
+
 data "github_repository" "repo" {
   full_name = "${var.github_owner}/${var.github_repo}"
 }
