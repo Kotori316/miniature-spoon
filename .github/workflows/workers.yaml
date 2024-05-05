@@ -26,7 +26,6 @@ jobs:
       # - run: docker compose run -w /root/workers node npm run test
 
   publish:
-    if: (github.event_name == 'push')
     needs:
       - test
     permissions:
@@ -34,5 +33,5 @@ jobs:
       contents: read
     uses: './.github/workflows/deploy-pages.yaml'
     with:
-      branch: 'preview'
+      branch: ${{ github.event_name == 'push' && 'main' || github.head_ref || 'preview' }}
     secrets: inherit
