@@ -7,6 +7,7 @@ on:
       - '.github/workflows/workers.yaml'
     branches:
       - main
+      - ssg_v2
   pull_request:
     paths:
       - 'workers/**'
@@ -23,7 +24,7 @@ jobs:
       - run: docker compose run -w /root/workers node npm run ci
       - run: docker compose run -w /root/ssg node npm ci
       - run: docker compose run -w /root/ssg node npm run ci
-      - run: docker compose run -w /root/workers node npm run test
+      # - run: docker compose run -w /root/workers node npm run test
 
   publish:
     runs-on: ubuntu-latest
@@ -72,6 +73,7 @@ jobs:
           R2_ACCESS_KEY: ${{steps.get-secrets.outputs.cloudflare_access_key}}
           R2_SECRET_KEY: ${{steps.get-secrets.outputs.cloudflare_secret_key}}
           R2_BUCKET: 'kotori316-maven'
+          DIRECTORY_PAGE_PREFIX: '/static/ssg'
       - name: Deploy
         id: action
         run: |

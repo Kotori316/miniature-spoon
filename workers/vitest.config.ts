@@ -11,7 +11,6 @@ export default defineWorkersConfig({
         wrangler: { configPath: "./wrangler.toml" },
         miniflare: {
           compatibilityFlags: ["nodejs_compat"],
-          sitePath: "./assets/",
           bindings: {
             "ENVIRONMENT": "unit-test",
           },

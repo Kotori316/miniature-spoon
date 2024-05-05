@@ -1,13 +1,7 @@
-// @ts-expect-error Cloudflare specification
-import manifest from "__STATIC_CONTENT_MANIFEST";
-import { Hono, type MiddlewareHandler } from "hono";
-import { cache } from "hono/cache";
-import { serveStatic } from "hono/cloudflare-workers";
-import { cors } from "hono/cors";
+import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { stream } from "hono/streaming";
-import { createDirContents } from "./component";
-import { availablePaths, getFiles, getMimeType } from "./files";
+import { availablePaths, getMimeType } from "./files";
 
 type Bindings = {
   MAVEN_BUCKET: R2Bucket;
@@ -15,45 +9,7 @@ type Bindings = {
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
-app.use(
-  "*",
-  secureHeaders(),
-  cors({
-    origin: [
-      "https://static.cloudflareinsights.com",
-      "https://cloudflareinsights.com",
-    ],
-  }),
-);
-const staticCacheName = "static-resources";
-const staticCacheControl = "max-age=3600";
-const cacheMiddleware: MiddlewareHandler<{ Bindings: Bindings }> = async (
-  c,
-  next,
-) => {
-  if (c.env.ENVIRONMENT === "unit-test") {
-    // Don't use cache in test as it cause freeze.
-    return await next();
-  }
-  const m = cache({
-    cacheName: staticCacheName,
-    cacheControl: staticCacheControl,
-  });
-  return m(c, next);
-};
-
-app.get(
-  "/favicon.ico",
-  cacheMiddleware,
-  serveStatic({ path: "./favicon.ico", manifest }),
-);
-app.get("/static/*", cacheMiddleware, serveStatic({ root: "./", manifest }));
-
-app.get(
-  "/",
-  cacheMiddleware,
-  serveStatic({ path: "./ssg/index.html", manifest }),
-);
+app.use("*", secureHeaders());
 
 const { matches, prefixes } = availablePaths([
   "com.kotori316",
@@ -80,14 +36,10 @@ app.get("/:prefix{.+$}", async (c) => {
       await stream.pipe(bucketObject.body);
     });
   }
-  const result = await getFiles(bucket, prefix);
-  if (result.isEmpty()) {
-    return c.notFound();
-  }
-  return c.html(
-    createDirContents(result.files, result.directories, `/${prefix}`),
-  );
+  return c.notFound();
 });
+
+app.get("/", (c) => c.redirect("/static/ssg/"));
 
 app.put("/put-object", async (c) => {
   // This is convinience endpoint to add test objects. Not available in deployed environment.

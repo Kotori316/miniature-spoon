@@ -1,23 +1,24 @@
-name = "kotori316-maven"
-compatibility_date = "2023-01-01"
-workers_dev = false
-main = "src/index.ts"
-send_metrics = false
+name = "test-maven-kotori316"
+compatibility_date = "2024-05-03"
+pages_build_output_dir = "./dist"
 
 [vars]
+ENVIRONMENT = "staging"
+
+[env.production.vars]
 ENVIRONMENT = "production"
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
 # id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
-[site]
-bucket = "./assets"
-
 [[r2_buckets]]
 binding = "MAVEN_BUCKET"
 bucket_name = "kotori316-maven"
-preview_bucket_name = "kotori316-maven"
+
+[[env.production.r2_buckets]]
+binding = "MAVEN_BUCKET"
+bucket_name = "kotori316-maven"
 
 # [[d1_databases]]
 # binding = "DB"
