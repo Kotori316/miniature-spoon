@@ -1,3 +1,4 @@
+import { describe, expect, it, test } from "vitest";
 import * as file from "../src/files";
 
 describe("file mime type", () => {

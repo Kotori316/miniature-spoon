@@ -9,9 +9,11 @@ import {
   type _Object as S3Object,
 } from "@aws-sdk/client-s3";
 
+const cacheFileName = "cache.json";
+
 export async function getObjectsInR2() {
   try {
-    const read = await readFile("cache.json", { encoding: "utf-8" });
+    const read = await readFile(cacheFileName, { encoding: "utf-8" });
     const data = JSON.parse(read) as Record<string, string | number>[];
     return data.map((o) => {
       return {
@@ -23,7 +25,7 @@ export async function getObjectsInR2() {
 
   const s3Client = new S3Client({
     region: "auto",
-    endpoint: process.env.R2_ENDPOINT,
+    endpoint: process.env.R2_ENDPOINT ?? "",
     credentials: {
       accessKeyId: process.env.R2_ACCESS_KEY ?? "",
       secretAccessKey: process.env.R2_SECRET_KEY ?? "",
@@ -37,7 +39,7 @@ export async function getObjectsInR2() {
   let list = await s3Client.send(new ListObjectsV2Command(option));
   const objects = list.Contents ?? [];
   console.log(`Got ${objects.length} items in ${Date.now() - s3AccessStart}ms`);
-  while (list.IsTruncated) {
+  while (list.IsTruncated && list.NextContinuationToken) {
     list = await s3Client.send(
       new ListObjectsV2Command({
         ...option,
@@ -52,7 +54,7 @@ export async function getObjectsInR2() {
   console.log(
     `Total ${objects.length} items in ${Date.now() - s3AccessStart}ms`,
   );
-  await writeFile("cache.json", JSON.stringify(objects));
+  await writeFile(cacheFileName, JSON.stringify(objects));
   return objects;
 }
 
@@ -70,7 +72,7 @@ function getDirectoriesGroupedByDepth(
     const currentDepth = objectKeys.flatMap((o) => {
       const result = o.match(pattern);
       if (result?.groups?.directory) {
-        return [path.resolve("/", result.groups?.directory)];
+        return [path.resolve("/", result.groups.directory)];
       }
       return [];
     });

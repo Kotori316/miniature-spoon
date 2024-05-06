@@ -1,10 +1,11 @@
 {
   "type": "module",
   "scripts": {
-    "format": "npx @biomejs/biome check --apply-unsafe ./src",
+    "format": "npx @biomejs/biome check --apply-unsafe ./src ./test",
     "dev": "vite",
     "build": "vite build",
-    "ci": "npx @biomejs/biome ci ./src"
+    "test": "vitest run",
+    "ci": "npx @biomejs/biome ci ./src ./test"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.521.0",
@@ -17,6 +18,7 @@
     "@hono/vite-dev-server": "^0.12.0",
     "@hono/vite-ssg": "^0.1.0",
     "@types/node": "^20.11.17",
-    "vite": "^5.1.4"
+    "vite": "^5.1.4",
+    "vitest": "^1.6.0"
   }
 }
