@@ -95,3 +95,8 @@ resource "github_repository_environment_deployment_policy" "policy" {
   environment    = github_repository_environment.workers_env.environment
   repository     = data.github_repository.repo.name
 }
+
+resource "github_repository_environment" "workers_preview" {
+  environment = "workers_preview"
+  repository  = data.github_repository.repo.name
+}

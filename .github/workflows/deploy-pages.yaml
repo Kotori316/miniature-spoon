@@ -27,10 +27,10 @@ jobs:
       id-token: write
       contents: read
     environment:
-      name: workers
-      url: 'https://maven.kotori316.com'
+      name: ${{ (inputs.branch || 'main') == 'main' && 'workers' || 'workers_preview' }}
+      # url: ${{ (inputs.branch || 'main') == 'main' && 'https://maven.kotori316.com' || format('https://{0}.maven.kotori316.com', inputs.branch) }}
     concurrency:
-      group: workers
+      group: ${{ inputs.branch || 'main' }}
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
