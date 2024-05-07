@@ -21,10 +21,6 @@ provider "cloudflare" {
   api_token = var.cloudflare_token
 }
 
-provider "github" {
-  owner = var.github_owner
-}
-
 data "cloudflare_zone" "zone" {
   name = var.cloudflare_zone_name
 }
@@ -75,28 +71,4 @@ resource "cloudflare_record" "page" {
   value   = cloudflare_pages_project.main.subdomain
   proxied = true
   ttl     = 1
-}
-
-data "github_repository" "repo" {
-  full_name = "${var.github_owner}/${var.github_repo}"
-}
-
-resource "github_repository_environment" "workers_env" {
-  environment = "workers"
-  repository  = data.github_repository.repo.name
-  deployment_branch_policy {
-    custom_branch_policies = true
-    protected_branches     = false
-  }
-}
-
-resource "github_repository_environment_deployment_policy" "policy" {
-  branch_pattern = "main"
-  environment    = github_repository_environment.workers_env.environment
-  repository     = data.github_repository.repo.name
-}
-
-resource "github_repository_environment" "workers_preview" {
-  environment = "workers_preview"
-  repository  = data.github_repository.repo.name
 }
