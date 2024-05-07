@@ -21,10 +21,6 @@ provider "cloudflare" {
   api_token = var.cloudflare_token
 }
 
-provider "github" {
-  owner = var.github_owner
-}
-
 data "cloudflare_zone" "zone" {
   name = var.cloudflare_zone_name
 }
@@ -77,26 +73,36 @@ resource "cloudflare_record" "page" {
   ttl     = 1
 }
 
-data "github_repository" "repo" {
-  full_name = "${var.github_owner}/${var.github_repo}"
-}
+resource "cloudflare_worker_script" "snapshot_delete" {
+  account_id = data.cloudflare_zone.zone.account_id
+  name       = "snapshot_delete"
+  module     = true
+  content    = <<-EOF
+    export default {
+      async scheduled(event, env, ctx) {
+        console.log("Hello scheduler at " + event.scheduledTime);
+      },
+    };
+    EOF
+  tags       = []
+  r2_bucket_binding {
+    bucket_name = "kotori316-maven"
+    name        = "MAVEN_BUCKET"
+  }
+  plain_text_binding {
+    name = "ENVIRONMENT"
+    text = "production"
+  }
+  compatibility_date  = "2024-05-02"
+  compatibility_flags = ["nodejs_compat"]
 
-resource "github_repository_environment" "workers_env" {
-  environment = "workers"
-  repository  = data.github_repository.repo.name
-  deployment_branch_policy {
-    custom_branch_policies = true
-    protected_branches     = false
+  lifecycle {
+    ignore_changes = [content]
   }
 }
 
-resource "github_repository_environment_deployment_policy" "policy" {
-  branch_pattern = "main"
-  environment    = github_repository_environment.workers_env.environment
-  repository     = data.github_repository.repo.name
-}
-
-resource "github_repository_environment" "workers_preview" {
-  environment = "workers_preview"
-  repository  = data.github_repository.repo.name
+resource "cloudflare_worker_cron_trigger" "snapshot_delete" {
+  account_id  = data.cloudflare_zone.zone.account_id
+  script_name = cloudflare_worker_script.snapshot_delete.name
+  schedules   = ["35 3 */7 * *"]
 }

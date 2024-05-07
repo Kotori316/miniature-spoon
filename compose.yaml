@@ -4,11 +4,14 @@ services:
     volumes:
       - ./workers:/root/workers
       - ./ssg/:/root/ssg
+      - ./snapshot-delete/:/root/snapshot-delete
       - container_node_modules:/root/workers/node_modules
       - container_node_modules_ssg:/root/ssg/node_modules
+      - container_node_modules_sd:/root/snapshot-delete/node_modules
     init: true
     command: sleep inf
 
 volumes:
   container_node_modules: {}
   container_node_modules_ssg: {}
+  container_node_modules_sd: {}
