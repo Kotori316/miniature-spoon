@@ -2,6 +2,10 @@ provider "github" {
   owner = var.github_owner
 }
 
+data "github_user" "main" {
+  username = var.github_owner
+}
+
 data "github_repository" "repo" {
   full_name = "${var.github_owner}/${var.github_repo}"
 }
@@ -24,4 +28,7 @@ resource "github_repository_environment_deployment_policy" "policy" {
 resource "github_repository_environment" "workers_preview" {
   environment = "workers_preview"
   repository  = data.github_repository.repo.name
+  reviewers {
+    users = [data.github_user.main.id]
+  }
 }
