@@ -8,7 +8,8 @@
     "dev": "wrangler dev --var 'ENVIRONMENT:local'",
     "start": "wrangler dev --var 'ENVIRONMENT:local'",
     "format": "biome check --apply-unsafe ./src",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "ci": "biome ci ./src && tsc --noEmit"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.2",

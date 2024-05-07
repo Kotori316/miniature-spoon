@@ -25,6 +25,8 @@ jobs:
       - run: docker compose run -w /root/ssg node npm run ci
       - run: docker compose run -w /root/workers node npm run test
       - run: docker compose run -w /root/ssg node npm run test
+      - run: docker compose run -w /root/snapshot-delete node npm ci
+      - run: docker compose run -w /root/snapshot-delete node npm run ci
 
   publish:
     needs:
