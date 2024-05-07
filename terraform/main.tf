@@ -95,6 +95,10 @@ resource "cloudflare_worker_script" "snapshot_delete" {
   }
   compatibility_date  = "2024-05-02"
   compatibility_flags = ["nodejs_compat"]
+
+  lifecycle {
+    ignore_changes = [content]
+  }
 }
 
 resource "cloudflare_worker_cron_trigger" "snapshot_delete" {
