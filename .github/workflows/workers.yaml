@@ -31,6 +31,7 @@ jobs:
       - run: docker compose run -w /root/snapshot-delete node npm run ci
 
   publish:
+    if: ${{ github.event_name == 'push' }}
     needs:
       - test
     permissions:
