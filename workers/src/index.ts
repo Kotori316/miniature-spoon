@@ -62,6 +62,10 @@ app.put("/put-object", async (c) => {
   );
 });
 
-app.notFound((c) => c.html(notFoundPage()));
+app.notFound((c) =>
+  c.html(notFoundPage(), 404, {
+    "Cache-Control": "no-store",
+  }),
+);
 
 export default app;
