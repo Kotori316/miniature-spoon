@@ -4,21 +4,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev --var 'ENVIRONMENT:local'",
-    "start": "wrangler dev --var 'ENVIRONMENT:local'",
+    "dev": "DRY_RUN=true tsx --env-file=.env src/index.ts",
     "format": "biome check --apply-unsafe ./src",
-    "cf-typegen": "wrangler types",
     "ci": "biome ci ./src && tsc --noEmit"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.2",
-    "@cloudflare/workers-types": "^4.20240502.0",
     "@types/node": "^20.12.8",
-    "typescript": "^5.0.4",
-    "wrangler": "^3.0.0"
+    "tsx": "^4.10.0",
+    "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.574.0",
     "fast-xml-parser": "^4.3.6"
   }
 }

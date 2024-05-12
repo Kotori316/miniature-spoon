@@ -16,3 +16,6 @@ indent_size = 2
 
 [*.{ts,tsx}]
 indent_size = 2
+
+[*.yaml]
+indent_size = 2
