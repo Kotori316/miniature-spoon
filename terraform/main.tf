@@ -72,37 +72,3 @@ resource "cloudflare_record" "page" {
   proxied = true
   ttl     = 1
 }
-
-resource "cloudflare_worker_script" "snapshot_delete" {
-  account_id = data.cloudflare_zone.zone.account_id
-  name       = "snapshot_delete"
-  module     = true
-  content    = <<-EOF
-    export default {
-      async scheduled(event, env, ctx) {
-        console.log("Hello scheduler at " + event.scheduledTime);
-      },
-    };
-    EOF
-  tags       = []
-  r2_bucket_binding {
-    bucket_name = "kotori316-maven"
-    name        = "MAVEN_BUCKET"
-  }
-  plain_text_binding {
-    name = "ENVIRONMENT"
-    text = "production"
-  }
-  compatibility_date  = "2024-05-02"
-  compatibility_flags = ["nodejs_compat"]
-
-  lifecycle {
-    ignore_changes = [content]
-  }
-}
-
-resource "cloudflare_worker_cron_trigger" "snapshot_delete" {
-  account_id  = data.cloudflare_zone.zone.account_id
-  script_name = cloudflare_worker_script.snapshot_delete.name
-  schedules   = ["35 3 */7 * *"]
-}
