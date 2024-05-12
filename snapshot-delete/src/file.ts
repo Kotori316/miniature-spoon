@@ -161,7 +161,7 @@ async function deleteFiles(
       );
       console.log("Deleted", chunk.length, "files");
     } else {
-      console.log("Dry run.", "Delete", chunk.length, "files");
+      console.log("Dry run.", "Delete", chunk.length, "files for", prefix);
     }
     total.push(...chunk.map((t) => t.Key));
   }

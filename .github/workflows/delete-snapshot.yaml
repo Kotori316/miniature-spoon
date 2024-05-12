@@ -43,7 +43,7 @@ jobs:
           R2_ACCESS_KEY: ${{steps.get-secrets.outputs.cloudflare_access_key}}
           R2_SECRET_KEY: ${{steps.get-secrets.outputs.cloudflare_secret_key}}
           R2_BUCKET: 'kotori316-maven'
-          RESULT_OUTPUT: '/tmp${{steps.log.outputs.name}}'
+          RESULT_OUTPUT: '/tmp/${{steps.log.outputs.name}}'
           DRY_RUN: 'true'
       - name: Upload log
         if: ${{ !cancelled() }}

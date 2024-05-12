@@ -14,23 +14,22 @@ async function main() {
   }
   const s3Client = new S3Client({
     region: "auto",
-    endpoint: process.env.R2_ENDPOINT ?? "",
+    endpoint: process.env.R2_ENDPOINT,
     credentials: {
-      accessKeyId: process.env.R2_ACCESS_KEY ?? "",
-      secretAccessKey: process.env.R2_SECRET_KEY ?? "",
+      accessKeyId: process.env.R2_ACCESS_KEY,
+      secretAccessKey: process.env.R2_SECRET_KEY,
     },
   });
-  const bucketName = process.env.R2_BUCKET ?? "";
+  const bucketName = process.env.R2_BUCKET;
 
   const result = await deleteSnapshots({
     s3Client,
     bucketName,
   });
 
-  await fs.writeFile(
-    process.env.RESULT_OUTPUT ?? "result.json",
-    JSON.stringify(result, undefined, 2),
-  );
+  const outputPath = process.env.RESULT_OUTPUT ?? "result.json";
+  await fs.writeFile(outputPath, JSON.stringify(result, undefined, 2));
+  console.log("Result is output to", outputPath);
 }
 
 await main();
