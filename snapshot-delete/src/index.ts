@@ -1,3 +1,4 @@
+import * as fs from "node:fs/promises";
 import { S3Client } from "@aws-sdk/client-s3";
 import { deleteSnapshots } from "./file";
 
@@ -21,10 +22,15 @@ async function main() {
   });
   const bucketName = process.env.R2_BUCKET ?? "";
 
-  await deleteSnapshots({
+  const result = await deleteSnapshots({
     s3Client,
     bucketName,
   });
+
+  await fs.writeFile(
+    process.env.RESULT_OUTPUT ?? "result.json",
+    JSON.stringify(result, undefined, 2),
+  );
 }
 
 await main();

@@ -15,7 +15,7 @@ export interface S3Bucket {
 }
 
 function resolve(parent: string, child: string): string {
-  return path.relative("/", path.resolve(parent, child));
+  return path.relative("/", path.resolve("/", parent, child));
 }
 
 export async function deleteSnapshots(bucket: S3Bucket) {
