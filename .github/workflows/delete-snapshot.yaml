@@ -44,7 +44,7 @@ jobs:
           R2_SECRET_KEY: ${{steps.get-secrets.outputs.cloudflare_secret_key}}
           R2_BUCKET: 'kotori316-maven'
           RESULT_OUTPUT: '/tmp/${{steps.log.outputs.name}}'
-          DRY_RUN: 'true'
+          DRY_RUN: 'false'
       - name: Upload log
         if: ${{ !cancelled() }}
         uses: google-github-actions/upload-cloud-storage@v2
