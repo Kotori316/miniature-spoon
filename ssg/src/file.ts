@@ -158,7 +158,7 @@ export function getDirectoryComponents(
 ): Map<string, DirectoryComponent> {
   const result = new Map<string, DirectoryComponent>();
   const directoriesByDepth = getDirectoriesGroupedByDepth(objects);
-  const allDirectories = Object.values(directoriesByDepth).flatMap((o) => o);
+  const allDirectories = Object.values(directoriesByDepth).flat();
 
   for (const directories of Object.values(directoriesByDepth)) {
     for (const directory of directories) {
