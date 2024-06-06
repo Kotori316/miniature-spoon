@@ -52,7 +52,7 @@ export async function deleteSnapshots(bucket: S3Bucket) {
         };
       }),
     )
-  ).flatMap((s) => s) satisfies object[];
+  ).flat() satisfies object[];
   console.log("To be left", prefixes);
 
   const deletedFiles = (
@@ -61,7 +61,7 @@ export async function deleteSnapshots(bucket: S3Bucket) {
         return deleteFiles(bucket, t.prefix, t.files);
       }),
     )
-  ).flatMap((s) => s) satisfies string[];
+  ).flat() satisfies string[];
   console.log("Deleted", deletedFiles.length);
 
   return {
