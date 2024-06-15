@@ -79,6 +79,10 @@ resource "google_cloud_run_v2_service" "main" {
         name       = google_storage_bucket.maven_bucket.name
         mount_path = "/maven-resources"
       }
+      volume_mounts {
+        name       = google_storage_bucket.maven_test_bucket.name
+        mount_path = "/maven-test-resources"
+      }
     }
     volumes {
       name = google_storage_bucket.setting_bucket.name
@@ -94,7 +98,21 @@ resource "google_cloud_run_v2_service" "main" {
         read_only = false
       }
     }
+    volumes {
+      name = google_storage_bucket.maven_test_bucket.name
+      gcs {
+        bucket    = google_storage_bucket.maven_test_bucket.name
+        read_only = false
+      }
+    }
   }
+}
+
+resource "google_cloud_run_v2_service_iam_binding" "main" {
+  name     = google_cloud_run_v2_service.main.name
+  members  = ["allUsers"]
+  role     = "roles/run.invoker"
+  location = google_cloud_run_v2_service.main.location
 }
 
 resource "google_cloud_run_domain_mapping" "mapping" {
