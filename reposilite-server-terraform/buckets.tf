@@ -17,6 +17,10 @@ resource "google_storage_bucket" "maven_bucket" {
   soft_delete_policy {
     retention_duration_seconds = 7 * (60 * 60 * 24)
   }
+  autoclass {
+    enabled                = true
+    terminal_storage_class = "ARCHIVE"
+  }
 }
 
 import {
@@ -30,6 +34,10 @@ resource "google_storage_bucket" "maven_test_bucket" {
 
   soft_delete_policy {
     retention_duration_seconds = 7 * (60 * 60 * 24)
+  }
+  autoclass {
+    enabled                = true
+    terminal_storage_class = "ARCHIVE"
   }
 }
 
