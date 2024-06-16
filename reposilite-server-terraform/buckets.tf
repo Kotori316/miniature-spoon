@@ -42,11 +42,16 @@ resource "google_storage_bucket" "maven_test_bucket" {
 }
 
 locals {
-  buckets = [
+  maven_buckets = [
     google_storage_bucket.maven_bucket,
-    google_storage_bucket.setting_bucket,
     google_storage_bucket.maven_test_bucket,
   ]
+  buckets = setunion(
+    local.maven_buckets,
+    [
+      google_storage_bucket.setting_bucket
+    ]
+  )
 }
 
 resource "google_storage_bucket_iam_member" "main" {
@@ -56,4 +61,35 @@ resource "google_storage_bucket_iam_member" "main" {
   bucket = each.key
   role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${google_service_account.runner.email}"
+}
+
+resource "google_pubsub_topic" "maven" {
+  for_each = {
+    for b in local.maven_buckets : b.name => b
+  }
+  name = "${each.key}-topic"
+}
+
+resource "google_storage_notification" "maven" {
+  for_each = {
+    for b in local.maven_buckets : b.name => b
+  }
+  topic          = google_pubsub_topic.maven[each.key].name
+  bucket         = each.key
+  payload_format = "JSON_API_V1"
+  event_types    = ["OBJECT_FINALIZE"]
+  # Need valid publish IAM permission to create resources
+  depends_on = [google_pubsub_topic_iam_binding.binding]
+}
+
+data "google_storage_project_service_account" "main" {
+}
+
+resource "google_pubsub_topic_iam_binding" "binding" {
+  for_each = {
+    for b in local.maven_buckets : b.name => b
+  }
+  topic   = google_pubsub_topic.maven[each.key].id
+  role    = "roles/pubsub.publisher"
+  members = ["serviceAccount:${data.google_storage_project_service_account.main.email_address}"]
 }
