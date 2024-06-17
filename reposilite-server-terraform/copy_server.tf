@@ -5,7 +5,8 @@ resource "google_cloud_run_v2_service" "copy_server" {
     max_instance_request_concurrency = 300
     service_account                  = google_service_account.runner.email
     containers {
-      image = "us-central1-docker.pkg.dev/kotori316-mods-resources/storage-copy-application/test:latest"
+      name  = "app"
+      image = "us-central1-docker.pkg.dev/kotori316-mods-resources/storage-copy-application/app:latest"
       resources {
         limits = {
           cpu    = "1000m"
