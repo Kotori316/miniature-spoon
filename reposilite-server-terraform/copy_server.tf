@@ -72,14 +72,13 @@ resource "google_eventarc_trigger" "copy_server" {
   name            = "${google_cloud_run_v2_service.copy_server.name}-trigger"
   location        = google_cloud_run_v2_service.copy_server.location
   service_account = google_service_account.copy_server_runner.email
-  transport {
-    pubsub {
-      topic = google_pubsub_topic.maven["kotori316-maven-test-storage"].id
-    }
-  }
   matching_criteria {
     attribute = "type"
-    value     = "google.cloud.pubsub.topic.v1.messagePublished"
+    value     = "google.cloud.storage.object.v1.finalized"
+  }
+  matching_criteria {
+    attribute = "bucket"
+    value = google_storage_bucket.maven_test_bucket.name
   }
   destination {
     cloud_run_service {

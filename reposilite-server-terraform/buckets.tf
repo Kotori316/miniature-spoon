@@ -79,17 +79,14 @@ resource "google_storage_notification" "maven" {
   payload_format = "JSON_API_V1"
   event_types    = ["OBJECT_FINALIZE"]
   # Need valid publish IAM permission to create resources
-  depends_on = [google_pubsub_topic_iam_binding.binding]
+  depends_on = [google_project_iam_member.pubsub_publish]
 }
 
 data "google_storage_project_service_account" "main" {
 }
 
-resource "google_pubsub_topic_iam_binding" "binding" {
-  for_each = {
-    for b in local.maven_buckets : b.name => b
-  }
-  topic   = google_pubsub_topic.maven[each.key].id
+resource "google_project_iam_member" "pubsub_publish" {
+  project = var.project_name
   role    = "roles/pubsub.publisher"
-  members = ["serviceAccount:${data.google_storage_project_service_account.main.email_address}"]
+  member = "serviceAccount:${data.google_storage_project_service_account.main.email_address}"
 }
