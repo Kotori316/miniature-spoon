@@ -88,5 +88,5 @@ data "google_storage_project_service_account" "main" {
 resource "google_project_iam_member" "pubsub_publish" {
   project = var.project_name
   role    = "roles/pubsub.publisher"
-  member = "serviceAccount:${data.google_storage_project_service_account.main.email_address}"
+  member  = "serviceAccount:${data.google_storage_project_service_account.main.email_address}"
 }

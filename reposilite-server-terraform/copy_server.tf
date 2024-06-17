@@ -2,12 +2,13 @@ resource "google_cloud_run_v2_service" "copy_server" {
   location = var.region
   name     = "${var.base_name}-copy-run"
   template {
-    service_account = google_service_account.runner.email
+    max_instance_request_concurrency = 300
+    service_account                  = google_service_account.runner.email
     containers {
       image = "us-central1-docker.pkg.dev/kotori316-mods-resources/storage-copy-application/test:latest"
       resources {
         limits = {
-          cpu    = "128m"
+          cpu    = "1000m"
           memory = "256Mi"
         }
         cpu_idle = true
@@ -68,6 +69,10 @@ resource "google_project_iam_member" "copy_server_eventarc" {
   project = var.project_name
 }
 
+resource "terraform_data" "trigger_bucket" {
+  input = google_storage_bucket.maven_bucket.name
+}
+
 resource "google_eventarc_trigger" "copy_server" {
   name            = "${google_cloud_run_v2_service.copy_server.name}-trigger"
   location        = google_cloud_run_v2_service.copy_server.location
@@ -78,7 +83,7 @@ resource "google_eventarc_trigger" "copy_server" {
   }
   matching_criteria {
     attribute = "bucket"
-    value = google_storage_bucket.maven_test_bucket.name
+    value     = terraform_data.trigger_bucket.output
   }
   destination {
     cloud_run_service {
@@ -86,6 +91,10 @@ resource "google_eventarc_trigger" "copy_server" {
       region  = google_cloud_run_v2_service.copy_server.location
       path    = "/post"
     }
+  }
+
+  lifecycle {
+    replace_triggered_by = [terraform_data.trigger_bucket]
   }
 }
 
