@@ -2,7 +2,7 @@ resource "google_cloud_run_v2_service" "copy_server" {
   location = var.region
   name     = "${var.base_name}-copy-run"
   template {
-    max_instance_request_concurrency = 300
+    max_instance_request_concurrency = 150
     service_account                  = google_service_account.runner.email
     containers {
       name  = "app"
@@ -10,7 +10,7 @@ resource "google_cloud_run_v2_service" "copy_server" {
       resources {
         limits = {
           cpu    = "1000m"
-          memory = "256Mi"
+          memory = "1024Mi"
         }
         cpu_idle = true
       }
