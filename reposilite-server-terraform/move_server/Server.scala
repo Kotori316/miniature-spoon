@@ -60,7 +60,7 @@ object Server extends cask.MainRoutes:
         result match
           case Left(f) =>
             val obj = ujson.Obj(
-              "message" -> "Failed to upload file",
+              "message" -> s"Failed to upload file (${value.name})",
               "reason" -> f.toString,
               "bucket" -> value.bucket,
               "object" -> value.name,
@@ -69,7 +69,7 @@ object Server extends cask.MainRoutes:
             cask.Response(obj, 500)
           case Right(_) =>
             val obj = ujson.Obj(
-              "message" -> "OK, uploaded",
+              "message" -> s"OK, uploaded (${value.name})",
               "bucket" -> value.bucket,
               "object" -> value.name
             )
