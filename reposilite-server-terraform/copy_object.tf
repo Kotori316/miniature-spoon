@@ -112,7 +112,15 @@ resource "google_workflows_workflow" "main" {
               }
               result = "copy_task_output"
             }
-            retry = "$${http.default_retry}"
+            retry = {
+              predicate = "$${http.default_retry_predicate}"
+              max_retries = 30
+              backoff = {
+                initial_delay = 24
+                max_delay = 200
+                multiplier = 2
+              }
+            }
           }
         },
         {
