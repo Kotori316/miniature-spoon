@@ -63,25 +63,6 @@ resource "google_storage_bucket_iam_member" "main" {
   member = "serviceAccount:${google_service_account.runner.email}"
 }
 
-resource "google_pubsub_topic" "maven" {
-  for_each = {
-    for b in local.maven_buckets : b.name => b
-  }
-  name = "${each.key}-topic"
-}
-
-resource "google_storage_notification" "maven" {
-  for_each = {
-    for b in local.maven_buckets : b.name => b
-  }
-  topic          = google_pubsub_topic.maven[each.key].name
-  bucket         = each.key
-  payload_format = "JSON_API_V1"
-  event_types    = ["OBJECT_FINALIZE"]
-  # Need valid publish IAM permission to create resources
-  depends_on = [google_project_iam_member.pubsub_publish]
-}
-
 data "google_storage_project_service_account" "main" {
 }
 
