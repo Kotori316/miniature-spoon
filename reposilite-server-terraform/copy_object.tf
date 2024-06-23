@@ -64,18 +64,6 @@ resource "google_workflows_workflow" "main" {
           }
         },
         {
-          create_param_cloud_build = {
-            assign = [
-              {
-                substitutions = {
-                  "_SOURCE_URL"      = "$${source_url}"
-                  "_DESTINATION_URL" = "$${destination_url}"
-                }
-              }
-            ]
-          }
-        },
-        {
           copy = {
             call = "googleapis.cloudbuild.v1.projects.triggers.run"
             args = {
@@ -190,7 +178,6 @@ resource "google_cloudbuild_trigger" "main" {
 
   lifecycle {
     ignore_changes = [
-      source_to_build[0].repo_type,
       webhook_config,
     ]
   }
