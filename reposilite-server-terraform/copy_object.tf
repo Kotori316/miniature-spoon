@@ -81,7 +81,6 @@ resource "google_workflows_workflow" "main" {
             args = {
               projectId = "$${project_id}"
               triggerId = google_cloudbuild_trigger.main.trigger_id
-              name      = google_cloudbuild_trigger.main.id
               body = {
                 substitutions = {
                   "_SOURCE_URL"      = "$${source_url}"
@@ -148,13 +147,17 @@ resource "google_cloudbuild_trigger" "main" {
   approval_config {
     approval_required = false
   }
+  webhook_config {
+    # Trick for terraform
+    secret = ""
+  }
 
   build {
     step {
       name       = "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
       entrypoint = "/bin/bash"
       args = [
-        "-c", "gcloud storage cp $${_SOURCE_URL} $${_DESTINATION_URL} > $${BUILDER_OUTPUT}/output"
+        "-c", "gcloud storage cp $${_SOURCE_URL} $${_DESTINATION_URL} > $$BUILDER_OUTPUT/output"
       ]
       env = [
         "AWS_DEFAULT_REGION=auto"
@@ -164,6 +167,9 @@ resource "google_cloudbuild_trigger" "main" {
         "AWS_ACCESS_KEY_ID",
         "AWS_SECRET_ACCESS_KEY",
       ]
+    }
+    options {
+      logging = "CLOUD_LOGGING_ONLY"
     }
 
     available_secrets {
@@ -184,7 +190,8 @@ resource "google_cloudbuild_trigger" "main" {
 
   lifecycle {
     ignore_changes = [
-      source_to_build[0].repo_type
+      source_to_build[0].repo_type,
+      webhook_config,
     ]
   }
 }
