@@ -70,6 +70,27 @@ resource "google_workflows_workflow" "main" {
           }
         },
         {
+          check_prefix = {
+            switch = [
+              {
+                condition = "$${text.match_regex(source.objectName, \"maven/\")}"
+                assign = [
+                  { doAction = "true" }
+                ]
+                next = "copy"
+              },
+              {
+                condition = "$${true}"
+                assign = [
+                  { doAction = "false" }
+                ]
+                next = "returnOutput"
+              }
+            ]
+            next = "end"
+          }
+        },
+        {
           copy = {
             try = {
               call = "googleapis.run.v1.namespaces.jobs.run"
@@ -99,6 +120,7 @@ resource "google_workflows_workflow" "main" {
             return = {
               source      = "$${source}"
               destination = "$${destination}"
+              doAction    = "$${doAction}"
             }
           }
         },
