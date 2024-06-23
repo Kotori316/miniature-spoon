@@ -65,14 +65,20 @@ resource "google_workflows_workflow" "main" {
         },
         {
           copy = {
-            call = "googleapis.cloudbuild.v1.projects.triggers.run"
+            call = "googleapis.run.v1.namespaces.jobs.run"
             args = {
-              projectId = "$${project_id}"
-              triggerId = google_cloudbuild_trigger.main.trigger_id
+              location = google_cloud_run_v2_job.copy_task.location
+              name     = "namespaces/${google_cloud_run_v2_job.copy_task.project}/jobs/${google_cloud_run_v2_job.copy_task.name}"
               body = {
-                substitutions = {
-                  "_SOURCE_URL"      = "$${source_url}"
-                  "_DESTINATION_URL" = "$${destination_url}"
+                overrides = {
+                  containerOverrides = {
+                    args = [
+                      "storage",
+                      "cp",
+                      "$${source_url}",
+                      "$${destination_url}",
+                    ]
+                  }
                 }
               }
             }
@@ -84,7 +90,6 @@ resource "google_workflows_workflow" "main" {
             return = {
               source      = "$${source}"
               destination = "$${destination}"
-              log         = "$${text.replace_all(text.decode(base64.decode(copy_task_output.metadata.build.results.buildStepOutputs[0])), \"\\n\", \"\")}"
             }
           }
         },
@@ -126,59 +131,55 @@ data "google_secret_manager_secret" "cloudflare_secret_key" {
   secret_id = "cloudflare_secret_key"
 }
 
-resource "google_cloudbuild_trigger" "main" {
-  name            = "${var.base_name}-copy-build"
-  description     = "A CodeBuild to run copy task for ${var.base_name}"
-  service_account = google_service_account.copy_flow_runner.id
-  location        = "global"
+resource "google_cloud_run_v2_job" "copy_task" {
+  name     = "${var.base_name}-copy-job"
+  location = var.region
 
-  approval_config {
-    approval_required = false
-  }
-  webhook_config {
-    # Trick for terraform
-    secret = ""
-  }
-
-  build {
-    step {
-      name       = "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
-      entrypoint = "/bin/bash"
-      args = [
-        "-c", "gcloud storage cp $${_SOURCE_URL} $${_DESTINATION_URL} > $$BUILDER_OUTPUT/output"
-      ]
-      env = [
-        "AWS_DEFAULT_REGION=auto"
-      ]
-      secret_env = [
-        "AWS_ENDPOINT_URL",
-        "AWS_ACCESS_KEY_ID",
-        "AWS_SECRET_ACCESS_KEY",
-      ]
-    }
-    options {
-      logging = "CLOUD_LOGGING_ONLY"
-    }
-
-    available_secrets {
-      secret_manager {
-        env          = "AWS_ENDPOINT_URL"
-        version_name = "${data.google_secret_manager_secret.cloudflare_s3_endpoint.id}/versions/latest"
+  template {
+    template {
+      service_account = google_service_account.copy_flow_runner.email
+      containers {
+        image   = "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
+        command = ["gcloud"]
+        args    = ["storage", "ls"]
+        resources {
+          limits = {
+            cpu    = "1"
+            memory = "512Mi"
+          }
+        }
+        env {
+          name  = "AWS_DEFAULT_REGION"
+          value = "auto"
+        }
+        env {
+          name = "AWS_ENDPOINT_URL"
+          value_source {
+            secret_key_ref {
+              secret  = data.google_secret_manager_secret.cloudflare_s3_endpoint.id
+              version = "latest"
+            }
+          }
+        }
+        env {
+          name = "AWS_ACCESS_KEY_ID"
+          value_source {
+            secret_key_ref {
+              secret  = data.google_secret_manager_secret.cloudflare_access_key.id
+              version = "latest"
+            }
+          }
+        }
+        env {
+          name = "AWS_SECRET_ACCESS_KEY"
+          value_source {
+            secret_key_ref {
+              secret  = data.google_secret_manager_secret.cloudflare_secret_key.id
+              version = "latest"
+            }
+          }
+        }
       }
-      secret_manager {
-        env          = "AWS_ACCESS_KEY_ID"
-        version_name = "${data.google_secret_manager_secret.cloudflare_access_key.id}/versions/latest"
-      }
-      secret_manager {
-        env          = "AWS_SECRET_ACCESS_KEY"
-        version_name = "${data.google_secret_manager_secret.cloudflare_secret_key.id}/versions/latest"
-      }
     }
-  }
-
-  lifecycle {
-    ignore_changes = [
-      webhook_config,
-    ]
   }
 }
