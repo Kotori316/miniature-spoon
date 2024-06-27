@@ -48,3 +48,11 @@ resource "google_cloud_run_v2_job_iam_binding" "copy_flow" {
   project  = google_cloud_run_v2_job.copy_task.project
   location = google_cloud_run_v2_job.copy_task.location
 }
+
+resource "google_cloud_tasks_queue_iam_binding" "caller" {
+  role = "roles/cloudtasks.enqueuer"
+  members  = ["serviceAccount:${google_service_account.copy_flow_runner.email}"]
+  name = google_cloud_tasks_queue.copy_flow_buffer.name
+  project = google_cloud_tasks_queue.copy_flow_buffer.project
+  location = google_cloud_tasks_queue.copy_flow_buffer.location
+}

@@ -77,7 +77,7 @@ resource "google_workflows_workflow" "main" {
                 assign = [
                   { doAction = "true" }
                 ]
-                next = "copy"
+                next = "body"
               },
               {
                 condition = "$${true}"
@@ -91,13 +91,10 @@ resource "google_workflows_workflow" "main" {
           }
         },
         {
-          copy = {
-            try = {
-              call = "googleapis.run.v1.namespaces.jobs.run"
-              args = {
-                location = google_cloud_run_v2_job.copy_task.location
-                name     = "namespaces/${google_cloud_run_v2_job.copy_task.project}/jobs/${google_cloud_run_v2_job.copy_task.name}"
-                body = {
+          body = {
+            assign = [
+              {
+                cloud_run_body = {
                   overrides = {
                     containerOverrides = {
                       args = [
@@ -110,17 +107,28 @@ resource "google_workflows_workflow" "main" {
                   }
                 }
               }
-              result = "copy_task_output"
-            }
-            retry = {
-              predicate = "$${http.default_retry_predicate}"
-              max_retries = 30
-              backoff = {
-                initial_delay = 24
-                max_delay = 200
-                multiplier = 2
+            ]
+            next = "add_task"
+          }
+        },
+        {
+          add_task = {
+            call = "googleapis.cloudtasks.v2.projects.locations.queues.tasks.create"
+            args = {
+              parent = google_cloud_tasks_queue.copy_flow_buffer.id
+              body = {
+                task = {
+                  httpRequest = {
+                    url  = "https://run.googleapis.com/v2/${google_cloud_run_v2_job.copy_task.id}:run"
+                    body = "$${base64.encode(json.encode(cloud_run_body))}"
+                    oauthToken = {
+                      serviceAccountEmail = google_service_account.copy_flow_runner.email
+                    }
+                  }
+                }
               }
             }
+            next = "returnOutput"
           }
         },
         {
@@ -220,5 +228,22 @@ resource "google_cloud_run_v2_job" "copy_task" {
         }
       }
     }
+  }
+}
+
+resource "google_cloud_tasks_queue" "copy_flow_buffer" {
+  name     = "${var.base_name}-copy-workflow-buffer"
+  location = var.region
+
+  rate_limits {
+    max_concurrent_dispatches = 1
+    max_dispatches_per_second = 1
+  }
+  retry_config {
+    max_attempts       = 30
+    max_retry_duration = "0s"
+    max_backoff        = "200s"
+    min_backoff        = "12s"
+    max_doublings      = 2
   }
 }
