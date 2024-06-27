@@ -1,5 +1,9 @@
 terraform {
   required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 5.0"
+    }
     cloudflare = {
       source  = "cloudflare/cloudflare"
       version = "~> 4.0"
@@ -17,8 +21,16 @@ terraform {
   required_version = "~> 1.6"
 }
 
+provider "google" {
+  project = var.project_name
+}
+
+data "google_secret_manager_secret_version" "cloudflare_token" {
+  secret = "cloudflare_token"
+}
+
 provider "cloudflare" {
-  api_token = var.cloudflare_token
+  api_token = data.google_secret_manager_secret_version.cloudflare_token.secret_data
 }
 
 data "cloudflare_zone" "zone" {
