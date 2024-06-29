@@ -123,15 +123,21 @@ function getLatestFilePrefixes(xmlText: string): string[] {
   const parser = new XMLParser();
   const parsed = parser.parse(xmlText);
   const snapshotVersions = parsed?.metadata?.versioning?.snapshotVersions
-    ?.snapshotVersion as SnapshotVersion[] | undefined;
+    ?.snapshotVersion as SnapshotVersion[] | SnapshotVersion | undefined;
   if (!snapshotVersions) return defaultPrefixes;
   const artifactId = parsed?.metadata?.artifactId as string | undefined;
 
-  const files = snapshotVersions.map((s) => {
-    const classifier = s.classifier ? `-${s.classifier}` : "";
-    return `${artifactId}-${s.value}${classifier}.${s.extension}`;
-  });
-  return defaultPrefixes.concat(files);
+  if (Array.isArray(snapshotVersions)) {
+    const files = snapshotVersions.map((s) => {
+      const classifier = s.classifier ? `-${s.classifier}` : "";
+      return `${artifactId}-${s.value}${classifier}.${s.extension}`;
+    });
+    return defaultPrefixes.concat(files);
+  }
+  const s = snapshotVersions;
+  const classifier = s.classifier ? `-${s.classifier}` : "";
+  const name = `${artifactId}-${s.value}${classifier}.${s.extension}`;
+  return defaultPrefixes.concat([name]);
 }
 
 async function deleteFiles(
