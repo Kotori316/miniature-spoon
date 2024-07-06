@@ -20,6 +20,7 @@ locals {
     "roles/logging.logWriter",
     "roles/secretmanager.secretAccessor",
     "roles/workflows.invoker", // Terraform doesn't support Workflows iam
+    google_project_iam_custom_role.firestore_adder.name,
   ])
 }
 
@@ -30,29 +31,16 @@ resource "google_project_iam_member" "copy_flow" {
   project  = var.project_name
 }
 
-resource "google_project_iam_custom_role" "job_runner" {
-  role_id     = replace("${var.base_name}-job-runner", "-", "_")
-  title       = "${var.base_name}-job-runner"
-  description = "Run with Override for ${var.base_name}"
+resource "google_project_iam_custom_role" "firestore_adder" {
+  role_id     = replace("firestore.${var.base_name}.adder", "-", "_")
+  title       = "Firestore Adder for ${var.base_name}"
+  description = "Add Firestore data only. For ${var.base_name}"
   permissions = [
-    "run.jobs.run",
-    "run.jobs.runWithOverrides",
-    "run.executions.get",
+    "datastore.entities.allocateIds",
+    "datastore.entities.create",
+    "datastore.entities.delete",
+    "datastore.entities.get",
+    "datastore.entities.list",
+    "datastore.entities.update",
   ]
-}
-
-resource "google_cloud_run_v2_job_iam_binding" "copy_flow" {
-  role     = google_project_iam_custom_role.job_runner.id
-  members  = ["serviceAccount:${google_service_account.copy_flow_runner.email}"]
-  name     = google_cloud_run_v2_job.copy_task.name
-  project  = google_cloud_run_v2_job.copy_task.project
-  location = google_cloud_run_v2_job.copy_task.location
-}
-
-resource "google_cloud_tasks_queue_iam_binding" "caller" {
-  role     = "roles/cloudtasks.enqueuer"
-  members  = ["serviceAccount:${google_service_account.copy_flow_runner.email}"]
-  name     = google_cloud_tasks_queue.copy_flow_buffer.name
-  project  = google_cloud_tasks_queue.copy_flow_buffer.project
-  location = google_cloud_tasks_queue.copy_flow_buffer.location
 }

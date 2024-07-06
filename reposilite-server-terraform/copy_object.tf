@@ -77,7 +77,7 @@ resource "google_workflows_workflow" "main" {
                 assign = [
                   { doAction = "true" }
                 ]
-                next = "body"
+                next = "add_task"
               },
               {
                 condition = "$${true}"
@@ -91,39 +91,18 @@ resource "google_workflows_workflow" "main" {
           }
         },
         {
-          body = {
-            assign = [
-              {
-                cloud_run_body = {
-                  overrides = {
-                    containerOverrides = {
-                      args = [
-                        "storage",
-                        "cp",
-                        "$${source_url}",
-                        "$${destination_url}",
-                      ]
-                    }
-                  }
-                }
-              }
-            ]
-            next = "add_task"
-          }
-        },
-        {
           add_task = {
-            call = "googleapis.cloudtasks.v2.projects.locations.queues.tasks.create"
+            call = "googleapis.firestore.v1.projects.databases.documents.createDocument"
             args = {
-              parent = google_cloud_tasks_queue.copy_flow_buffer.id
+              collectionId = "MavenCopy"
+              parent       = "$${\"projects/\" + project_id + \"/databases/(default)/documents\"}"
               body = {
-                task = {
-                  httpRequest = {
-                    url  = "https://run.googleapis.com/v2/${google_cloud_run_v2_job.copy_task.id}:run"
-                    body = "$${base64.encode(json.encode(cloud_run_body))}"
-                    oauthToken = {
-                      serviceAccountEmail = google_service_account.copy_flow_runner.email
-                    }
+                fields = {
+                  source_url = {
+                    stringValue = "$${source_url}"
+                  }
+                  destination_url = {
+                    stringValue = "$${destination_url}"
                   }
                 }
               }
@@ -176,74 +155,4 @@ data "google_secret_manager_secret" "cloudflare_access_key" {
 
 data "google_secret_manager_secret" "cloudflare_secret_key" {
   secret_id = "cloudflare_secret_key"
-}
-
-resource "google_cloud_run_v2_job" "copy_task" {
-  name     = "${var.base_name}-copy-job"
-  location = var.region
-
-  template {
-    template {
-      service_account = google_service_account.copy_flow_runner.email
-      containers {
-        image   = "gcr.io/google.com/cloudsdktool/cloud-sdk:alpine"
-        command = ["gcloud"]
-        args    = ["storage", "ls"]
-        resources {
-          limits = {
-            cpu    = "1"
-            memory = "512Mi"
-          }
-        }
-        env {
-          name  = "AWS_DEFAULT_REGION"
-          value = "auto"
-        }
-        env {
-          name = "AWS_ENDPOINT_URL"
-          value_source {
-            secret_key_ref {
-              secret  = data.google_secret_manager_secret.cloudflare_s3_endpoint.id
-              version = "latest"
-            }
-          }
-        }
-        env {
-          name = "AWS_ACCESS_KEY_ID"
-          value_source {
-            secret_key_ref {
-              secret  = data.google_secret_manager_secret.cloudflare_access_key.id
-              version = "latest"
-            }
-          }
-        }
-        env {
-          name = "AWS_SECRET_ACCESS_KEY"
-          value_source {
-            secret_key_ref {
-              secret  = data.google_secret_manager_secret.cloudflare_secret_key.id
-              version = "latest"
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-resource "google_cloud_tasks_queue" "copy_flow_buffer" {
-  name     = "${var.base_name}-copy-workflow-buffer"
-  location = var.region
-
-  rate_limits {
-    max_concurrent_dispatches = 1
-    max_dispatches_per_second = 1
-  }
-  retry_config {
-    max_attempts       = 30
-    max_retry_duration = "0s"
-    max_backoff        = "200s"
-    min_backoff        = "12s"
-    max_doublings      = 2
-  }
 }
