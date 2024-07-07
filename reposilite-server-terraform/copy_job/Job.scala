@@ -1,4 +1,4 @@
-//> using jvm "21"
+//> using jvm "temurin:17"
 //> using dep "com.google.cloud:google-cloud-storage:2.40.1"
 //> using dep "com.google.firebase:firebase-admin:9.3.0"
 //> using dep "software.amazon.awssdk:s3:2.26.16"
@@ -13,8 +13,6 @@ import cats.implicits.catsSyntaxEitherId
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.firestore.FirestoreOptions
 import com.google.cloud.storage.{Blob, BlobId, StorageOptions}
-import software.amazon.awssdk.auth.credentials.{AwsBasicCredentials, StaticCredentialsProvider}
-import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3AsyncClient
 import software.amazon.awssdk.services.s3.model.{PutObjectRequest, PutObjectResponse}
 import software.amazon.awssdk.transfer.s3.S3TransferManager
