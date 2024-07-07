@@ -14,58 +14,40 @@ resource "google_workflows_workflow" "main" {
       steps = [
         {
           init = {
-            steps = [
+            assign = [
+              { project_id = "$${sys.get_env(\"GOOGLE_CLOUD_PROJECT_ID\")}" },
+              { service_account_name = "$${sys.get_env(\"GOOGLE_CLOUD_SERVICE_ACCOUNT_NAME\")}" },
               {
-                parse_arg = {
-                  assign = [
-                    { project_id = "$${sys.get_env(\"GOOGLE_CLOUD_PROJECT_ID\")}" },
-                    { service_account_name = "$${sys.get_env(\"GOOGLE_CLOUD_SERVICE_ACCOUNT_NAME\")}" },
-                    {
-                      source = {
-                        bucket     = "$${input.data.bucket}"
-                        objectName = "$${input.data.name}"
-                      }
-                    },
-                    { pathSeparator = "$${sys.get_env(\"PATH_SEPARATOR\", \"/\")}" },
-                    { destinationBucket = "$${sys.get_env(\"DESTINATION_BUCKET\", \"kotori316-maven\")}" },
-                  ]
+                source = {
+                  bucket     = "$${input.data.bucket}"
+                  objectName = "$${input.data.name}"
                 }
               },
+              { pathSeparator = "$${sys.get_env(\"PATH_SEPARATOR\", \"/\")}" },
+              { destinationBucket = "$${sys.get_env(\"DESTINATION_BUCKET\", \"kotori316-maven\")}" },
               {
-                set_destination = {
-                  assign = [
-                    {
-                      destination = {
-                        bucket     = "$${destinationBucket}"
-                        objectName = "$${text.replace_all_regex(source.objectName, \"^.+?\" + pathSeparator, \"\")}"
-                      }
-                    }
-                  ]
+                destination = {
+                  bucket     = "$${destinationBucket}"
+                  objectName = "$${text.replace_all_regex(source.objectName, \"^.+?\" + pathSeparator, \"\")}"
                 }
               },
-              {
-                set_url = {
-                  assign = [
-                    { source_url = "$${\"gs://\" + source.bucket + \"/\" + source.objectName}" },
-                    { destination_url = "$${\"s3://\" + destination.bucket + \"/\" + destination.objectName}" },
-                  ]
-                }
-              },
-              {
-                log_events = {
-                  call = "sys.log"
-                  args = {
-                    json = {
-                      source          = "$${source}"
-                      destination     = "$${destination}"
-                      source_url      = "$${source_url}"
-                      destination_url = "$${destination_url}"
-                    }
-                    severity = "INFO"
-                  }
-                }
-              },
+              { source_url = "$${\"gs://\" + source.bucket + \"/\" + source.objectName}" },
+              { destination_url = "$${\"s3://\" + destination.bucket + \"/\" + destination.objectName}" },
             ]
+          }
+        },
+        {
+          log_events = {
+            call = "sys.log"
+            args = {
+              json = {
+                source          = "$${source}"
+                destination     = "$${destination}"
+                source_url      = "$${source_url}"
+                destination_url = "$${destination_url}"
+              }
+              severity = "INFO"
+            }
           }
         },
         {
