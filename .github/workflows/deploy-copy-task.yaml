@@ -4,15 +4,43 @@ on:
     paths:
       - reposilite-server-terraform/copy_job/*
       - .github/workflows/deploy-copy-task.yaml
+    branches:
+      - main
+  pull_request:
+    paths:
+      - reposilite-server-terraform/copy_job/*
+      - .github/workflows/deploy-copy-task.yaml
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Build Copy Task
+        uses: docker/build-push-action@v6
+        id: build-action-get
+        with:
+          push: false
+          tags: copy_job:latest
+          platforms: linux/amd64
+          provenance: false
+          context: 'reposilite-server-terraform/copy_job'
+          file: 'reposilite-server-terraform/copy_job/Dockerfile'
+
+  build:
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs:
+      - test
     outputs:
       metadata: ${{ steps.build-action-get.outputs.metadata }}
     steps:
