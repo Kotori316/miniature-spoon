@@ -1,3 +1,4 @@
+name: Deploy Copy Task
 on:
   push:
     paths:
@@ -33,9 +34,10 @@ jobs:
         with:
           push: true
           tags: |
-            us-central1-docker.pkg.dev/kotori316-mods-resources/reposilite-server-copy-job-registory/copy_task:${{github.sha}}
             us-central1-docker.pkg.dev/kotori316-mods-resources/reposilite-server-copy-job-registory/copy_task:latest
+            us-central1-docker.pkg.dev/kotori316-mods-resources/reposilite-server-copy-job-registory/copy_task:${{github.sha}}
           platforms: linux/amd64
+          provenance: false
           context: 'reposilite-server-terraform/copy_job'
           file: 'reposilite-server-terraform/copy_job/Dockerfile'
 
@@ -51,7 +53,12 @@ jobs:
           workload_identity_provider: ${{secrets.GCP_IDENTITY_PROVIDER}}
           service_account: ${{secrets.GCP_FUNCTION_ADMIN_SERVICE_ACCOUNT}}
       - name: Check image name
-        run: echo "IMAGE_NAME=$(echo "$METADATA" | jq -r '."image.name"')" >> $GITHUB_OUTPUT
+        run: |
+          images=$(echo "$METADATA" | jq -r '."image.name"')
+          image=$(echo "$images" | cut -d',' -f1)
+          echo "IMAGE_NAME=$image" >> $GITHUB_OUTPUT
+          echo "images: $images"
+          echo "used: $image"
         id: image
         env:
           METADATA: ${{ needs.build.outputs.metadata }}
