@@ -44,3 +44,11 @@ resource "google_project_iam_custom_role" "firestore_adder" {
     "datastore.entities.update",
   ]
 }
+
+resource "google_cloud_run_v2_job_iam_member" "copy_task" {
+  name     = google_cloud_run_v2_job.copy_task.name
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${google_service_account.copy_flow_runner.email}"
+  project  = var.project_name
+  location = google_cloud_run_v2_job.copy_task.location
+}
