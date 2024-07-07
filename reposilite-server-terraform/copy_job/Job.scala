@@ -6,6 +6,7 @@
 //> using dep "software.amazon.awssdk.crt:aws-crt:0.30.0"
 //> using dep "org.slf4j:slf4j-simple:2.0.13"
 //> using dep "org.typelevel::cats-core:2.12.0"
+//> using dep "com.lihaoyi::ujson:3.3.1"
 
 import cats.Traverse
 import cats.data.EitherT
@@ -36,6 +37,12 @@ case class CopyObject(fireStoreId: String, source: String, destination: String) 
   def destinationPath: String = URI.create(destination).getPath
 
   def destinationBucket: String = URI.create(destination).getHost
+
+  def toJson: ujson.Obj = ujson.Obj(
+    "fireStoreId" -> fireStoreId,
+    "source" -> source,
+    "destination" -> destination,
+  )
 }
 
 enum ErrorType:
@@ -62,7 +69,7 @@ private val collectionName = "MavenCopy"
 
 @main
 def main(): Unit =
-  println("Hello")
+  println("Hello Cpy Job")
 
   val targets = getTargets
   val copyTask = targets.flatMap { s =>
@@ -72,12 +79,19 @@ def main(): Unit =
   val e = Await.result(copyTask.value, Duration(1, TimeUnit.MINUTES))
   e match
     case Right(value) =>
-      println(value)
-      println(value.map(t => (t.sourceBucket, t.sourcePath, t.destinationBucket, t.destinationPath)))
+      ujson.writeToOutputStream(ujson.Obj(
+        "message" -> "Success",
+        "result" -> ujson.Arr.from(value.map(_.toJson))
+      ), Console.out)
     case Left(value) =>
-      println(value)
+      ujson.writeToOutputStream(ujson.Obj(
+        "message" -> "Fail",
+        "error" -> value.toString
+      ), Console.err)
 
-  println("End")
+  val code = if (e.isRight) 0 else 1
+  println(s"End $code")
+  sys.exit(code)
 end main
 
 def getTargets: EitherT[Future, ErrorType, Seq[CopyObject]] =
