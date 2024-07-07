@@ -8,9 +8,8 @@
 //> using dep "org.typelevel::cats-core:2.12.0"
 //> using dep "com.lihaoyi::ujson:3.3.1"
 
-import cats.Traverse
 import cats.data.EitherT
-import cats.implicits.catsSyntaxEitherId
+import cats.implicits.{catsSyntaxEitherId, toTraverseOps}
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.firestore.FirestoreOptions
 import com.google.cloud.storage.{Blob, BlobId, StorageOptions}
@@ -21,6 +20,8 @@ import software.amazon.awssdk.transfer.s3.model.UploadFileRequest
 
 import java.net.URI
 import java.nio.file.Files
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
@@ -69,33 +70,38 @@ private val collectionName = "MavenCopy"
 
 @main
 def main(): Unit =
-  println("Hello Cpy Job")
+  println("Hello Copy Job")
 
   val targets = getTargets
   val copyTask = targets.flatMap { s =>
-    Traverse[Seq].traverse(s)(copy)
+    EitherT(
+      Future.traverse(s)(c => copy(c).value)
+        .map(s => s.sequence)
+    )
   }
 
   val e = Await.result(copyTask.value, Duration(1, TimeUnit.MINUTES))
   e match
     case Right(value) =>
-      ujson.writeToOutputStream(ujson.Obj(
+      println(ujson.write(ujson.Obj(
         "message" -> "Success",
-        "result" -> ujson.Arr.from(value.map(_.toJson))
-      ), Console.out)
+        "result" -> "All Green",
+        "time" -> ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
+      )))
     case Left(value) =>
-      ujson.writeToOutputStream(ujson.Obj(
+      println(ujson.write(ujson.Obj(
         "message" -> "Fail",
-        "error" -> value.toString
-      ), Console.err)
+        "error" -> value.toString,
+        "time" -> ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
+      )))
 
   val code = if (e.isRight) 0 else 1
   println(s"End $code")
   sys.exit(code)
 end main
 
-def getTargets: EitherT[Future, ErrorType, Seq[CopyObject]] =
-  val allTargets = Future(db.collection(collectionName).limit(2).get())
+def getTargets: EitherT[Future, ErrorType, List[CopyObject]] =
+  val allTargets = Future(db.collection(collectionName).limit(10).get())
     .flatMap(f => Future(f.get()))
     .map(q => q.getDocuments.asScala.map { s =>
       val m = s.getData.asScala
@@ -105,7 +111,7 @@ def getTargets: EitherT[Future, ErrorType, Seq[CopyObject]] =
         fireStoreId = s.getId,
       )
     })
-    .map(_.toSeq)
+    .map(_.toList)
     .map(s => s.asRight[ErrorType])
   val recovered = allTargets.recover(t => ErrorType.FireStore(t.getMessage).asLeft)
   EitherT(recovered)
@@ -139,7 +145,14 @@ def uploadFileToS3(blob: Blob, copyObject: CopyObject): EitherT[Future, ErrorTyp
         .build()
       transferManager.uploadFile(uploadRequest)
     }.flatMap(uploader => FutureConverters.asScala(uploader.completionFuture()))
-      .map(r => r.response().asRight)
+      .map { r =>
+        println(ujson.write(ujson.Obj(
+          "message" -> "Uploaded",
+          "file" -> copyObject.toJson,
+          "time" -> ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
+        )))
+        r.response().asRight
+      }
       .recover(t => ErrorType.AwsWriteError(t.getMessage).asLeft)
   }
 
