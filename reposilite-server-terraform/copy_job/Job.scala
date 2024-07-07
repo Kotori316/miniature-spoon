@@ -73,6 +73,14 @@ def main(): Unit =
   println("Hello Copy Job")
 
   val targets = getTargets
+  targets.value.onComplete{t =>
+    for {
+      a <- t.toEither
+      b <- a
+    } {
+      println(s"Target count: ${b.length}")
+    }
+  }
   val copyTask = targets.flatMap { s =>
     EitherT(
       Future.traverse(s)(c => copy(c).value)
@@ -80,7 +88,7 @@ def main(): Unit =
     )
   }
 
-  val e = Await.result(copyTask.value, Duration(1, TimeUnit.MINUTES))
+  val e = Await.result(copyTask.value, Duration(9, TimeUnit.MINUTES))
   e match
     case Right(value) =>
       println(ujson.write(ujson.Obj(
