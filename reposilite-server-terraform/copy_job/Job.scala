@@ -101,7 +101,7 @@ def main(): Unit =
 end main
 
 def getTargets: EitherT[Future, ErrorType, List[CopyObject]] =
-  val allTargets = Future(db.collection(collectionName).limit(10).get())
+  val allTargets = Future(db.collection(collectionName).get())
     .flatMap(f => Future(f.get()))
     .map(q => q.getDocuments.asScala.map { s =>
       val m = s.getData.asScala
@@ -147,7 +147,7 @@ def uploadFileToS3(blob: Blob, copyObject: CopyObject): EitherT[Future, ErrorTyp
     }.flatMap(uploader => FutureConverters.asScala(uploader.completionFuture()))
       .map { r =>
         println(ujson.write(ujson.Obj(
-          "message" -> "Uploaded",
+          "message" -> s"Uploaded ${copyObject.destination}",
           "file" -> copyObject.toJson,
           "time" -> ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
         )))
