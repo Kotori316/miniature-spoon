@@ -7,7 +7,7 @@ on:
         required: true
         default: 'preview'
   schedule:
-    - cron: "20 4 * * *" # 13:20 in JST
+    - cron: "20 19 * * *" # 04:20 in JST
   workflow_dispatch:
     inputs:
       branch:
