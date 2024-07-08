@@ -31,11 +31,15 @@ import scala.jdk.javaapi.FutureConverters
 import scala.util.Try
 
 case class CopyObject(fireStoreId: String, source: String, destination: String) {
-  def sourcePath: String = URI.create(source).getPath
+  private val keyRegex = "^/(?<key>.+)$".r
+
+  def sourcePath: String = URI.create(source).getPath match
+    case keyRegex(key) => key
 
   def sourceBucket: String = URI.create(source).getHost
 
-  def destinationPath: String = URI.create(destination).getPath
+  def destinationPath: String = URI.create(destination).getPath match
+    case keyRegex(key) => key
 
   def destinationBucket: String = URI.create(destination).getHost
 
@@ -73,7 +77,7 @@ def main(): Unit =
   println("Hello Copy Job")
 
   val targets = getTargets
-  targets.value.onComplete{t =>
+  targets.value.onComplete { t =>
     for {
       a <- t.toEither
       b <- a
