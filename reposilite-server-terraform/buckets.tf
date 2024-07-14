@@ -18,8 +18,8 @@ resource "google_storage_bucket" "maven_bucket" {
     retention_duration_seconds = 7 * (60 * 60 * 24)
   }
   autoclass {
-    enabled                = true
-    terminal_storage_class = "ARCHIVE"
+    enabled = false
+    // terminal_storage_class = "ARCHIVE"
   }
 }
 
@@ -36,8 +36,8 @@ resource "google_storage_bucket" "maven_test_bucket" {
     retention_duration_seconds = 7 * (60 * 60 * 24)
   }
   autoclass {
-    enabled                = true
-    terminal_storage_class = "ARCHIVE"
+    enabled = false
+    // terminal_storage_class = "ARCHIVE"
   }
 }
 
