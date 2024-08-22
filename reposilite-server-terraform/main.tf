@@ -46,10 +46,9 @@ resource "random_password" "admin_password" {
 }
 
 resource "google_cloud_run_v2_service" "main" {
-  location     = var.region
-  name         = "${var.base_name}-run"
-  ingress      = "INGRESS_TRAFFIC_ALL"
-  launch_stage = "BETA"
+  location = var.region
+  name     = "${var.base_name}-run"
+  ingress  = "INGRESS_TRAFFIC_ALL"
   custom_audiences = [
     "https://${var.domain}"
   ]
@@ -117,7 +116,7 @@ locals {
 resource "cloudflare_record" "records" {
   name            = local.dns_data["name"]
   type            = local.dns_data["type"]
-  value           = local.dns_data["rrdata"]
+  content         = local.dns_data["rrdata"]
   zone_id         = data.cloudflare_zone.zone.zone_id
   proxied         = false
   ttl             = 1
