@@ -54,12 +54,6 @@ jobs:
         with:
           workload_identity_provider: ${{secrets.GCP_IDENTITY_PROVIDER}}
           service_account: ${{secrets.GCP_TERRAFORM_PLANNER_SERVICE_ACCOUNT}}
-      - name: Get credentials
-        id: get-secrets
-        uses: google-github-actions/get-secretmanager-secrets@v2
-        with:
-          secrets: |-
-            cloudflare_token:kotori316-mods-resources/cloudflare_token
       - name: Prepare log
         id: log
         run: |
@@ -76,7 +70,6 @@ jobs:
           terraform plan -detailed-exitcode -no-color >>"/tmp/${{steps.log.outputs.name}}" 2>&1 && echo "No changes" || (echo "Plan detected changes"; false)
         working-directory: terraform
         env:
-          TF_VAR_cloudflare_token: ${{steps.get-secrets.outputs.cloudflare_token}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Init reposilite config
         run: terraform init
@@ -87,7 +80,6 @@ jobs:
           terraform plan -detailed-exitcode -no-color >>"/tmp/${{steps.log.outputs.name}}" 2>&1 && echo "No changes" || (echo "Plan detected changes"; false)
         working-directory: reposilite-server-terraform
         env:
-          TF_VAR_cloudflare_token: ${{steps.get-secrets.outputs.cloudflare_token}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload log
         if: ${{ !cancelled() }}
