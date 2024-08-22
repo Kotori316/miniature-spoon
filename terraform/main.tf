@@ -80,7 +80,7 @@ resource "cloudflare_record" "page" {
   name    = "maven"
   type    = "CNAME"
   zone_id = data.cloudflare_zone.zone.zone_id
-  value   = cloudflare_pages_project.main.subdomain
+  content = cloudflare_pages_project.main.subdomain
   proxied = true
   ttl     = 1
 }
