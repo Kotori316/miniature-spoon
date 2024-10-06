@@ -74,6 +74,10 @@ resource "google_cloud_run_v2_service" "main" {
         name       = google_storage_bucket.setting_bucket.name
         mount_path = "/app/data"
       }
+      env {
+        name  = "NO_COLOR"
+        value = "true"
+      }
     }
     volumes {
       name = google_storage_bucket.setting_bucket.name

@@ -20,7 +20,7 @@ variable "base_name" {
 
 variable "initial_image" {
   type    = string
-  default = "docker.io/dzikoysk/reposilite:3.5.14"
+  default = "docker.io/dzikoysk/reposilite:3.5.17"
 }
 
 variable "domain" {
