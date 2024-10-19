@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "DRY_RUN=true tsx --env-file=.env src/index.ts",
-    "format": "biome check --write --unsafe ./src",
-    "ci": "biome ci ./src && tsc --noEmit"
+    "format": "npx @biomejs/biome check --write --unsafe",
+    "ci": "npx @biomejs/biome ci && tsc --noEmit"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.2",
