@@ -12,15 +12,15 @@ dotenv.config();
 const objects = await file.getObjectsInR2();
 const objectKeys = objects.map((o) => o.Key || "").filter((o) => o !== "");
 
-const repositoryPathes = objectKeys
+const repositoryPaths = objectKeys
   .filter((o) => o.endsWith("maven-metadata.xml"))
   .filter((o) => !o.includes("SNAPSHOT"))
   .map((o) => o.replace("/maven-metadata.xml", ""));
-console.log(repositoryPathes);
+console.log(repositoryPaths);
 
 // Repository index
 app.get("/", (c) => {
-  return c.html(createRepositoryIndex(repositoryPathes));
+  return c.html(createRepositoryIndex(repositoryPaths));
 });
 
 // Each directories

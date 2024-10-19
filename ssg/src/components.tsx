@@ -17,7 +17,7 @@ const Page: FC<PropsWithChildren<{ title: string }>> = (props) => {
 };
 
 export function createRepositoryIndex(repositoryPathes: string[]) {
-  const extention = ".html";
+  const extension = ".html";
   return (
     <Page title="Repositories">
       <div class="m-4">
@@ -32,7 +32,7 @@ export function createRepositoryIndex(repositoryPathes: string[]) {
               <li>
                 <a
                   class="font-mono underline-offset-auto text-emerald-700 hover:text-indigo-700 hover:underline decoration-indigo-400"
-                  href={`${path}${extention}`}
+                  href={`${path}${extension}`}
                 >
                   {`${group}:${name}`}
                 </a>
