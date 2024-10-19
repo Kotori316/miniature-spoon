@@ -1,5 +1,14 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.7.0/schema.json",
+  "files": {
+    "include": [
+      "./src",
+      "./test",
+      "package.json",
+      "./*.ts",
+      "tailwind.config.js"
+    ]
+  },
   "organizeImports": {
     "enabled": true
   },
