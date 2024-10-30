@@ -1,6 +1,6 @@
 services:
   node:
-    image: node:20
+    image: node:22
     volumes:
       - ./workers:/root/workers
       - ./ssg/:/root/ssg

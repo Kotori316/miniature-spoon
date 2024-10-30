@@ -10,7 +10,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    container: 'node:20'
+    container: 'node:22'
     defaults:
       run:
         working-directory: 'snapshot-delete'
