@@ -30,7 +30,7 @@ app.get("/:prefix{.+$}", async (c) => {
     prefix.endsWith("jar")
   ) {
     console.log("Checked SPECIAL CASE for", prefix);
-    return c.notFound();
+    return c.text("Not allowed", 403);
   }
   const bucket = c.env.MAVEN_BUCKET;
   const bucketObject = await bucket.get(prefix);
