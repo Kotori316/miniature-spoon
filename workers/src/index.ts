@@ -25,9 +25,17 @@ app.get("/:prefix{.+$}", async (c) => {
   ) {
     return c.notFound();
   }
+  if (
+    prefix.includes("com.kotori316.plugin.cf.gradle.plugin") &&
+    prefix.endsWith("jar")
+  ) {
+    console.log("Checked SPECIAL CASE for", prefix);
+    return c.notFound();
+  }
   const bucket = c.env.MAVEN_BUCKET;
   const bucketObject = await bucket.get(prefix);
   if (bucketObject !== null) {
+    console.log("Checked SUCCESS for", prefix, bucketObject.httpEtag);
     c.header("etag", bucketObject.httpEtag);
     c.header(
       "Content-Type",
@@ -37,6 +45,7 @@ app.get("/:prefix{.+$}", async (c) => {
       await stream.pipe(bucketObject.body);
     });
   }
+  console.log("Checked NOT FOUND for", prefix);
 
   if (Array.from(knownMimeTypes.keys()).find((e) => c.req.path.endsWith(e))) {
     return c.notFound();
