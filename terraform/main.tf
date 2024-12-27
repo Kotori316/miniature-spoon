@@ -42,45 +42,33 @@ resource "cloudflare_r2_bucket" "maven_bucket" {
   name       = var.maven_name
 }
 
-resource "cloudflare_pages_project" "main" {
-  account_id        = data.cloudflare_zone.zone.account_id
-  name              = "${var.maven_name}-page"
-  production_branch = "main"
-  deployment_configs {
-    preview {
-      environment_variables = {
-        ENVIRONMENT = "staging"
-      }
-      r2_buckets = {
-        MAVEN_BUCKET = cloudflare_r2_bucket.maven_bucket.name
-      }
-    }
-    production {
-      environment_variables = {
-        ENVIRONMENT = "production"
-      }
-      r2_buckets = {
-        MAVEN_BUCKET = cloudflare_r2_bucket.maven_bucket.name
-      }
-    }
+resource "cloudflare_workers_script" "main" {
+  account_id = data.cloudflare_zone.zone.account_id
+  content    = file("initial.js")
+  name       = "${var.maven_name}-worker"
+
+  r2_bucket_binding {
+    bucket_name = cloudflare_r2_bucket.maven_bucket.name
+    name        = "MAVEN_BUCKET"
   }
-  build_config {
-    build_caching   = false
-    destination_dir = "dist"
+  plain_text_binding {
+    name = "ENVIRONMENT"
+    text = "production"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      content,
+      kv_namespace_binding,
+      plain_text_binding,
+    ]
   }
 }
 
-resource "cloudflare_pages_domain" "main" {
-  account_id   = data.cloudflare_zone.zone.account_id
-  domain       = "maven.${var.cloudflare_zone_name}"
-  project_name = cloudflare_pages_project.main.name
-}
-
-resource "cloudflare_record" "page" {
-  name    = "maven"
-  type    = "CNAME"
-  zone_id = data.cloudflare_zone.zone.zone_id
-  content = cloudflare_pages_project.main.subdomain
-  proxied = true
-  ttl     = 1
+resource "cloudflare_workers_domain" "main" {
+  account_id  = data.cloudflare_zone.zone.account_id
+  hostname    = "maven.${var.cloudflare_zone_name}"
+  service     = cloudflare_workers_script.main.name
+  zone_id     = data.cloudflare_zone.zone.id
+  environment = "production"
 }

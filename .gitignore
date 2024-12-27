@@ -12,3 +12,4 @@ work
 cache.json
 workers/public/static/output.css
 workers/public/static/ssg
+alias
