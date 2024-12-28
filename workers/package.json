@@ -2,17 +2,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --mode client && vite build",
     "preview": "$npm_execpath run css && $npm_execpath run build && wrangler pages dev dist",
     "deploy": "$npm_execpath run css && $npm_execpath run build && wrangler pages deploy dist --commit-dirty=true --branch=${BRANCH:-main}",
-    "css": "npx tailwindcss -i ./src/input.css -o ./public/static/output.css --minify",
-    "css:watch": "npx tailwindcss -i ./src/input.css -o ./public/static/output.css --watch",
+    "css": "npx tailwindcss -i app/style.css -o ./public/static/output.css --minify",
+    "css:watch": "npx tailwindcss -i app/style.css -o ./public/static/output.css --watch",
     "format": "npx @biomejs/biome check --write --unsafe",
     "test": "vitest run",
     "ci": "npx @biomejs/biome ci && tsc --noEmit"
   },
   "dependencies": {
     "hono": "^4.0.0",
+    "honox": "^0.1.27",
     "path-browserify": "^1.0.1"
   },
   "devDependencies": {
@@ -21,6 +22,8 @@
     "@hono/vite-cloudflare-pages": "^0.4.0",
     "@hono/vite-dev-server": "^0.17.0",
     "@types/path-browserify": "^1.0.2",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.4.4",
     "vite": "^6.0.0",
