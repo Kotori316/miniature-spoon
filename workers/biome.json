@@ -2,8 +2,9 @@
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "files": {
     "include": [
-      "./app",
-      "./test",
+      "./app/**/*.ts",
+      "./app/**/*.tsx",
+      "./test/**/*.ts",
       "package.json",
       "./*.ts",
       "tailwind.config.js"
@@ -17,7 +18,22 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "useJsxKeyInIterable": "off"
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "noUnusedFunctionParameters": "error"
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "level": "error",
+          "fix": "unsafe",
+          "options": {}
+        }
+      },
+      "suspicious": {
+        "noReactSpecificProps": {
+          "level": "error",
+          "fix": "unsafe"
+        }
       }
     }
   },

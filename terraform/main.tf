@@ -42,6 +42,11 @@ resource "cloudflare_r2_bucket" "maven_bucket" {
   name       = var.maven_name
 }
 
+resource "cloudflare_r2_bucket" "worker_material" {
+  account_id = data.cloudflare_zone.zone.account_id
+  name       = "${var.maven_name}-worker-material"
+}
+
 resource "cloudflare_workers_script" "main" {
   account_id = data.cloudflare_zone.zone.account_id
   content    = file("initial.js")
@@ -50,6 +55,10 @@ resource "cloudflare_workers_script" "main" {
   r2_bucket_binding {
     bucket_name = cloudflare_r2_bucket.maven_bucket.name
     name        = "MAVEN_BUCKET"
+  }
+  r2_bucket_binding {
+    bucket_name = cloudflare_r2_bucket.worker_material.name
+    name        = "WORKER_MATERIAL"
   }
   plain_text_binding {
     name = "ENVIRONMENT"
