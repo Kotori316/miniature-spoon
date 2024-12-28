@@ -4,6 +4,7 @@ import { notFoundPage } from "./components";
 type Bindings = {
   MAVEN_BUCKET: R2Bucket;
   ENVIRONMENT: string;
+  ASSETS: typeof fetch;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
