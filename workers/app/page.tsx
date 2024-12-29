@@ -1,22 +1,20 @@
-import { html } from "hono/html";
-import type { FC, PropsWithChildren } from "hono/jsx";
-import { Link, Script } from "honox/server";
+import { Style } from "hono/css";
+import { jsxRenderer } from "hono/jsx-renderer";
+import { Script } from "honox/server";
+import { all } from "./css";
 
-export const Page: FC<PropsWithChildren<{ title: string }>> = ({
-  children,
-  title,
-}) => {
-  const content = (
+export const renderer = jsxRenderer(({ children, title }) => {
+  return (
     <html lang="en">
       <head>
-        <meta charSet="utf-8" />
+        <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <Style>{all}</Style>
         <title>{title}</title>
-        <Link href="/app/style.css" rel="stylesheet" />
+        <link rel="icon" href="/favicon.ico" />
         <Script src="/app/client.ts" async />
       </head>
       <body>{children}</body>
     </html>
   );
-  return html`<!DOCTYPE html>${content}`;
-};
+});

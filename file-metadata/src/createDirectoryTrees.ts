@@ -1,16 +1,4 @@
-import type { DirectoryTree, FileTree, StorageTree } from "./getTree";
-
-type ChildDirectory = Pick<DirectoryWithTypedChildren, "fullPath" | "name"> & {
-  dotPath: string;
-};
-
-export type DirectoryWithTypedChildren = {
-  fullPath: string;
-  name: string;
-  dotPath: string;
-  childDirectories: ChildDirectory[];
-  childFiles: FileTree[];
-};
+import {ChildDirectory, DirectoryTree, DirectoryWithTypedChildren, FileTree, StorageTree} from "./types";
 
 export function createDirectoryTrees(
   dir: DirectoryTree,

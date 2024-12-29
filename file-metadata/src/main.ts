@@ -1,10 +1,10 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import {
-  type DirectoryWithTypedChildren,
   createDirectoryTrees,
 } from "./createDirectoryTrees";
-import { type Repositories, findRepository } from "./findRepository";
+import {  findRepository } from "./findRepository";
 import { getTree } from "./getTree";
+import {DirectoryWithTypedChildren, Repositories} from "./types";
 
 async function main() {
   console.log("Start main");

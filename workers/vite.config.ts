@@ -1,28 +1,22 @@
+import build from "@hono/vite-build/cloudflare-workers";
+import adapter from "@hono/vite-dev-server/cloudflare";
 import honox from "honox/vite";
-import client from "honox/vite/client";
 import { defineConfig } from "vite";
 
-const entry = "./app/server.ts";
-
 export default defineConfig(({ mode }) => {
-  if (mode === "client") {
-    return {
-      build: {},
-      plugins: [client()],
-    };
-  }
+  const outDir = mode === "client" ? "./dist" : "./dist-worker-server";
+  const minify = false;
   return {
     build: {
       emptyOutDir: false,
-      minify: false,
-      ssr: true,
-      target: ["esnext"],
-      rollupOptions: {
-        external: [/^node:/],
-        input: entry,
-        output: {},
-      },
+      minify,
     },
-    plugins: [honox({ entry })],
+    plugins: [
+      honox({ devServer: { adapter } }),
+      build({
+        outputDir: outDir,
+        minify,
+      }),
+    ],
   };
 });

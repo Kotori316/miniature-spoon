@@ -1,24 +1,9 @@
 import path from "path-browserify";
 import { type File, Storage } from "@google-cloud/storage";
 import {getMineType} from "./mineTypes";
+import {DirectoryTree, FileTree} from "./types";
 
 const storage = new Storage();
-export type FileTree = {
-  type: "file";
-  fullPath: string;
-  name: string;
-  url: string;
-  size?: string | number;
-  contentType: string;
-};
-export type DirectoryTree = {
-  type: "directory";
-  fullPath: string;
-  name: string;
-  children: Record<string, StorageTree>;
-};
-export type StorageTree = FileTree | DirectoryTree;
-
 
 function createDirectory(name: string, fullPath: string): DirectoryTree {
   return {

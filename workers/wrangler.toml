@@ -1,11 +1,11 @@
 name = "kotori316-maven-worker"
-compatibility_date = "2024-09-19"
-# compatibility_flags = [ "nodejs_compat" ]
-pages_build_output_dir = "./dist"
+main = "dist-worker-server/index.js"
+compatibility_date = "2024-12-24"
+compatibility_flags = ["nodejs_compat"]
 send_metrics = false
 
 [assets]
-directory = "./public/"
+directory = "./dist"
 binding = "ASSETS"
 experimental_serve_directly = true
 
@@ -17,8 +17,9 @@ ENVIRONMENT = "production"
 # id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 [[r2_buckets]]
-binding = "MAVEN_BUCKET"
-bucket_name = "kotori316-maven"
+binding = "WORKER_MATERIAL"
+bucket_name = "kotori316-maven-worker-material"
+preview_bucket_name = "kotori316-maven-worker-material"
 
 # [[d1_databases]]
 # binding = "DB"

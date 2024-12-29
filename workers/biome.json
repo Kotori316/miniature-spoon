@@ -6,9 +6,9 @@
       "./app/**/*.tsx",
       "./test/**/*.ts",
       "package.json",
-      "./*.ts",
-      "tailwind.config.js"
-    ]
+      "./*.ts"
+    ],
+    "ignore": ["**/global.d.ts"]
   },
   "organizeImports": {
     "enabled": true

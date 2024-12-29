@@ -1,15 +1,4 @@
-import type { DirectoryWithTypedChildren } from "./createDirectoryTrees";
-
-type Repository = Pick<
-  DirectoryWithTypedChildren,
-  "fullPath" | "name" | "dotPath"
-> & {
-  repositoryName: string;
-};
-
-export type Repositories = {
-  list: Repository[];
-};
+import {DirectoryWithTypedChildren, Repositories, Repository} from "./types";
 
 export function findRepository(
   directories: DirectoryWithTypedChildren[],

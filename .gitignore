@@ -3,6 +3,8 @@
 
 node_modules
 dist
+dist*
+uploads
 build
 .wrangler
 workers/assets/static/output.css
