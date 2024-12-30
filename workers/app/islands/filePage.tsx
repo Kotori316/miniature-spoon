@@ -76,9 +76,19 @@ const FileList: FC<{
   data: DirectoryWithTypedChildren;
   setPath: (p: string) => void;
 }> = ({ data, setPath }) => {
+  const parent = data.parentDirectory
+    ? {
+        ...data.parentDirectory,
+        name: "../",
+      }
+    : undefined;
+
   return (
     <div class={fileList}>
       <div class={fileListItem}>
+        {parent && (
+          <Directory directory={parent} setPath={setPath} key="parent" />
+        )}
         {data.childDirectories.map((d) => {
           return <Directory directory={d} setPath={setPath} key={d.fullPath} />;
         })}
@@ -96,6 +106,7 @@ const FileList: FC<{
 const Directory: FC<{
   directory: ArrayElement<DirectoryWithTypedChildren["childDirectories"]>;
   setPath: (p: string) => void;
+  key: string;
 }> = ({ directory }) => {
   const setUrl = () => {
     const newUrl = `/files?path=${directory.dotPath}`;
@@ -115,6 +126,7 @@ const Directory: FC<{
 
 const File: FC<{
   file: ArrayElement<DirectoryWithTypedChildren["childFiles"]>;
+  key: string;
 }> = ({ file }) => {
   return <div class={fileText}>{file.name}</div>;
 };
