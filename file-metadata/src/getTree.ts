@@ -35,6 +35,10 @@ function addTreeLeaf(file: File, tree: DirectoryTree) {
     return;
   }
   const parsed = path.parse(file.name);
+  if (parsed.base === ".DS_Store") {
+    // Ignore .DS_Store file
+    return;
+  }
 
   let cursor = tree;
   const strings = parsed.dir.split("/");
@@ -80,7 +84,7 @@ function addTreeLeaf(file: File, tree: DirectoryTree) {
 
 function convertToIsoTime(time: string | undefined): string | undefined {
   if (!time) {
-    return undefined
+    return undefined;
   }
-  return new Date(time).toISOString()
+  return new Date(time).toISOString();
 }

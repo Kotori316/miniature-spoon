@@ -37,6 +37,13 @@ export async function fetchResource(
   urlPath: string,
   requestHeader: HeadersInit,
 ): Promise<FetchResponse> {
+  if (urlPath.endsWith(".DS_Store")) {
+    // No need to get mac metadata
+    return {
+      result: "error",
+      status: 400,
+    }
+  }
   const extension = path.extname(urlPath);
   if (!extension) {
     return { result: "directory" };
