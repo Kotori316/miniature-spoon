@@ -1,8 +1,10 @@
 import { Hono } from "hono";
 import { fetchResource } from "../api/fetchResource";
 import apiRepositoryIndex from "../api/route/repository-index";
+import apiListFile from "../api/route/list-file";
 import { renderer } from "../page";
 import { rootPage } from "../pages";
+import {filePage} from "../pages/file";
 
 export type Bindings = {
   WORKER_MATERIAL: R2Bucket;
@@ -15,7 +17,13 @@ const app = new Hono<{ Bindings: Bindings }>()
   .get("/", (c) => {
     return c.render(rootPage(), { title: "Index" });
   })
-  .route("/api/repository-index", apiRepositoryIndex);
+  .get("/files", (c) => {
+    const dotPath = c.req.query("path");
+    if(!dotPath) {return c.notFound();}
+    return c.render(filePage(dotPath), {title: dotPath})
+  })
+  .route("/api/repository-index", apiRepositoryIndex)
+  .route("/api/list-file", apiListFile);
 
 // Not to include catch all path as type
 app.get("*", async (c) => {
