@@ -1,4 +1,10 @@
-import {ChildDirectory, DirectoryTree, DirectoryWithTypedChildren, FileTree, StorageTree} from "./types";
+import type {
+  ChildDirectory,
+  DirectoryTree,
+  DirectoryWithTypedChildren,
+  FileTree,
+  StorageTree,
+} from "./types";
 
 export function createDirectoryTrees(
   dir: DirectoryTree,

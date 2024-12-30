@@ -11,11 +11,12 @@ export const knownMineType: Record<string, string> = {
   ".jar": "application/java-archive",
 };
 
-export function getMineType(fileName: string, providedContentType?:string ): string {
+export function getMineType(
+  fileName: string,
+  providedContentType?: string,
+): string {
   const ext = path.extname(fileName);
   return (
-    knownMineType[ext] ||
-    providedContentType ||
-    "application/octet-stream"
+    knownMineType[ext] || providedContentType || "application/octet-stream"
   );
 }

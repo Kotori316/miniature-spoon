@@ -1,7 +1,7 @@
-import path from "path-browserify";
 import { type File, Storage } from "@google-cloud/storage";
-import {getMineType} from "./mineTypes";
-import {DirectoryTree, FileTree} from "./types";
+import path from "path-browserify";
+import { getMineType } from "./mineTypes";
+import type { DirectoryTree, FileTree } from "./types";
 
 const storage = new Storage();
 

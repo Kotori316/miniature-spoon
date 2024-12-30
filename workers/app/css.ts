@@ -22,7 +22,7 @@ export const all = css`
     -webkit-text-size-adjust: 100%;
     -moz-tab-size: 4;
     tab-size: 4;
-    font-family: theme('fontFamily.sans', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    font-family: theme('fontFamily.sans', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"), serif;
     font-feature-settings: theme('fontFamily.sans[1].fontFeatureSettings', normal);
     font-variation-settings: theme('fontFamily.sans[1].fontVariationSettings', normal);
     -webkit-tap-highlight-color: transparent;
@@ -67,7 +67,7 @@ export const all = css`
   kbd,
   samp,
   pre {
-    font-family: theme('fontFamily.mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-family: theme('fontFamily.mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace),monospace;
     font-feature-settings: theme('fontFamily.mono[1].fontFeatureSettings', normal);
     font-variation-settings: theme('fontFamily.mono[1].fontVariationSettings', normal);
     font-size: 1em;
@@ -279,9 +279,10 @@ export const repositoryText = css`
 
 // font-mono text-emerald-700 decoration-indigo-400 underline-offset-auto hover:text-indigo-700 hover:underline
 export const repositoryItem = css`
-  ${repositoryText}
+  ${repositoryText};
   text-decoration-color: dodgerblue;
   text-underline-offset: auto;
+  cursor: pointer;
 
   &:hover {
     color: royalblue;
@@ -298,4 +299,25 @@ export const title = css`
 
 export const box = css`
   margin: 1rem;
-  `;
+`;
+
+export const separateDirectoryAndFiles = css`
+  border: 1px solid gray;
+`;
+
+export const fileText = css`
+  font-family: monospace;
+  color: cornflowerblue;
+`;
+
+export const fileList = css`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem
+`;
+
+export const fileListItem = css`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem
+`;

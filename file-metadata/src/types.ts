@@ -14,7 +14,10 @@ export type DirectoryTree = {
 };
 export type StorageTree = FileTree | DirectoryTree;
 
-export type ChildDirectory = Pick<DirectoryWithTypedChildren, "fullPath" | "name"> & {
+export type ChildDirectory = Pick<
+  DirectoryWithTypedChildren,
+  "fullPath" | "name"
+> & {
   dotPath: string;
 };
 
@@ -37,3 +40,5 @@ export type Repositories = {
   list: Repository[];
 };
 
+export type ArrayElement<T extends readonly unknown[]> =
+  T extends readonly (infer S)[] ? S : never;

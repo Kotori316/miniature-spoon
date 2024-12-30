@@ -24,13 +24,14 @@ describe("convert repository name", () => {
       expected: "com.kotori316:autoplanter-neoforge-1.21",
     },
     {
-      fullPath: "maven/com/kotori316/plugin/cf/com.kotori316.plugin.cf.gradle.plugin",
+      fullPath:
+        "maven/com/kotori316/plugin/cf/com.kotori316.plugin.cf.gradle.plugin",
       expected: "com.kotori316.plugin.cf:com.kotori316.plugin.cf.gradle.plugin",
     },
     {
       fullPath: "maven/com/kotori316/scalable-cats-force-fabric",
       expected: "com.kotori316:scalable-cats-force-fabric",
-    }
+    },
   ])(
     "returns expected repository name for $fullPath",
     ({ fullPath, expected }) => {

@@ -10,17 +10,18 @@
     "ci": "npx @biomejs/biome ci && tsc --noEmit"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.4.2",
+    "file-metadata": "file:../file-metadata",
     "hono": "^4.0.0",
     "honox": "^0.1.27",
-    "pretty-bytes": "^6.1.1",
     "path-browserify": "^1.0.1",
-    "file-metadata": "file:../file-metadata"
+    "pretty-bytes": "^6.1.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.2",
     "@cloudflare/workers-types": "^4.20230914.0",
-    "@hono/vite-cloudflare-pages": "^0.4.0",
     "@hono/vite-build": "^1.2.0",
+    "@hono/vite-cloudflare-pages": "^0.4.0",
     "@hono/vite-dev-server": "^0.17.0",
     "@types/path-browserify": "^1.0.2",
     "autoprefixer": "^10.4.20",

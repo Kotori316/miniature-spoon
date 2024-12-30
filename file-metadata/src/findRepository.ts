@@ -1,4 +1,8 @@
-import {DirectoryWithTypedChildren, Repositories, Repository} from "./types";
+import type {
+  DirectoryWithTypedChildren,
+  Repositories,
+  Repository,
+} from "./types";
 
 export function findRepository(
   directories: DirectoryWithTypedChildren[],

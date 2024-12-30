@@ -10,7 +10,8 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride":true,
     "lib": [
-      "esnext"
+      "esnext",
+      "DOM"
     ],
     "types": [
       "@cloudflare/workers-types",
@@ -28,6 +29,7 @@
   ],
   "exclude": [
     "dist",
+    "dist-worker-server",
     "node_modules",
     "**/*.spec.ts"
   ]
