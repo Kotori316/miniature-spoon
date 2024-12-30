@@ -3,10 +3,14 @@ import type {
   DirectoryWithTypedChildren,
 } from "file-metadata/src/types";
 import { hc } from "hono/client";
+import { cx } from "hono/css";
 import { type FC, useEffect, useState } from "hono/jsx";
+import prettyBytes from "pretty-bytes";
 import type { ApiListFile } from "../api/route/list-file";
 import * as css from "../css";
 import {
+  dateBox,
+  fileGrid,
   fileList,
   fileListItem,
   fileText,
@@ -89,15 +93,25 @@ const FileList: FC<{
         {parent && (
           <Directory directory={parent} setPath={setPath} key="parent" />
         )}
-        {data.childDirectories.map((d) => {
-          return <Directory directory={d} setPath={setPath} key={d.fullPath} />;
-        })}
+        {data.childDirectories
+          .toSorted((a, b) =>
+            a.name.localeCompare(b.name, undefined, { numeric: true }),
+          )
+          .map((d) => {
+            return (
+              <Directory directory={d} setPath={setPath} key={d.fullPath} />
+            );
+          })}
       </div>
       <div class={separateDirectoryAndFiles} />
-      <div class={fileListItem}>
-        {data.childFiles.map((f) => {
-          return <File file={f} key={f.fullPath} />;
-        })}
+      <div class={cx(fileText, fileGrid)}>
+        {data.childFiles
+          .toSorted((a, b) =>
+            a.name.localeCompare(b.name, undefined, { numeric: true }),
+          )
+          .map((f) => {
+            return <File file={f} key={f.fullPath} />;
+          })}
       </div>
     </div>
   );
@@ -128,5 +142,30 @@ const File: FC<{
   file: ArrayElement<DirectoryWithTypedChildren["childFiles"]>;
   key: string;
 }> = ({ file }) => {
-  return <div class={fileText}>{file.name}</div>;
+  const date = file.createdAt
+    ? new Date(file.createdAt).toLocaleString()
+    : "[create time unknown]";
+  const size = () => {
+    if (typeof file.size === "string") {
+      if (Number.isFinite(Number.parseFloat(file.size))) {
+        return prettyBytes(Number.parseFloat(file.size));
+      }
+      return file.size;
+    }
+    if (typeof file.size === "number") {
+      return prettyBytes(file.size);
+    }
+    return "[size unknown]";
+  };
+  return (
+    <>
+      <div>{file.name}</div>
+      <div>{file.contentType}</div>
+      <div>{size()}</div>
+      <div class={dateBox}>
+        <span>{date}</span>
+        <span>({Intl.DateTimeFormat().resolvedOptions().timeZone})</span>
+      </div>
+    </>
+  );
 };

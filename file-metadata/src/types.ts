@@ -5,6 +5,8 @@ export type FileTree = {
   url: string;
   size: string | number | undefined;
   contentType: string;
+  createdAt: string | undefined;
+  updatedAt: string | undefined;
 };
 export type DirectoryTree = {
   type: "directory";

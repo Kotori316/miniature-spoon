@@ -73,5 +73,14 @@ function addTreeLeaf(file: File, tree: DirectoryTree) {
     url: file.publicUrl().replaceAll("%2F", "/"),
     size: file.metadata.size,
     contentType: getMineType(file.name, file.metadata.contentType),
+    createdAt: convertToIsoTime(file.metadata.timeCreated),
+    updatedAt: convertToIsoTime(file.metadata.updated),
   } satisfies FileTree;
+}
+
+function convertToIsoTime(time: string | undefined): string | undefined {
+  if (!time) {
+    return undefined
+  }
+  return new Date(time).toISOString()
 }

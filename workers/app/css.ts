@@ -321,3 +321,17 @@ export const fileListItem = css`
   flex-direction: column;
   gap: 0.25rem
 `;
+
+export const fileGrid = css`
+  display: grid;
+  grid-template-columns: 1fr max-content max-content max-content;
+  column-gap: 1rem;
+  row-gap: 0.25rem;
+`;
+
+export const dateBox = css`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.25rem
+`;
