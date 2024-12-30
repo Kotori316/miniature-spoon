@@ -22,6 +22,14 @@ export function createDirectoryTrees(
         } satisfies ChildDirectory;
       });
     const files: FileTree[] = children.filter((t) => t.type === "file");
+    const parentDirectory =
+      dir.parent === undefined
+        ? undefined
+        : ({
+            name: dir.parent.name,
+            fullPath: dir.parent.fullPath,
+            dotPath: dir.parent.fullPath.replaceAll("/", "."),
+          } satisfies ChildDirectory);
 
     const d = {
       fullPath: dir.fullPath,
@@ -29,6 +37,7 @@ export function createDirectoryTrees(
       childDirectories: dirs,
       childFiles: files,
       dotPath: dir.fullPath.replaceAll("/", "."),
+      parentDirectory,
     } satisfies DirectoryWithTypedChildren;
     if (d.fullPath.length > 0) {
       result.push(d);

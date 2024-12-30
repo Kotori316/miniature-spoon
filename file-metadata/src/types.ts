@@ -10,6 +10,7 @@ export type DirectoryTree = {
   type: "directory";
   fullPath: string;
   name: string;
+  parent: Pick<DirectoryTree, "fullPath" | "name"> | undefined;
   children: Record<string, StorageTree>;
 };
 export type StorageTree = FileTree | DirectoryTree;
@@ -25,6 +26,7 @@ export type DirectoryWithTypedChildren = {
   fullPath: string;
   name: string;
   dotPath: string;
+  parentDirectory: ChildDirectory | undefined;
   childDirectories: ChildDirectory[];
   childFiles: FileTree[];
 };
