@@ -9,6 +9,7 @@ import { filePage } from "../pages/file";
 export type Bindings = {
   WORKER_MATERIAL: R2Bucket;
   ENVIRONMENT: string;
+  RESOURCE_DOMAIN: string;
   ASSETS: typeof fetch;
 };
 
@@ -29,11 +30,21 @@ const app = new Hono<{ Bindings: Bindings }>()
 
 // Not to include catch all path as type
 app.get("*", async (c) => {
-  // including first / like /com
+  // including first / like `/com`
   const urlPath = c.req.path;
-  const result = await fetchResource(urlPath, c.req.raw.headers);
+  const resourceDomain = import.meta.env.DEV
+    ? import.meta.env.VITE_RESOURCE_DOMAIN
+    : c.env.RESOURCE_DOMAIN;
+  const result = await fetchResource(
+    urlPath,
+    resourceDomain,
+    c.req.raw.headers,
+  );
   switch (result.result) {
-    case "directory":
+    case "directory": {
+      const dotPath = `maven.${urlPath.replace(/^\//, "").replace(/\/$/, "").replaceAll("/", ".")}`;
+      return c.redirect(`/files?path=${dotPath}`);
+    }
     case "error":
       return c.notFound();
     case "ok":

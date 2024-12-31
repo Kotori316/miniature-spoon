@@ -31,10 +31,12 @@ const knownMineType: Record<string, string> = {
 /**
  * Get a resource response from my storage
  * @param urlPath start with `/`
+ * @param resourceDomain the root URL of resources, without last `/`
  * @param requestHeader the request header to fetch resource
  */
 export async function fetchResource(
   urlPath: string,
+  resourceDomain: string,
   requestHeader: HeadersInit,
 ): Promise<FetchResponse> {
   if (urlPath.endsWith(".DS_Store")) {
@@ -48,14 +50,11 @@ export async function fetchResource(
   if (!extension) {
     return { result: "directory" };
   }
-  const fileResponseFuture = fetch(
-    `https://storage.googleapis.com/kotori316-maven-storage/maven${urlPath}`,
-    {
-      method: "GET",
-      redirect: "follow",
-      headers: requestHeader,
-    },
-  );
+  const fileResponseFuture = fetch(`${resourceDomain}${urlPath}`, {
+    method: "GET",
+    redirect: "follow",
+    headers: requestHeader,
+  });
   // file
   const overrideMineType: string | undefined = knownMineType[extension];
   const fileResponse = await fileResponseFuture;

@@ -26,6 +26,7 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
 }) => {
   const [dotPath, setDotPath] = useState(initialDotPath);
   const [data, setData] = useState<DirectoryWithTypedChildren>();
+  const [hasError, setHasError] = useState<boolean>();
   const [selectedFile, setSelectedFileInternal] = useState<FileTree>();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -34,6 +35,7 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
     const res = await client.index.$post({ json: { dotPath } }, {});
     if (res.status >= 500) {
       console.log("Error in fetch files", res.status, res.statusText);
+      setHasError(true);
       return;
     }
     const result = await res.json();
@@ -41,6 +43,7 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
       case "error":
         console.log("Error in fetch files", res.status, JSON.stringify(result));
         setData(undefined);
+        setHasError(true);
         break;
       case "ok":
         setData(result.result);
@@ -62,9 +65,13 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
   if (!data) {
     return (
       <div>
-        <Header headerText={"Files in ..."} />
+        <Header headerText={hasError ? "Error" : "Files in ..."} />
         <div class={css.preloadBox}>
-          <div>Loading...</div>
+          {hasError ? (
+            <div>Failed to get file list</div>
+          ) : (
+            <div>Loading...</div>
+          )}
           <div>
             <button type="button" onClick={fetchApi} class={css.reloadButton}>
               Reload
