@@ -254,8 +254,17 @@ const flexRow = css`
   flex-direction: row;
 `;
 const flexCol = css`
-display: flex;
-flex-direction: column;
+  display: flex;
+  flex-direction: column;
+`;
+export const underline = css`
+  text-underline-offset: auto;
+  cursor: pointer;
+
+  &:hover {
+    text-underline: auto;
+    text-decoration-line: underline;
+  }
 `;
 
 // flex flex-row items-center gap-2 border-gray-600 border-b p-4"
@@ -295,14 +304,11 @@ export const repositoryText = css`
 // font-mono text-emerald-700 decoration-indigo-400 underline-offset-auto hover:text-indigo-700 hover:underline
 export const repositoryItem = css`
   ${repositoryText};
+  ${underline};
   text-decoration-color: dodgerblue;
-  text-underline-offset: auto;
-  cursor: pointer;
 
   &:hover {
     color: royalblue;
-    text-underline: auto;
-    text-decoration-line: underline;
   }
 `;
 
@@ -364,8 +370,13 @@ export const preloadBox = css`
 
 export const dialog = css`
   width: 80%;
+  min-height: 10rem;
   border-radius: 0.375rem;
   padding: 4px 10px;
+
+  &::backdrop {
+    background-color: rgba(211, 211, 211, 0.5);
+  }
 `;
 
 export const dialogBox = css`
@@ -379,8 +390,13 @@ export const dialogHeaderBox = css`
   grid-template-columns: 1fr max-content max-content;
   gap: 1rem;
 `;
+
 export const dialogHeaderIconBox = css`
   ${flexRow};
   gap: 0.25rem;
   align-items: center;
+`;
+
+export const codeBlock = css`
+  overflow: scroll;
 `;

@@ -11,6 +11,7 @@ import {
 import { getFileCreatedAt, getFileSize } from "../api/fileTreeUtil";
 import { highlight } from "../client/highlighter";
 import {
+  codeBlock,
   dialog,
   dialogBox,
   dialogHeaderBox,
@@ -100,8 +101,10 @@ export const FileDialog: FC<{
         <div>{getFileSize(selectedFile)}</div>
         <div>{date}</div>
       </div>
-      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: intended */}
-      {content && <div dangerouslySetInnerHTML={{ __html: content }} />}
+      {content && (
+        /* biome-ignore lint/security/noDangerouslySetInnerHtml: intended */
+        <div class={codeBlock} dangerouslySetInnerHTML={{ __html: content }} />
+      )}
     </Dialog>
   );
 };

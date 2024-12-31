@@ -176,6 +176,7 @@ const File: FC<{
         <button
           type="button"
           id={`file-name-${file.name}`}
+          class={css.underline}
           onClick={() => setSelectedFile(file)}
         >
           {file.name}
