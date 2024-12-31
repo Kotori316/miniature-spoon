@@ -272,8 +272,12 @@ export const repositoryUl = css`
   list-style-type: disc;
 `;
 
-export const repositoryText = css`
+export const monospaceText = css`
   font-family: monospace;
+`;
+
+export const repositoryText = css`
+  ${monospaceText};
   color: green;
 `;
 
@@ -334,4 +338,18 @@ export const dateBox = css`
   flex-direction: row;
   flex-wrap: wrap;
   gap: 0.25rem
+`;
+
+export const reloadButton = css`
+  border-radius: 4px;
+  border: 1px solid dimgrey;
+  padding: 4px 10px;
+`;
+
+export const preloadBox = css`
+  ${box};
+  ${monospaceText};
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 `;

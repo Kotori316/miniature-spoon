@@ -42,7 +42,7 @@ export async function fetchResource(
     return {
       result: "error",
       status: 400,
-    }
+    };
   }
   const extension = path.extname(urlPath);
   if (!extension) {

@@ -51,16 +51,17 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
   useEffect(() => {
     fetchApi();
   }, [dotPath]);
-
   if (!data) {
     return (
       <div>
         <Header headerText={"Files in ..."} />
-        <div class={css.box}>
+        <div class={css.preloadBox}>
           <div>Loading...</div>
-          <button type="button" onClick={fetchApi}>
-            Reload
-          </button>
+          <div>
+            <button type="button" onClick={fetchApi} class={css.reloadButton}>
+              Reload
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -159,7 +160,7 @@ const File: FC<{
   };
   return (
     <>
-      <div>{file.name}</div>
+      <div id={`file-name-${file.name}`}>{file.name}</div>
       <div>{file.contentType}</div>
       <div>{size()}</div>
       <div class={dateBox}>
