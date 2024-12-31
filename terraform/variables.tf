@@ -22,3 +22,8 @@ variable "github_repo" {
   type    = string
   default = "miniature-spoon"
 }
+
+variable "google_storage_name" {
+  type    = string
+  default = "kotori316-maven-storage"
+}

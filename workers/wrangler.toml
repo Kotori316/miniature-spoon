@@ -4,6 +4,10 @@ compatibility_date = "2024-12-24"
 compatibility_flags = ["nodejs_compat"]
 send_metrics = false
 
+[observability]
+enabled = true
+head_sampling_rate = 1
+
 [assets]
 directory = "./dist"
 binding = "ASSETS"
@@ -11,6 +15,7 @@ experimental_serve_directly = true
 
 [vars]
 ENVIRONMENT = "production"
+RESOURCE_DOMAIN = "https://storage.googleapis.com/kotori316-maven-storage/maven"
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
