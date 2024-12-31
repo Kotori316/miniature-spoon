@@ -1,0 +1,28 @@
+{
+  "name": "file-metadata",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "tsx --env-file=.env src/main.ts",
+    "format": "npx @biomejs/biome check --write --unsafe",
+    "ci": "npx @biomejs/biome ci && tsc --noEmit",
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kotori316/miniature-spoon.git"
+  },
+  "private": true,
+  "dependencies": {
+    "@google-cloud/storage": "^7.14.0",
+    "path-browserify": "^1.0.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.10.2",
+    "@types/path-browserify": "^1.0.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

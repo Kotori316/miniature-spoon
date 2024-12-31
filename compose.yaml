@@ -3,15 +3,12 @@ services:
     image: node:22
     volumes:
       - ./workers:/root/workers
-      - ./ssg/:/root/ssg
-      - ./snapshot-delete/:/root/snapshot-delete
+      - ./file-metadata/:/root/file-metadata
       - container_node_modules:/root/workers/node_modules
-      - container_node_modules_ssg:/root/ssg/node_modules
-      - container_node_modules_sd:/root/snapshot-delete/node_modules
+      - container_node_modules_file_metadata:/root/file-metadata/node_modules
     init: true
     command: sleep inf
 
 volumes:
   container_node_modules: {}
-  container_node_modules_ssg: {}
-  container_node_modules_sd: {}
+  container_node_modules_file_metadata: {}

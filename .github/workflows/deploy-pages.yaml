@@ -6,8 +6,6 @@ on:
         type: string
         required: true
         default: 'preview'
-  schedule:
-    - cron: "20 19 * * *" # 04:20 in JST
   workflow_dispatch:
     inputs:
       branch:
@@ -23,7 +21,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: false
     permissions:
       id-token: write
       contents: read
@@ -40,10 +37,6 @@ jobs:
           node-version: 22
       - run: npm ci
         working-directory: workers
-      - run: npm ci
-        working-directory: ssg
-      - run: npm run css
-        working-directory: workers
       - uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{secrets.GCP_IDENTITY_PROVIDER}}
@@ -54,18 +47,6 @@ jobs:
         with:
           secrets: |-
             cloudflare_token:kotori316-mods-resources/cloudflare_token
-            cloudflare_access_key:kotori316-mods-resources/cloudflare_access_key
-            cloudflare_s3_endpoint:kotori316-mods-resources/cloudflare_s3_endpoint
-            cloudflare_secret_key:kotori316-mods-resources/cloudflare_secret_key
-      - name: Run SSG
-        working-directory: ssg
-        run: npm run build
-        env:
-          R2_ENDPOINT: ${{steps.get-secrets.outputs.cloudflare_s3_endpoint}}
-          R2_ACCESS_KEY: ${{steps.get-secrets.outputs.cloudflare_access_key}}
-          R2_SECRET_KEY: ${{steps.get-secrets.outputs.cloudflare_secret_key}}
-          R2_BUCKET: 'kotori316-maven'
-          DIRECTORY_PAGE_PREFIX: '/static/ssg'
       - name: Deploy
         id: action
         run: |

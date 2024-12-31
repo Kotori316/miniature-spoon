@@ -29,6 +29,10 @@ data "google_secret_manager_secret_version" "cloudflare_token" {
   secret = "cloudflare_token"
 }
 
+data "google_storage_bucket" "maven_storage" {
+  name = var.google_storage_name
+}
+
 provider "cloudflare" {
   api_token = data.google_secret_manager_secret_version.cloudflare_token.secret_data
 }
@@ -42,25 +46,32 @@ resource "cloudflare_r2_bucket" "maven_bucket" {
   name       = var.maven_name
 }
 
+resource "cloudflare_r2_bucket" "worker_material" {
+  account_id = data.cloudflare_zone.zone.account_id
+  name       = "${var.maven_name}-worker-material"
+}
+
 resource "cloudflare_workers_script" "main" {
   account_id = data.cloudflare_zone.zone.account_id
   content    = file("initial.js")
   name       = "${var.maven_name}-worker"
 
   r2_bucket_binding {
-    bucket_name = cloudflare_r2_bucket.maven_bucket.name
-    name        = "MAVEN_BUCKET"
+    bucket_name = cloudflare_r2_bucket.worker_material.name
+    name        = "WORKER_MATERIAL"
   }
   plain_text_binding {
     name = "ENVIRONMENT"
     text = "production"
   }
+  plain_text_binding {
+    name = "RESOURCE_DOMAIN"
+    text = "https://storage.googleapis.com/${data.google_storage_bucket.maven_storage.name}/maven"
+  }
 
   lifecycle {
     ignore_changes = [
       content,
-      kv_namespace_binding,
-      plain_text_binding,
     ]
   }
 }

@@ -1,17 +1,30 @@
-import build from "@hono/vite-cloudflare-pages";
-import devServer from "@hono/vite-dev-server";
+import build from "@hono/vite-build/cloudflare-workers";
 import adapter from "@hono/vite-dev-server/cloudflare";
+import honox from "honox/vite";
 import { defineConfig } from "vite";
 
-export default defineConfig({
-  plugins: [
-    build({
-      entry: ["src/index.ts"],
-      outputDir: "./dist",
-    }),
-    devServer({
-      adapter,
-      entry: "src/index.ts",
-    }),
-  ],
+export default defineConfig(({ mode }) => {
+  const outDir = mode === "client" ? "./dist" : "./dist-worker-server";
+  const minify = true;
+  return {
+    build: {
+      emptyOutDir: false,
+      minify,
+    },
+    plugins: [
+      honox({ devServer: { adapter } }),
+      build({
+        outputDir: outDir,
+        minify,
+        external: serverExternal(mode),
+      }),
+    ],
+  };
 });
+
+function serverExternal(mode: string): string[] {
+  if (mode === "client") {
+    return [];
+  }
+  return ["shiki"];
+}

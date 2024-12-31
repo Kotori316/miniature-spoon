@@ -1,26 +1,30 @@
-name = "kotori316-maven-page"
-compatibility_date = "2024-05-03"
-# compatibility_flags = [ "nodejs_compat" ]
-pages_build_output_dir = "./dist"
+name = "kotori316-maven-worker"
+main = "dist-worker-server/index.js"
+compatibility_date = "2024-12-24"
+compatibility_flags = ["nodejs_compat"]
 send_metrics = false
 
-[vars]
-ENVIRONMENT = "staging"
+[observability]
+enabled = true
+head_sampling_rate = 1
 
-[env.production.vars]
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+experimental_serve_directly = true
+
+[vars]
 ENVIRONMENT = "production"
+RESOURCE_DOMAIN = "https://storage.googleapis.com/kotori316-maven-storage/maven"
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
 # id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 [[r2_buckets]]
-binding = "MAVEN_BUCKET"
-bucket_name = "kotori316-maven"
-
-[[env.production.r2_buckets]]
-binding = "MAVEN_BUCKET"
-bucket_name = "kotori316-maven"
+binding = "WORKER_MATERIAL"
+bucket_name = "kotori316-maven-worker-material"
+preview_bucket_name = "kotori316-maven-worker-material"
 
 # [[d1_databases]]
 # binding = "DB"

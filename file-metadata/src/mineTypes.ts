@@ -1,0 +1,23 @@
+import path from "path-browserify";
+
+export const knownMineType: Record<string, string> = {
+  ".module": "application/json",
+  ".pom": "application/xml",
+  ".xml": "application/xml",
+  ".md5": "text/plain",
+  ".sha1": "text/plain",
+  ".sha256": "text/plain",
+  ".sha512": "text/plain",
+  ".asc": "text/plain",
+  ".jar": "application/java-archive",
+};
+
+export function getMineType(
+  fileName: string,
+  providedContentType?: string,
+): string {
+  const ext = path.extname(fileName);
+  return (
+    knownMineType[ext] || providedContentType || "application/octet-stream"
+  );
+}

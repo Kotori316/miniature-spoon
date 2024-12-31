@@ -1,14 +1,8 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "files": {
-    "include": [
-      "./app/**/*.ts",
-      "./app/**/*.tsx",
-      "./test/**/*.ts",
-      "package.json",
-      "./*.ts"
-    ],
-    "ignore": ["**/global.d.ts"]
+    "include": ["./src/**/*.ts", "./test/**/*.ts", "package.json", "./*.ts"],
+    "ignore": ["output"]
   },
   "organizeImports": {
     "enabled": true
