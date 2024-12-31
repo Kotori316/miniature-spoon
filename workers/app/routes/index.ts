@@ -1,4 +1,6 @@
+import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
+import { z } from "zod";
 import { fetchResource } from "../api/fetchResource";
 import apiListFile from "../api/route/list-file";
 import apiRepositoryIndex from "../api/route/repository-index";
@@ -13,18 +15,27 @@ export type Bindings = {
   ASSETS: typeof fetch;
 };
 
+const filesSchema = z.object({
+  path: z.string().min(1),
+});
+
 const app = new Hono<{ Bindings: Bindings }>()
   .use("*", renderer)
   .get("/", (c) => {
     return c.render(rootPage(), { title: "Index" });
   })
-  .get("/files", (c) => {
-    const dotPath = c.req.query("path");
-    if (!dotPath) {
-      return c.notFound();
-    }
-    return c.render(filePage(dotPath), { title: "Files" });
-  })
+  .get(
+    "/files",
+    zValidator("query", filesSchema, (result, c) => {
+      if (result.success) {
+        return undefined;
+      }
+      return c.redirect("/");
+    }),
+    (c) => {
+      return c.render(filePage(c.req.valid("query").path), { title: "Files" });
+    },
+  )
   .route("/api/repository-index", apiRepositoryIndex)
   .route("/api/list-file", apiListFile);
 
