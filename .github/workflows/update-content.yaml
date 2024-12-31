@@ -1,0 +1,54 @@
+name: Update content
+on:
+  workflow_call:
+  workflow_dispatch:
+  schedule:
+    - cron: "20 19 * * *" # 04:20 in JST
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write
+      contents: read
+    concurrency:
+      group: ${{ inputs.branch || 'main' }}-update
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+        working-directory: file-metadata
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{secrets.GCP_IDENTITY_PROVIDER}}
+          service_account: ${{secrets.GCP_SERVICE_ACCOUNT}}
+      - name: Get credentials
+        id: get-secrets
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |-
+            cloudflare_access_key:kotori316-mods-resources/cloudflare_access_key
+            cloudflare_s3_endpoint:kotori316-mods-resources/cloudflare_s3_endpoint
+            cloudflare_secret_key:kotori316-mods-resources/cloudflare_secret_key
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{secrets.GCP_IDENTITY_PROVIDER}}
+      - name: Create empty env file
+        run: touch .env
+        working-directory: file-metadata
+      - name: Fetch maven storage
+        env:
+          GOOGLE_STORAGE_BUCKET_NAME: 'kotori316-maven-storage'
+        run: npm run dev
+        working-directory: file-metadata
+      - name: Upload to r2
+        env:
+          AWS_ENDPOINT_URL: ${{steps.get-secrets.outputs.cloudflare_s3_endpoint}}
+          AWS_ACCESS_KEY_ID: ${{steps.get-secrets.outputs.cloudflare_access_key}}
+          AWS_SECRET_ACCESS_KEY: ${{steps.get-secrets.outputs.cloudflare_secret_key}}
+        run: aws s3 sync ./output s3://kotori316-maven-worker-material
+        working-directory: file-metadata

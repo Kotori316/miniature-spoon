@@ -3,16 +3,14 @@ on:
   push:
     paths:
       - 'workers/**'
-      - 'ssg/**'
-      - 'snapshot-delete/**'
+      - 'file-metadata/**'
       - '.github/workflows/workers.yaml'
     branches:
       - main
   pull_request:
     paths:
       - 'workers/**'
-      - 'ssg/**'
-      - 'snapshot-delete/**'
+      - 'file-metadata/**'
       - '.github/workflows/workers.yaml'
 
 jobs:
@@ -23,15 +21,12 @@ jobs:
       - uses: actions/checkout@v4
       - run: docker compose run -w /root/workers node npm ci
       - run: docker compose run -w /root/workers node npm run ci
-      - run: docker compose run -w /root/workers node npm run css
-      - run: docker compose run -w /root/ssg node npm ci
-      - run: docker compose run -w /root/ssg node npm run ci
       - run: docker compose run -w /root/workers node npm run test
-      - run: docker compose run -w /root/ssg node npm run test
-      - run: docker compose run -w /root/snapshot-delete node npm ci
-      - run: docker compose run -w /root/snapshot-delete node npm run ci
+      - run: docker compose run -w /root/file-metadata node npm ci
+      - run: docker compose run -w /root/file-metadata node npm run ci
+      - run: docker compose run -w /root/file-metadata node npm run test
 
-  publish:
+  publish-worker:
     if: ${{ github.event_name == 'push' }}
     needs:
       - test
@@ -41,4 +36,14 @@ jobs:
     uses: './.github/workflows/deploy-pages.yaml'
     with:
       branch: ${{ github.event_name == 'push' && 'main' || github.head_ref || 'preview' }}
+    secrets: inherit
+
+  update-content:
+    if: ${{ github.event_name == 'push' }}
+    needs:
+      - test
+    permissions:
+      id-token: write
+      contents: read
+    uses: './.github/workflows/update-content.yaml'
     secrets: inherit
