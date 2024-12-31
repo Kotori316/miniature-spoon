@@ -1,23 +1,13 @@
-import type {
-  ArrayElement,
-  DirectoryWithTypedChildren,
-} from "file-metadata/src/types";
-import { hc } from "hono/client";
-import { cx } from "hono/css";
-import { type FC, useEffect, useState } from "hono/jsx";
-import prettyBytes from "pretty-bytes";
-import type { ApiListFile } from "../api/route/list-file";
+import type {ArrayElement, DirectoryWithTypedChildren, FileTree,} from "file-metadata/src/types";
+import {hc} from "hono/client";
+import {cx} from "hono/css";
+import {type FC, useEffect, useRef, useState} from "hono/jsx";
+import type {ApiListFile} from "../api/route/list-file";
 import * as css from "../css";
-import {
-  dateBox,
-  fileGrid,
-  fileList,
-  fileListItem,
-  fileText,
-  repositoryItem,
-  separateDirectoryAndFiles,
-} from "../css";
-import { Header } from "../pages";
+import {dateBox, fileGrid, fileList, fileListItem, fileText, repositoryItem, separateDirectoryAndFiles} from "../css";
+import {Header} from "../pages";
+import {FileDialog} from "./fileDialog";
+import {getFileCreatedAt, getFileSize} from "../api/fileTreeUtil";
 
 export const FilePage: FC<{ initialDotPath: string }> = ({
   initialDotPath,
@@ -26,6 +16,11 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
   const [data, setData] = useState<DirectoryWithTypedChildren | undefined>(
     undefined,
   );
+  const [selectedFile, setSelectedFileInternal] = useState<
+    FileTree | undefined
+  >(undefined);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
   const fetchApi = async () => {
     const client = hc<ApiListFile>("/api/list-file");
     const res = await client.index.$post({ json: { dotPath } }, {});
@@ -46,6 +41,11 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
       default:
         throw new Error(`Unreachable${result satisfies never}`);
     }
+  };
+
+  const setSelectedFile = (file: FileTree) => {
+    setSelectedFileInternal(file);
+    dialogRef.current?.showModal();
   };
 
   useEffect(() => {
@@ -71,8 +71,13 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
     <div>
       <Header headerText={`Files in ${data.fullPath}`} />
       <div class={css.box}>
-        <FileList data={data} setPath={setDotPath} />
+        <FileList
+          data={data}
+          setPath={setDotPath}
+          setSelectedFile={setSelectedFile}
+        />
       </div>
+      <FileDialog dialogRef={dialogRef} selectedFile={selectedFile} />
     </div>
   );
 };
@@ -80,7 +85,8 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
 const FileList: FC<{
   data: DirectoryWithTypedChildren;
   setPath: (p: string) => void;
-}> = ({ data, setPath }) => {
+  setSelectedFile: (file: FileTree) => void;
+}> = ({ data, setPath, setSelectedFile }) => {
   const parent = data.parentDirectory
     ? {
         ...data.parentDirectory,
@@ -111,7 +117,13 @@ const FileList: FC<{
             a.name.localeCompare(b.name, undefined, { numeric: true }),
           )
           .map((f) => {
-            return <File file={f} key={f.fullPath} />;
+            return (
+              <File
+                file={f}
+                key={f.fullPath}
+                setSelectedFile={setSelectedFile}
+              />
+            );
           })}
       </div>
     </div>
@@ -132,37 +144,37 @@ const Directory: FC<{
 
   return (
     <div>
-      <span class={repositoryItem} onClick={setUrl} onKeyPress={setUrl}>
+      <button
+        type="button"
+        class={repositoryItem}
+        onClick={setUrl}
+        onKeyPress={setUrl}
+      >
         {directory.name}
-      </span>
+      </button>
     </div>
   );
 };
 
 const File: FC<{
   file: ArrayElement<DirectoryWithTypedChildren["childFiles"]>;
+  setSelectedFile: (file: FileTree) => void;
   key: string;
-}> = ({ file }) => {
-  const date = file.createdAt
-    ? new Date(file.createdAt).toLocaleString()
-    : "[create time unknown]";
-  const size = () => {
-    if (typeof file.size === "string") {
-      if (Number.isFinite(Number.parseFloat(file.size))) {
-        return prettyBytes(Number.parseFloat(file.size));
-      }
-      return file.size;
-    }
-    if (typeof file.size === "number") {
-      return prettyBytes(file.size);
-    }
-    return "[size unknown]";
-  };
+}> = ({ file, setSelectedFile }) => {
+  const date = getFileCreatedAt(file);
   return (
     <>
-      <div id={`file-name-${file.name}`}>{file.name}</div>
+      <div>
+        <button
+          type="button"
+          id={`file-name-${file.name}`}
+          onClick={() => setSelectedFile(file)}
+        >
+          {file.name}
+        </button>
+      </div>
       <div>{file.contentType}</div>
-      <div>{size()}</div>
+      <div>{getFileSize(file)}</div>
       <div class={dateBox}>
         <span>{date}</span>
         <span>({Intl.DateTimeFormat().resolvedOptions().timeZone})</span>

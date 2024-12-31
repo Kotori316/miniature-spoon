@@ -1,6 +1,6 @@
-import { css } from "hono/css";
+import {css} from "hono/css";
 
-// Copied from tailwind
+// Copied from tailwind, and font is modified
 export const all = css`
   *,
   ::before,
@@ -22,9 +22,13 @@ export const all = css`
     -webkit-text-size-adjust: 100%;
     -moz-tab-size: 4;
     tab-size: 4;
-    font-family: theme('fontFamily.sans', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"), serif;
-    font-feature-settings: theme('fontFamily.sans[1].fontFeatureSettings', normal);
-    font-variation-settings: theme('fontFamily.sans[1].fontVariationSettings', normal);
+    font-family: "Helvetica Neue",
+    "Arial",
+    "Hiragino Kaku Gothic ProN",
+    "Hiragino Sans",
+    "BIZ UDPGothic",
+    "Meiryo",
+    sans-serif;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -67,7 +71,7 @@ export const all = css`
   kbd,
   samp,
   pre {
-    font-family: theme('fontFamily.mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace),monospace;
+    font-family: theme('fontFamily.mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace), monospace;
     font-feature-settings: theme('fontFamily.mono[1].fontFeatureSettings', normal);
     font-variation-settings: theme('fontFamily.mono[1].fontVariationSettings', normal);
     font-size: 1em;
@@ -245,10 +249,18 @@ export const all = css`
   }
 `;
 
-// flex flex-row items-center gap-2 border-gray-600 border-b p-4"
-export const header = css`
+const flexRow = css`
   display: flex;
   flex-direction: row;
+`;
+const flexCol = css`
+display: flex;
+flex-direction: column;
+`
+
+// flex flex-row items-center gap-2 border-gray-600 border-b p-4"
+export const header = css`
+  ${flexRow};
   align-items: center;
   gap: 0.5rem;
   border-bottom: 1px solid gray;
@@ -265,8 +277,7 @@ export const birdLogo = css`
 
 // flex list-inside list-disc flex-col gap-1
 export const repositoryUl = css`
-  display: flex;
-  flex-direction: column;
+  ${flexCol};
   gap: 0.25rem;
   list-style-position: inside;
   list-style-type: disc;
@@ -315,14 +326,12 @@ export const fileText = css`
 `;
 
 export const fileList = css`
-  display: flex;
-  flex-direction: column;
+  ${flexCol};
   gap: 1rem
 `;
 
 export const fileListItem = css`
-  display: flex;
-  flex-direction: column;
+  ${flexCol};
   gap: 0.25rem
 `;
 
@@ -334,8 +343,7 @@ export const fileGrid = css`
 `;
 
 export const dateBox = css`
-  display: flex;
-  flex-direction: row;
+  ${flexRow};
   flex-wrap: wrap;
   gap: 0.25rem
 `;
@@ -353,3 +361,26 @@ export const preloadBox = css`
   flex-direction: column;
   gap: 0.25rem;
 `;
+
+export const dialog = css`
+  width: 80%;
+  border-radius: 0.375rem;
+  padding: 4px 10px;
+`
+
+export const dialogBox = css`
+  ${flexCol};
+  ${box};
+  gap: 0.5rem;
+;
+`
+export const dialogHeaderBox = css`
+  display: grid;
+  grid-template-columns: 1fr max-content max-content;
+  gap: 1rem;
+`
+export const dialogHeaderIconBox = css`
+  ${flexRow};
+  gap: 0.25rem;
+  align-items: center;
+`
