@@ -6,7 +6,11 @@ import type { DirectoryWithTypedChildren, Repositories } from "./types";
 
 async function main() {
   console.log("Start main");
-  const tree = await getTree("kotori316-maven-storage");
+  if (!process.env.GOOGLE_STORAGE_BUCKET_NAME) {
+    console.log("No bucket specified for GOOGLE_STORAGE_BUCKET_NAME");
+    process.exit(1);
+  }
+  const tree = await getTree(process.env.GOOGLE_STORAGE_BUCKET_NAME);
   console.log("Loaded tree");
   const separated = createDirectoryTrees(tree);
   const repositories = findRepository(separated);
