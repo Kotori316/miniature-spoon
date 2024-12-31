@@ -17,7 +17,7 @@ export const RepositoryList: FC = () => {
   };
 
   useEffect(() => {
-    fetchApi();
+    fetchApi().catch(console.error);
   }, []);
 
   if (data === undefined) {

@@ -57,7 +57,7 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
   };
 
   useEffect(() => {
-    fetchApi();
+    fetchApi().catch(console.error);
   }, [dotPath]);
   if (!data) {
     return (

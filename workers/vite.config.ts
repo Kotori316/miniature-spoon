@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig(({ mode }) => {
   const outDir = mode === "client" ? "./dist" : "./dist-worker-server";
-  const minify = false;
+  const minify = true;
   return {
     build: {
       emptyOutDir: false,
@@ -16,7 +16,15 @@ export default defineConfig(({ mode }) => {
       build({
         outputDir: outDir,
         minify,
+        external: serverExternal(mode),
       }),
     ],
   };
 });
+
+function serverExternal(mode: string): string[] {
+  if (mode === "client") {
+    return [];
+  }
+  return ["shiki"];
+}

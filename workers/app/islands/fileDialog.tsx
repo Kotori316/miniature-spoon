@@ -63,7 +63,7 @@ export const FileDialog: FC<{
           setContent(await highlight(selectedFile, await res.text()));
         }
       };
-      getHighlightedContent();
+      getHighlightedContent().catch(console.error);
     } else {
       setContent("Preview is not available for this file type");
     }
