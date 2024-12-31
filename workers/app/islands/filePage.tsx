@@ -1,24 +1,32 @@
-import type {ArrayElement, DirectoryWithTypedChildren, FileTree,} from "file-metadata/src/types";
-import {hc} from "hono/client";
-import {cx} from "hono/css";
-import {type FC, useEffect, useRef, useState} from "hono/jsx";
-import type {ApiListFile} from "../api/route/list-file";
+import type {
+  ArrayElement,
+  DirectoryWithTypedChildren,
+  FileTree,
+} from "file-metadata/src/types";
+import { hc } from "hono/client";
+import { cx } from "hono/css";
+import { type FC, useEffect, useRef, useState } from "hono/jsx";
+import { getFileCreatedAt, getFileSize } from "../api/fileTreeUtil";
+import type { ApiListFile } from "../api/route/list-file";
 import * as css from "../css";
-import {dateBox, fileGrid, fileList, fileListItem, fileText, repositoryItem, separateDirectoryAndFiles} from "../css";
-import {Header} from "../pages";
-import {FileDialog} from "./fileDialog";
-import {getFileCreatedAt, getFileSize} from "../api/fileTreeUtil";
+import {
+  dateBox,
+  fileGrid,
+  fileList,
+  fileListItem,
+  fileText,
+  repositoryItem,
+  separateDirectoryAndFiles,
+} from "../css";
+import { Header } from "../pages";
+import { FileDialog } from "./fileDialog";
 
 export const FilePage: FC<{ initialDotPath: string }> = ({
   initialDotPath,
 }) => {
   const [dotPath, setDotPath] = useState(initialDotPath);
-  const [data, setData] = useState<DirectoryWithTypedChildren | undefined>(
-    undefined,
-  );
-  const [selectedFile, setSelectedFileInternal] = useState<
-    FileTree | undefined
-  >(undefined);
+  const [data, setData] = useState<DirectoryWithTypedChildren>();
+  const [selectedFile, setSelectedFileInternal] = useState<FileTree>();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const fetchApi = async () => {

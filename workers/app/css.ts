@@ -1,4 +1,4 @@
-import {css} from "hono/css";
+import { css } from "hono/css";
 
 // Copied from tailwind, and font is modified
 export const all = css`
@@ -256,7 +256,7 @@ const flexRow = css`
 const flexCol = css`
 display: flex;
 flex-direction: column;
-`
+`;
 
 // flex flex-row items-center gap-2 border-gray-600 border-b p-4"
 export const header = css`
@@ -366,21 +366,21 @@ export const dialog = css`
   width: 80%;
   border-radius: 0.375rem;
   padding: 4px 10px;
-`
+`;
 
 export const dialogBox = css`
   ${flexCol};
   ${box};
   gap: 0.5rem;
 ;
-`
+`;
 export const dialogHeaderBox = css`
   display: grid;
   grid-template-columns: 1fr max-content max-content;
   gap: 1rem;
-`
+`;
 export const dialogHeaderIconBox = css`
   ${flexRow};
   gap: 0.25rem;
   align-items: center;
-`
+`;

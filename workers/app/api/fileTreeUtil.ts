@@ -1,4 +1,4 @@
-import type {FileTree} from "file-metadata/src/types";
+import type { FileTree } from "file-metadata/src/types";
 import prettyBytes from "pretty-bytes";
 
 export function getFileSize(file: FileTree): string {
@@ -15,11 +15,11 @@ export function getFileSize(file: FileTree): string {
 }
 
 export function getFileCreatedAt(file: FileTree): string {
-  if(!file.createdAt) {
+  if (!file.createdAt) {
     return "[create time unknown]";
   }
   return new Date(file.createdAt).toLocaleString(undefined, {
     dateStyle: "medium",
-    timeStyle: "medium"
+    timeStyle: "medium",
   });
 }

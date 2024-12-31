@@ -8,7 +8,7 @@ import { repositoryItem, repositoryText, repositoryUl, title } from "../css";
 const client = hc<ApiRepositoryIndex>("/api/repository-index");
 
 export const RepositoryList: FC = () => {
-  const [data, setData] = useState<Repositories | undefined>(undefined);
+  const [data, setData] = useState<Repositories>();
 
   const fetchApi = async () => {
     const res = await client.index.$get();
