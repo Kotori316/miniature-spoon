@@ -22,7 +22,7 @@ const filesSchema = z.object({
 const app = new Hono<{ Bindings: Bindings }>()
   .use("*", renderer)
   .get("/", (c) => {
-    const title = "Kotori316 Maven Repository List"
+    const title = "Kotori316 Maven Repository List";
     return c.render(rootPage(title), { title });
   })
   .get(

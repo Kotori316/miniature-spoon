@@ -1,7 +1,7 @@
+import { css as cssDefine, cx } from "hono/css";
 import type { FC } from "hono/jsx";
 import * as css from "../css";
 import { RepositoryList } from "../islands/repositoryList";
-import { css as cssDefine, cx } from "hono/css";
 
 export function rootPage(title: string) {
   return (
@@ -26,15 +26,18 @@ export const Header: FC<{ headerText: string }> = ({ headerText }) => {
       </a>
       <h1 class={css.title}>{headerText}</h1>
       <div class={cx(css.iconBox, css.box)}>
-      <a class={css.iconBoxAnimation} href="https://github.com/Kotori316">
-        <i class={cx(ghText, "fa-brands", "fa-github")}></i>
-      </a>
-      <a class={css.iconBoxAnimation} href="https://discord.gg/ThxxGXMjZn">
-        <i class={cx(ghText, "fa-brands", "fa-discord")}></i>
-      </a>
-      <a class={css.iconBoxAnimation} href="https://twitter.com/small_bird_316">
-        <i class={cx(ghText, "fa-brands", "fa-twitter")}></i>
-      </a>
+        <a class={css.iconBoxAnimation} href="https://github.com/Kotori316">
+          <i class={cx(ghText, "fa-brands", "fa-github")} />
+        </a>
+        <a class={css.iconBoxAnimation} href="https://discord.gg/ThxxGXMjZn">
+          <i class={cx(ghText, "fa-brands", "fa-discord")} />
+        </a>
+        <a
+          class={css.iconBoxAnimation}
+          href="https://twitter.com/small_bird_316"
+        >
+          <i class={cx(ghText, "fa-brands", "fa-twitter")} />
+        </a>
       </div>
     </header>
   );

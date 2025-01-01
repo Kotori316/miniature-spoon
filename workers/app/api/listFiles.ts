@@ -23,8 +23,7 @@ export async function listFiles(
     );
     const key = `../../../file-metadata/output/${fileName}`;
     if (key in file) {
-      const result: DirectoryWithTypedChildren =
-        await file[`../../../file-metadata/output/${fileName}`]();
+      const result = await file[key]();
       return {
         type: "ok",
         result,

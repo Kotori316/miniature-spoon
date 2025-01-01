@@ -1,5 +1,6 @@
 import * as path from "node:path";
 import { knownMineType } from "file-metadata/src/types";
+import { isDirectory } from "./fileTreeUtil";
 
 type FetchResponseOk = {
   result: "ok";
@@ -37,7 +38,7 @@ export async function fetchResource(
     };
   }
   const extension = path.extname(urlPath);
-  if (!extension) {
+  if (isDirectory(extension)) {
     return { result: "directory" };
   }
   const fileResponseFuture = fetch(`${resourceDomain}${urlPath}`, {

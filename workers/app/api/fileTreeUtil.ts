@@ -1,6 +1,13 @@
 import type { FileTree } from "file-metadata/src/types";
 import prettyBytes from "pretty-bytes";
 
+export function isDirectory(extension: string): boolean {
+  if (!extension) {
+    return true;
+  }
+  return /^\.\d+$/.test(extension);
+}
+
 export function getFileSize(file: FileTree): string {
   if (typeof file.size === "string") {
     if (Number.isFinite(Number.parseFloat(file.size))) {
