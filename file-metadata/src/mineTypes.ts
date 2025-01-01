@@ -1,5 +1,5 @@
 import path from "path-browserify";
-import {knownMineType} from "./types";
+import { knownMineType } from "./types";
 
 export function getMineType(
   fileName: string,
