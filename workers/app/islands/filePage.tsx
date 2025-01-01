@@ -150,23 +150,18 @@ const Directory: FC<{
   setPath: (p: string) => void;
   key: string;
 }> = ({ directory }) => {
-  const setUrl = () => {
-    const newUrl = `/files?path=${directory.dotPath}`;
+  const newUrl = `/files?path=${directory.dotPath}`;
+  /*const setUrl = () => {
     window.location.href = newUrl;
-    /*setPath(directory.dotPath);
-    window.history.pushState({}, "", newUrl);*/
-  };
+    /!*setPath(directory.dotPath);
+    window.history.pushState({}, "", newUrl);*!/
+  };*/
 
   return (
     <div>
-      <button
-        type="button"
-        class={repositoryItem}
-        onClick={setUrl}
-        onKeyPress={setUrl}
-      >
+      <a href={newUrl} class={repositoryItem}>
         {directory.name}
-      </button>
+      </a>
     </div>
   );
 };
