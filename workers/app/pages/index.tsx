@@ -3,10 +3,10 @@ import * as css from "../css";
 import { RepositoryList } from "../islands/repositoryList";
 import { css as cssDefine, cx } from "hono/css";
 
-export function rootPage() {
+export function rootPage(title: string) {
   return (
     <div class="">
-      <Header headerText="Kotori316 Maven Repository List" />
+      <Header headerText={title} />
       <div class={css.box}>
         <RepositoryList />
       </div>

@@ -22,7 +22,8 @@ const filesSchema = z.object({
 const app = new Hono<{ Bindings: Bindings }>()
   .use("*", renderer)
   .get("/", (c) => {
-    return c.render(rootPage(), { title: "Index" });
+    const title = "Kotori316 Maven Repository List"
+    return c.render(rootPage(title), { title });
   })
   .get(
     "/files",
