@@ -400,3 +400,10 @@ export const dialogHeaderIconBox = css`
 export const codeBlock = css`
   overflow: scroll;
 `;
+
+export const rotate = css`
+  &:hover {
+    transform: rotate(180deg);
+    transition: transform 1s;
+  }
+`;

@@ -18,7 +18,9 @@ import {
   dialogHeaderIconBox,
   fileGrid,
   fileText,
+  rotate,
   separateDirectoryAndFiles,
+  underline,
 } from "../css";
 
 export const FileDialog: FC<{
@@ -84,13 +86,13 @@ export const FileDialog: FC<{
         <a
           href={relativeLink}
           target="_blank"
-          class={dialogHeaderIconBox}
+          class={cx(dialogHeaderIconBox, underline)}
           rel="noreferrer"
         >
           <i class="fa-solid fa-link" />
           <span>Link to file</span>
         </a>
-        <button type="button" onClick={closeDialog}>
+        <button type="button" onClick={closeDialog} class={rotate}>
           <i class="fa-xl fa-solid fa-xmark" />
         </button>
       </h1>
