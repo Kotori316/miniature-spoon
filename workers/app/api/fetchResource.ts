@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import { knownMineType } from "file-metadata/src/mineTypes";
+import { knownMineType } from "file-metadata/src/types";
 
 type FetchResponseOk = {
   result: "ok";

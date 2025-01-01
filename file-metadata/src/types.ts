@@ -46,3 +46,15 @@ export type Repositories = {
 
 export type ArrayElement<T extends readonly unknown[]> =
   T extends readonly (infer S)[] ? S : never;
+
+export const knownMineType: Record<string, string> = {
+  ".module": "application/json",
+  ".pom": "text/xml",
+  ".xml": "text/xml",
+  ".md5": "text/plain",
+  ".sha1": "text/plain",
+  ".sha256": "text/plain",
+  ".sha512": "text/plain",
+  ".asc": "text/plain",
+  ".jar": "application/java-archive",
+};
