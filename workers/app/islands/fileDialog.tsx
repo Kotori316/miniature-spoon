@@ -15,7 +15,7 @@ import {
   dialog,
   dialogBox,
   dialogHeaderBox,
-  dialogHeaderIconBox,
+  iconBox,
   fileGrid,
   fileText,
   rotate,
@@ -80,14 +80,14 @@ export const FileDialog: FC<{
       innerContainer={innerContainer}
     >
       <h1 class={dialogHeaderBox}>
-        <div class={dialogHeaderIconBox}>
+        <div class={iconBox}>
           <i class="fa-solid fa-file" />
           <span>{selectedFile.fullPath}</span>
         </div>
         <a
           href={relativeLink}
           target="_blank"
-          class={cx(dialogHeaderIconBox, underline)}
+          class={cx(iconBox, underline)}
           rel="noreferrer"
         >
           <i class="fa-solid fa-link" />

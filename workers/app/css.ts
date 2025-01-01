@@ -267,14 +267,13 @@ export const underline = css`
   }
 `;
 
-// flex flex-row items-center gap-2 border-gray-600 border-b p-4"
 export const header = css`
-  ${flexRow};
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
   align-items: center;
   gap: 0.5rem;
   border-bottom: 1px solid gray;
   padding: 0.5rem;
-  font-family: sans-serif;
 `;
 
 // h-20 w-20 rounded-full
@@ -391,10 +390,20 @@ export const dialogHeaderBox = css`
   gap: 1rem;
 `;
 
-export const dialogHeaderIconBox = css`
+export const iconBox = css`
   ${flexRow};
   gap: 0.25rem;
   align-items: center;
+`;
+
+export const iconBoxAnimation = css`
+  ${iconBox};
+  color: silver;
+  transition: color 0.5s;
+  &:hover {
+    color: black;
+    transition: color 0.5s;
+  }
 `;
 
 export const codeBlock = css`
