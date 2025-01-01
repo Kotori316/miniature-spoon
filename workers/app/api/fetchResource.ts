@@ -1,4 +1,5 @@
 import * as path from "node:path";
+import { knownMineType } from "file-metadata/src/mineTypes";
 
 type FetchResponseOk = {
   result: "ok";
@@ -16,17 +17,6 @@ type FetchResponse =
   | FetchResponseOk
   | FetchResponseError
   | FetchResponseDirectory;
-
-const knownMineType: Record<string, string> = {
-  ".module": "application/json",
-  ".pom": "application/xml",
-  ".md5": "text/plain",
-  ".sha1": "text/plain",
-  ".sha256": "text/plain",
-  ".sha512": "text/plain",
-  ".asc": "text/plain",
-  ".jar": "application/java-archive",
-};
 
 /**
  * Get a resource response from my storage

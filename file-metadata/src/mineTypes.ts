@@ -2,8 +2,8 @@ import path from "path-browserify";
 
 export const knownMineType: Record<string, string> = {
   ".module": "application/json",
-  ".pom": "application/xml",
-  ".xml": "application/xml",
+  ".pom": "text/xml",
+  ".xml": "text/xml",
   ".md5": "text/plain",
   ".sha1": "text/plain",
   ".sha256": "text/plain",
