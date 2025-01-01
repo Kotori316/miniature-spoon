@@ -59,6 +59,7 @@ export const FileDialog: FC<{
       selectedFile.contentType.startsWith("application/json") ||
       selectedFile.contentType.startsWith("application/xml")
     ) {
+      setContent("Loading...");
       const getHighlightedContent = async () => {
         const res = await fetch(relativeLink);
         if (res.ok) {
