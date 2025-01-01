@@ -9,7 +9,7 @@ resource "google_project_iam_member" "runner_secret" {
   member  = "serviceAccount:${google_service_account.runner.email}"
   role    = "roles/secretmanager.secretAccessor"
 }
-
+/*
 resource "google_service_account" "copy_flow_runner" {
   account_id = "storage-copy-workflows-runner"
 }
@@ -51,4 +51,4 @@ resource "google_cloud_run_v2_job_iam_member" "copy_task" {
   member   = "serviceAccount:${google_service_account.copy_flow_runner.email}"
   project  = var.project_name
   location = google_cloud_run_v2_job.copy_task.location
-}
+}*/

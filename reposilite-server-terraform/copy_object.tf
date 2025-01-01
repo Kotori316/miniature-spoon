@@ -1,4 +1,4 @@
-resource "terraform_data" "trigger_bucket" {
+/*resource "terraform_data" "trigger_bucket" {
   input = google_storage_bucket.maven_bucket.name
 }
 
@@ -247,4 +247,4 @@ resource "google_cloud_scheduler_job" "copy_task" {
     }
   }
   depends_on = [google_cloud_run_v2_job_iam_member.copy_task]
-}
+}*/
