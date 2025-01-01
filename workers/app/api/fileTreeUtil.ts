@@ -19,7 +19,11 @@ export function getFileCreatedAt(file: FileTree): string {
     return "[create time unknown]";
   }
   return new Date(file.createdAt).toLocaleString(undefined, {
-    dateStyle: "medium",
-    timeStyle: "medium",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
   });
 }
