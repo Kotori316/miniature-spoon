@@ -23,6 +23,10 @@ base.use(
     };
     console.log(JSON.stringify(accessLog));
   }),
+  createMiddleware(async (c, next) => {
+    await next();
+    c.res.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }),
 );
 
 const app = createApp({ app: base });

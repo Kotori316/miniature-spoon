@@ -17,6 +17,7 @@ export const renderer = jsxRenderer(({ children, title }) => {
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         />
+        <meta name="robots" content="noindex,nofollow"></meta>
       </head>
       <body>{children}</body>
     </html>
