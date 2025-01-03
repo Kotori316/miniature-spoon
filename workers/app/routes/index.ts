@@ -7,6 +7,7 @@ import apiRepositoryIndex from "../api/route/repository-index";
 import { renderer } from "../page";
 import { rootPage } from "../pages";
 import { filePage } from "../pages/file";
+import apiRobots from "../api/robots";
 
 export type Bindings = {
   WORKER_MATERIAL: R2Bucket;
@@ -37,6 +38,7 @@ const app = new Hono<{ Bindings: Bindings }>()
       return c.render(filePage(c.req.valid("query").path), { title: "Files" });
     },
   )
+  .route("/robots.txt", apiRobots)
   .route("/api/repository-index", apiRepositoryIndex)
   .route("/api/list-file", apiListFile);
 
