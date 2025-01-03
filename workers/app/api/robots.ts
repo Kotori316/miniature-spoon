@@ -1,11 +1,9 @@
 import { Hono } from "hono";
 
-const app = new Hono();
 const robots = `User-agent: *
 Disallow: /
 `;
-
-app.get("/", (c) => {
+const app = new Hono().get("/", (c) => {
   return c.text(robots);
 });
 
