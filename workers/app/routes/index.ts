@@ -2,6 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { z } from "zod";
 import { fetchResource } from "../api/fetchResource";
+import apiRobots from "../api/robots";
 import apiListFile from "../api/route/list-file";
 import apiRepositoryIndex from "../api/route/repository-index";
 import { renderer } from "../page";
@@ -37,6 +38,7 @@ const app = new Hono<{ Bindings: Bindings }>()
       return c.render(filePage(c.req.valid("query").path), { title: "Files" });
     },
   )
+  .route("/robots.txt", apiRobots)
   .route("/api/repository-index", apiRepositoryIndex)
   .route("/api/list-file", apiListFile);
 
