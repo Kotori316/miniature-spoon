@@ -50,5 +50,6 @@ jobs:
           AWS_ENDPOINT_URL: ${{steps.get-secrets.outputs.cloudflare_s3_endpoint}}
           AWS_ACCESS_KEY_ID: ${{steps.get-secrets.outputs.cloudflare_access_key}}
           AWS_SECRET_ACCESS_KEY: ${{steps.get-secrets.outputs.cloudflare_secret_key}}
+          AWS_REGION: 'auto'
         run: aws s3 sync ./output s3://kotori316-maven-worker-material
         working-directory: file-metadata
