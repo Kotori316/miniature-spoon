@@ -6,6 +6,7 @@ on:
 jobs:
   delete:
     runs-on: ubuntu-latest
+    if: false
     timeout-minutes: 5
     permissions:
       id-token: write
