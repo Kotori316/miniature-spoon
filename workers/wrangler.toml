@@ -11,7 +11,7 @@ head_sampling_rate = 1
 [assets]
 directory = "./dist"
 binding = "ASSETS"
-experimental_serve_directly = true
+run_worker_first = false
 
 [vars]
 ENVIRONMENT = "production"
