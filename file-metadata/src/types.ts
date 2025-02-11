@@ -57,4 +57,5 @@ export const knownMineType: Record<string, string> = {
   ".sha512": "text/plain",
   ".asc": "text/plain",
   ".jar": "application/java-archive",
+  ".txt": "text/plain",
 };
