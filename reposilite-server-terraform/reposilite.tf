@@ -67,19 +67,20 @@ resource "google_cloud_run_domain_mapping" "mapping" {
 }
 
 data "cloudflare_zone" "zone" {
-  name = var.cloudflare_zone_name
+  filter = {
+    name = var.cloudflare_zone_name
+  }
 }
 
 locals {
   dns_data = google_cloud_run_domain_mapping.mapping.status[0]["resource_records"][0]
 }
 
-resource "cloudflare_record" "records" {
-  name            = local.dns_data["name"]
-  type            = local.dns_data["type"]
-  content         = local.dns_data["rrdata"]
-  zone_id         = data.cloudflare_zone.zone.zone_id
-  proxied         = false
-  ttl             = 1
-  allow_overwrite = false
+resource "cloudflare_dns_record" "records" {
+  name    = local.dns_data["name"]
+  type    = local.dns_data["type"]
+  content = local.dns_data["rrdata"]
+  zone_id = data.cloudflare_zone.zone.zone_id
+  proxied = false
+  ttl     = 1
 }
