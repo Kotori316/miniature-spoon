@@ -18,9 +18,9 @@ variable "base_name" {
   default = "reposilite-server"
 }
 
-variable "initial_image" {
+variable "reposilite_image" {
   type    = string
-  default = "docker.io/dzikoysk/reposilite:3.5.17"
+  default = "docker.io/dzikoysk/reposilite:3.5.21"
 }
 
 variable "domain" {

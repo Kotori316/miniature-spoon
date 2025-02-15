@@ -57,7 +57,7 @@ resource "google_cloud_run_v2_service" "main" {
     service_account                  = google_service_account.runner.email
     max_instance_request_concurrency = 100
     containers {
-      image = var.initial_image
+      image = var.reposilite_image
       resources {
         limits = {
           cpu    = "1000m"
