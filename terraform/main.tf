@@ -55,6 +55,7 @@ resource "cloudflare_workers_script" "main" {
   account_id = data.cloudflare_zone.zone.account_id
   content    = file("initial.js")
   name       = "${var.maven_name}-worker"
+  logpush    = false
 
   r2_bucket_binding {
     bucket_name = cloudflare_r2_bucket.worker_material.name
