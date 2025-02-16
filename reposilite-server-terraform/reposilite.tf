@@ -35,6 +35,15 @@ resource "google_cloud_run_v2_service" "main" {
         name  = "NO_COLOR"
         value = "true"
       }
+      // https://docs.aws.amazon.com/sdkref/latest/guide/feature-dataintegrity.html
+      env {
+        name  = "AWS_REQUEST_CHECKSUM_CALCULATION"
+        value = "WHEN_REQUIRED"
+      }
+      env {
+        name  = "AWS_RESPONSE_CHECKSUM_VALIDATION"
+        value = "WHEN_REQUIRED"
+      }
     }
     volumes {
       name = google_storage_bucket.setting_bucket.name
