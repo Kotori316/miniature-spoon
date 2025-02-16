@@ -48,13 +48,15 @@ jobs:
           GOOGLE_STORAGE_BUCKET_NAME: 'kotori316-maven-storage'
         run: npm run dev
         working-directory: file-metadata
-      - run: docker pull amazon/aws-cli:2.22.35
+      - run: docker pull amazon/aws-cli:latest
       - name: Upload to r2
         env:
           AWS_ENDPOINT_URL: ${{steps.get-secrets.outputs.cloudflare_s3_endpoint}}
           AWS_ACCESS_KEY_ID: ${{steps.get-secrets.outputs.cloudflare_access_key}}
           AWS_SECRET_ACCESS_KEY: ${{steps.get-secrets.outputs.cloudflare_secret_key}}
           AWS_REGION: 'auto'
+          AWS_REQUEST_CHECKSUM_CALCULATION: 'WHEN_REQUIRED'
+          AWS_RESPONSE_CHECKSUM_VALIDATION: 'WHEN_REQUIRED'
         run: >-
-          docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_ENDPOINT_URL -e AWS_REGION -v $(pwd)/output:/aws amazon/aws-cli:2.22.35 s3 sync ./ s3://kotori316-maven-worker-material
+          docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_ENDPOINT_URL -e AWS_REGION -e AWS_REQUEST_CHECKSUM_CALCULATION -e AWS_RESPONSE_CHECKSUM_VALIDATION -v $(pwd)/output:/aws amazon/aws-cli:latest s3 sync ./ s3://kotori316-maven-worker-material
         working-directory: file-metadata
