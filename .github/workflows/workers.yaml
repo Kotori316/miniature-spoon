@@ -33,7 +33,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: './.github/workflows/deploy-pages.yaml'
+    uses: './.github/workflows/deploy-workers.yaml'
     with:
       branch: ${{ github.event_name == 'push' && 'main' || github.head_ref || 'preview' }}
     secrets: inherit
