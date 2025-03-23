@@ -92,8 +92,13 @@ locals {
 resource "cloudflare_dns_record" "records" {
   name    = "${local.dns_data["name"]}.${var.cloudflare_zone_name}"
   type    = local.dns_data["type"]
-  content = local.dns_data["rrdata"]
   zone_id = data.cloudflare_zone.zone.zone_id
   proxied = false
   ttl     = 1
+
+  content = (local.dns_data["type"] == "CNAME"
+    # Remove last period
+    ? substr(local.dns_data["rrdata"], 0, length(local.dns_data["rrdata"]) - 1)
+    # Use the raw value
+  : local.dns_data["rrdata"])
 }
