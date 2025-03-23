@@ -90,7 +90,7 @@ locals {
 }
 
 resource "cloudflare_dns_record" "records" {
-  name    = local.dns_data["name"]
+  name    = "${local.dns_data["name"]}.${var.cloudflare_zone_name}"
   type    = local.dns_data["type"]
   content = local.dns_data["rrdata"]
   zone_id = data.cloudflare_zone.zone.zone_id
