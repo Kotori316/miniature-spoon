@@ -10,7 +10,7 @@
     "ci": "npx @biomejs/biome ci && (tsc --noEmit && echo 'Checked TypeScript')"
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.4.2",
+    "@hono/zod-validator": "^0.5.0",
     "file-metadata": "file:../file-metadata",
     "hono": "^4.0.0",
     "honox": "^0.1.27",
