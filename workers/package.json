@@ -15,7 +15,7 @@
     "hono": "^4.0.0",
     "honox": "^0.1.27",
     "path-browserify": "^1.0.1",
-    "pretty-bytes": "^6.1.1"
+    "pretty-bytes": "^7.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.2",
