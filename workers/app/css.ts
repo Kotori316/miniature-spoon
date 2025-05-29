@@ -407,7 +407,7 @@ export const iconBoxAnimation = css`
 `;
 
 export const codeBlock = css`
-  overflow: scroll;
+  overflow: auto;
 `;
 
 export const rotate = css`
