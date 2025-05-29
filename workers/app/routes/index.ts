@@ -42,33 +42,44 @@ const app = new Hono<{ Bindings: Bindings }>()
   .route("/api/repository-index", apiRepositoryIndex)
   .route("/api/list-file", apiListFile);
 
-// Not to include catch all path as type
-app.get("*", async (c) => {
-  // including first / like `/com`
-  const urlPath = c.req.path;
-  const resourceDomain = import.meta.env.DEV
-    ? import.meta.env.VITE_RESOURCE_DOMAIN
-    : c.env.RESOURCE_DOMAIN;
-  const result = await fetchResource(
-    urlPath,
-    resourceDomain,
-    c.req.raw.headers,
-  );
-  switch (result.result) {
-    case "directory": {
-      const dotPath = `maven.${urlPath.replace(/^\//, "").replace(/\/$/, "").replaceAll("/", ".")}`;
-      return c.redirect(`/files?path=${dotPath}`);
+const allowedPrefixes = [
+  "com",
+  "org",
+  "com.kotori316",
+  "org.typelevel",
+] as const;
+
+app.on(
+  "GET",
+  allowedPrefixes.map((prefix) => `/${prefix.replace(".", "/")}/*`),
+  async (c) => {
+    // including first / like `/com`
+    const urlPath = c.req.path;
+    const resourceDomain = import.meta.env.DEV
+      ? import.meta.env.VITE_RESOURCE_DOMAIN
+      : c.env.RESOURCE_DOMAIN;
+    const result = await fetchResource(
+      urlPath,
+      resourceDomain,
+      c.req.raw.headers,
+    );
+    switch (result.result) {
+      case "directory": {
+        const dotPath = `maven.${urlPath.replace(/^\//, "").replace(/\/$/, "").replaceAll("/", ".")}`;
+        return c.redirect(`/files?path=${dotPath}`);
+      }
+      case "error":
+        return c.notFound();
+      case "ok":
+        return result.response;
+      default: {
+        const unreachable: never = result;
+        console.error("Unreachable");
+        return unreachable;
+      }
     }
-    case "error":
-      return c.notFound();
-    case "ok":
-      return result.response;
-    default: {
-      const unreachable: never = result;
-      console.error("Unreachable");
-      return unreachable;
-    }
-  }
-});
+  },
+);
+
 export type App = typeof app;
 export default app;
