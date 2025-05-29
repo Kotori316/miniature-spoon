@@ -32,7 +32,6 @@ export const FileDialog: FC<{
   const innerContainer = useRef<HTMLDivElement>(null);
   const closeDialog = () => {
     dialogRef.current?.close();
-    setContent(undefined);
   };
   const dialogClick = (event: Event) => {
     if (event.target === dialogRef.current) {
