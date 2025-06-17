@@ -18,7 +18,7 @@
     "pretty-bytes": "^7.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.7.2",
+    "@biomejs/biome": "^2.0.0",
     "@cloudflare/workers-types": "^4.20230914.0",
     "@hono/vite-build": "^1.2.0",
     "@hono/vite-cloudflare-pages": "^0.4.0",
