@@ -1,9 +1,9 @@
-import { Hono } from "hono";
+import { type Env, Hono } from "hono";
 import { createMiddleware } from "hono/factory";
 import { secureHeaders } from "hono/secure-headers";
 import { createApp } from "honox/server";
 
-const base = new Hono();
+const base = new Hono<Env>();
 
 base.use(
   "*",
