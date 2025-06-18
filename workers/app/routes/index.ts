@@ -5,7 +5,6 @@ import { fetchResource } from "../api/fetchResource";
 import apiRobots from "../api/robots";
 import apiListFile from "../api/route/list-file";
 import apiRepositoryIndex from "../api/route/repository-index";
-import { renderer } from "../page";
 import { rootPage } from "../pages";
 import { filePage } from "../pages/file";
 
@@ -21,7 +20,6 @@ const filesSchema = z.object({
 });
 
 const app = new Hono<{ Bindings: Bindings }>()
-  .use("*", renderer)
   .get("/", (c) => {
     const title = "Kotori316 Maven Repository List";
     return c.render(rootPage(title), { title });
