@@ -20,6 +20,7 @@ export default jsxRenderer(({ children, title }, c) => {
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          nonce={c.var.secureHeadersNonce || ""}
         />
         <meta name="robots" content="noindex,nofollow" />
       </head>
