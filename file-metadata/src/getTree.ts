@@ -43,8 +43,8 @@ function addTreeLeaf(file: File, tree: DirectoryTree) {
   let cursor = tree;
   const strings = parsed.dir.split("/");
   if (strings.length !== 1) {
-    let full: string | undefined = undefined;
-    let preKey: string | undefined = undefined;
+    let full: string | undefined;
+    let preKey: string | undefined;
     for (const key of strings) {
       const preFull = full;
       full = full === undefined ? key : `${full}/${key}`;
