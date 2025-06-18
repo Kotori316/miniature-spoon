@@ -9,7 +9,7 @@ export default jsxRenderer(({ children, title }, c) => {
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta property="csp-nonce" content={c.var.secureHeadersNonce || ""}/>
+        <meta property="csp-nonce" content={c.var.secureHeadersNonce || ""} />
         <Style nonce={c.var.secureHeadersNonce || ""}>{all}</Style>
         <title>{title}</title>
         <link rel="icon" href="/favicon.ico" />
