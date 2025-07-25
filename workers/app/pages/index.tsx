@@ -6,6 +6,7 @@ import { RepositoryList } from "../islands/repositoryList";
 export function rootPage(title: string) {
   return (
     <div class="">
+      <title>{title}</title>
       <Header headerText={title} />
       <div class={css.box}>
         <RepositoryList />

@@ -22,7 +22,7 @@ const filesSchema = z.object({
 const app = new Hono<{ Bindings: Bindings }>()
   .get("/", (c) => {
     const title = "Kotori316 Maven Repository List";
-    return c.render(rootPage(title), { title });
+    return c.render(rootPage(title));
   })
   .get(
     "/files",
@@ -33,7 +33,7 @@ const app = new Hono<{ Bindings: Bindings }>()
       return c.redirect("/");
     }),
     (c) => {
-      return c.render(filePage(c.req.valid("query").path), { title: "Files" });
+      return c.render(filePage(c.req.valid("query").path));
     },
   )
   .route("/robots.txt", apiRobots)

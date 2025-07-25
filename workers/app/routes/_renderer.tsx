@@ -3,7 +3,7 @@ import { jsxRenderer } from "hono/jsx-renderer";
 import { Script } from "honox/server";
 import { all } from "../css";
 
-export default jsxRenderer(({ children, title }, c) => {
+export default jsxRenderer(({ children }, c) => {
   return (
     <html lang="en">
       <head>
@@ -11,7 +11,6 @@ export default jsxRenderer(({ children, title }, c) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta property="csp-nonce" content={c.var.secureHeadersNonce || ""} />
         <Style nonce={c.var.secureHeadersNonce || ""}>{all}</Style>
-        <title>{title}</title>
         <link rel="icon" href="/favicon.ico" />
         <Script
           nonce={c.var.secureHeadersNonce || ""}
