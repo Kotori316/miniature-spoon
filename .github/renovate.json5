@@ -20,6 +20,10 @@
     {
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
+    },
+    {
+      "matchPackageNames": ["@cloudflare/workers-types", "wrangler"],
+      "schedule": ["* * 1,15 * *"],
     }
   ],
   "platformCommit": "enabled",
