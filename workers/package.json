@@ -23,6 +23,7 @@
     "@hono/vite-build": "^1.2.0",
     "@hono/vite-cloudflare-pages": "^0.4.0",
     "@hono/vite-dev-server": "^0.20.0",
+    "@types/node": "^22.16.5",
     "@types/path-browserify": "^1.0.2",
     "autoprefixer": "^10.4.20",
     "shiki": "^3.0.0",
