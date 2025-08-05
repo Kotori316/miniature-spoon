@@ -117,16 +117,16 @@ const Dialog: FC<
     dialogRef: RefObject<HTMLDialogElement>;
     innerContainer: RefObject<HTMLDivElement>;
   }>
-> = (props) => {
+> = ({ dialogRef, onDialogClick, innerContainer, children }) => {
   return (
     <dialog
       class={dialog}
-      ref={props.dialogRef}
-      onClick={props.onDialogClick}
-      onKeyPress={props.onDialogClick}
+      ref={dialogRef}
+      onClick={onDialogClick}
+      onKeyPress={onDialogClick}
     >
-      <div class={dialogBox} ref={props.innerContainer}>
-        {props.children}
+      <div class={dialogBox} ref={innerContainer}>
+        {children}
       </div>
     </dialog>
   );
