@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: docker compose run --rm -w /root/workers node npm ci
       - run: docker compose run --rm -w /root/workers node npm run ci
       - run: docker compose run --rm -w /root/workers node npm run test
