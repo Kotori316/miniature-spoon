@@ -16,7 +16,7 @@ jobs:
       group: ${{ inputs.branch || 'main' }}-update
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'file-metadata/package.json'
