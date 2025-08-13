@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v5
       - name: Terraform Format
         run: terraform fmt -recursive -check ./
-      - uses: terraform-linters/setup-tflint@v4
+      - uses: terraform-linters/setup-tflint@v5
       - name: Init tflint
         run: tflint --init
         working-directory: terraform
