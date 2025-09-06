@@ -1,8 +1,8 @@
-import { NONCE, secureHeaders } from "hono/secure-headers";
+import { secureHeaders } from "hono/secure-headers";
 import { createRoute } from "honox/factory";
 
 export default createRoute(
   secureHeaders({
-    contentSecurityPolicy: { styleSrc: [NONCE] },
+    contentSecurityPolicy: {},
   }),
 );
