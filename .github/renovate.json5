@@ -9,6 +9,20 @@
     ":disableDependencyDashboard",
     "customManagers:biomeVersions",
   ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "^.*\\.tf$",
+        "^.*\\.tfvars$"
+      ],
+      "matchStrings": [
+        "=\\s*\"(?<depName>docker\\.io\\/[a-zA-Z0-9\\._-]+?\\/[a-zA-Z0-9\\._-]+?):(?<currentValue>[^\" ]+)\""
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver",
+    }
+  ],
   "packageRules": [
     {
       "matchManagers": [
