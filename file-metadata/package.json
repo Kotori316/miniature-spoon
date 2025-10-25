@@ -23,7 +23,7 @@
     "@types/path-browserify": "^1.0.3",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "vitest": "^3.0.0"
+    "vitest": "^4.0.0"
   },
   "volta": {
     "node": "22.21.0"
