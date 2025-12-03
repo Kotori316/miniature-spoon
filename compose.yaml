@@ -1,6 +1,6 @@
 services:
   node:
-    image: node:22
+    image: node:24
     volumes:
       - ./workers:/root/workers
       - ./file-metadata/:/root/file-metadata
