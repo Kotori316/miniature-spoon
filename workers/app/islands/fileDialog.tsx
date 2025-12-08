@@ -104,7 +104,6 @@ export const FileDialog: FC<{
         <div>{date}</div>
       </div>
       {content && (
-        /* biome-ignore lint/security/noDangerouslySetInnerHtml: intended */
         <div class={codeBlock} dangerouslySetInnerHTML={{ __html: content }} />
       )}
     </Dialog>

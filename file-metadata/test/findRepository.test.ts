@@ -32,10 +32,10 @@ describe("convert repository name", () => {
       fullPath: "maven/com/kotori316/scalable-cats-force-fabric",
       expected: "com.kotori316:scalable-cats-force-fabric",
     },
-  ])(
-    "returns expected repository name for $fullPath",
-    ({ fullPath, expected }) => {
-      expect(getRepositoryName(fullPath)).toBe(expected);
-    },
-  );
+  ])("returns expected repository name for $fullPath", ({
+    fullPath,
+    expected,
+  }) => {
+    expect(getRepositoryName(fullPath)).toBe(expected);
+  });
 });
