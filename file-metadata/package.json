@@ -19,13 +19,13 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",
-    "@types/node": "^22.10.2",
+    "@types/node": "^24.0.0",
     "@types/path-browserify": "^1.0.3",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^4.0.0"
   },
   "volta": {
-    "node": "22.22.0"
+    "node": "24.13.0"
   }
 }
