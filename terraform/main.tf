@@ -29,58 +29,51 @@ data "google_secret_manager_secret_version" "cloudflare_token" {
   secret = "cloudflare_token"
 }
 
-data "google_storage_bucket" "maven_storage" {
-  name = var.google_storage_name
-}
-
 provider "cloudflare" {
   api_token = data.google_secret_manager_secret_version.cloudflare_token.secret_data
 }
 
 data "cloudflare_zone" "zone" {
-  name = var.cloudflare_zone_name
+  filter = {
+    name = var.cloudflare_zone_name
+  }
 }
 
 resource "cloudflare_r2_bucket" "maven_bucket" {
-  account_id = data.cloudflare_zone.zone.account_id
+  account_id = data.cloudflare_zone.zone.account.id
   name       = var.maven_name
 }
 
 resource "cloudflare_r2_bucket" "worker_material" {
-  account_id = data.cloudflare_zone.zone.account_id
+  account_id = data.cloudflare_zone.zone.account.id
   name       = "${var.maven_name}-worker-material"
 }
 
-resource "cloudflare_workers_script" "main" {
-  account_id = data.cloudflare_zone.zone.account_id
-  content    = file("initial.js")
+resource "cloudflare_worker" "main" {
+  account_id = data.cloudflare_zone.zone.account.id
   name       = "${var.maven_name}-worker"
   logpush    = false
 
-  r2_bucket_binding {
-    bucket_name = cloudflare_r2_bucket.worker_material.name
-    name        = "WORKER_MATERIAL"
-  }
-  plain_text_binding {
-    name = "ENVIRONMENT"
-    text = "production"
-  }
-  plain_text_binding {
-    name = "RESOURCE_DOMAIN"
-    text = "https://storage.googleapis.com/${data.google_storage_bucket.maven_storage.name}/maven"
+  observability = {
+    enabled            = true
+    head_sampling_rate = 1
+    logs = {
+      enabled            = true
+      head_sampling_rate = 1
+      invocation_logs    = true
+    }
   }
 
-  lifecycle {
-    ignore_changes = [
-      content,
-    ]
+  subdomain = {
+    enabled          = false
+    previews_enabled = false
   }
 }
 
-resource "cloudflare_workers_domain" "main" {
-  account_id  = data.cloudflare_zone.zone.account_id
+resource "cloudflare_workers_custom_domain" "main" {
+  account_id  = data.cloudflare_zone.zone.account.id
   hostname    = "maven.${var.cloudflare_zone_name}"
-  service     = cloudflare_workers_script.main.name
+  service     = cloudflare_worker.main.name
   zone_id     = data.cloudflare_zone.zone.id
   environment = "production"
 }
