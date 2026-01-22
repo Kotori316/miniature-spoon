@@ -71,9 +71,8 @@ resource "cloudflare_worker" "main" {
 }
 
 resource "cloudflare_workers_custom_domain" "main" {
-  account_id  = data.cloudflare_zone.zone.account.id
-  hostname    = "maven.${var.cloudflare_zone_name}"
-  service     = cloudflare_worker.main.name
-  zone_id     = data.cloudflare_zone.zone.id
-  environment = "production"
+  account_id = data.cloudflare_zone.zone.account.id
+  hostname   = "maven.${var.cloudflare_zone_name}"
+  service    = cloudflare_worker.main.name
+  zone_id    = data.cloudflare_zone.zone.id
 }
