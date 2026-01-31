@@ -75,4 +75,6 @@ resource "cloudflare_workers_custom_domain" "main" {
   hostname   = "maven.${var.cloudflare_zone_name}"
   service    = cloudflare_worker.main.name
   zone_id    = data.cloudflare_zone.zone.id
+  # noinspection HCLDeprecatedElement
+  environment = "production"
 }
