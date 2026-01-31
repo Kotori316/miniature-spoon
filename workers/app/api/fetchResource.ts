@@ -43,68 +43,95 @@ export async function fetchResource(
   }
 
   const overrideMineType: string | undefined = knownMineType[extension];
-
   if (typeof storage === "string") {
-    const fileResponse = await fetch(`${storage}${urlPath}`, {
-      method: "GET",
-      redirect: "follow",
-      headers: requestHeader,
-    });
-    // file
-    if (fileResponse.status >= 400) {
-      return { result: "error", status: fileResponse.status };
-    }
-
-    const o = new Response(fileResponse.body, fileResponse);
-    if (overrideMineType) {
-      o.headers.set("Content-Type", overrideMineType);
-    }
-    return { result: "ok", status: fileResponse.status, response: o };
+    return fetchResourceFromUrl(
+      urlPath,
+      storage,
+      requestHeader,
+      overrideMineType,
+    );
   }
 
   if (storage && typeof storage === "object" && "get" in storage) {
-    const key = urlPath.replace(/^\//, "");
-    const requestHeaders = new Headers(requestHeader);
-    const fileObject = await storage.get(key, {
-      onlyIf: requestHeaders,
-      range: requestHeaders,
-    });
+    return fetchResourceFromR2(
+      urlPath,
+      storage,
+      requestHeader,
+      overrideMineType,
+    );
+  }
 
-    if (!fileObject) {
-      return { result: "error", status: 404 };
-    }
+  return {
+    result: "error",
+    status: 500,
+  };
+}
 
-    const responseHeaders = new Headers();
-    fileObject.writeHttpMetadata(responseHeaders);
-    responseHeaders.set("etag", fileObject.httpEtag);
-    if (overrideMineType) {
-      responseHeaders.set("Content-Type", overrideMineType);
-    }
+export async function fetchResourceFromUrl(
+  urlPath: string,
+  storage: string,
+  requestHeader: HeadersInit,
+  overrideMineType?: string,
+): Promise<FetchResponse> {
+  const fileResponse = await fetch(`${storage}${urlPath}`, {
+    method: "GET",
+    redirect: "follow",
+    headers: requestHeader,
+  });
+  // file
+  if (fileResponse.status >= 400) {
+    return { result: "error", status: fileResponse.status };
+  }
 
-    if ("body" in fileObject) {
-      const status = responseHeaders.has("Content-Range") ? 206 : 200;
-      return {
-        result: "ok",
-        status: status,
-        response: new Response(fileObject.body, {
-          status: status,
-          headers: responseHeaders,
-        }),
-      };
-    }
+  const o = new Response(fileResponse.body, fileResponse);
+  if (overrideMineType) {
+    o.headers.set("Content-Type", overrideMineType);
+  }
+  return { result: "ok", status: fileResponse.status, response: o };
+}
 
+export async function fetchResourceFromR2(
+  urlPath: string,
+  storage: R2Bucket,
+  requestHeader: HeadersInit,
+  overrideMineType?: string,
+): Promise<FetchResponse> {
+  const key = urlPath.replace(/^\//, "");
+  const requestHeaders = new Headers(requestHeader);
+  const fileObject = await storage.get(key, {
+    onlyIf: requestHeaders,
+    range: requestHeaders,
+  });
+
+  if (!fileObject) {
+    return { result: "error", status: 404 };
+  }
+
+  const responseHeaders = new Headers();
+  fileObject.writeHttpMetadata(responseHeaders);
+  responseHeaders.set("etag", fileObject.httpEtag);
+  if (overrideMineType) {
+    responseHeaders.set("Content-Type", overrideMineType);
+  }
+
+  if ("body" in fileObject) {
+    const status = responseHeaders.has("Content-Range") ? 206 : 200;
     return {
       result: "ok",
-      status: 304,
-      response: new Response(null, {
-        status: 304,
+      status: status,
+      response: new Response(fileObject.body, {
+        status: status,
         headers: responseHeaders,
       }),
     };
   }
 
   return {
-    result: "error",
-    status: 500,
+    result: "ok",
+    status: 304,
+    response: new Response(null, {
+      status: 304,
+      headers: responseHeaders,
+    }),
   };
 }
