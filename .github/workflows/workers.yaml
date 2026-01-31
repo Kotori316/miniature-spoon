@@ -13,6 +13,9 @@ on:
       - 'file-metadata/**'
       - '.github/workflows/workers.yaml'
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
