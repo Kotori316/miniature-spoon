@@ -26,5 +26,6 @@
       "bucket_name": "kotori316-maven-worker-material",
       "preview_bucket_name": "kotori316-maven-worker-material"
     }
-  ]
+  ],
+  "workers_dev": false
 }
