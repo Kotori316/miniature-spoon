@@ -39,11 +39,6 @@ data "cloudflare_zone" "zone" {
   }
 }
 
-resource "cloudflare_r2_bucket" "maven_bucket" {
-  account_id = data.cloudflare_zone.zone.account.id
-  name       = var.maven_name
-}
-
 resource "cloudflare_r2_bucket" "worker_material" {
   account_id = data.cloudflare_zone.zone.account.id
   name       = "${var.maven_name}-worker-material"
