@@ -10,8 +10,8 @@ import { filePage } from "../pages/file";
 
 export type Bindings = {
   WORKER_MATERIAL: R2Bucket;
+  MAVEN_R2: R2Bucket;
   ENVIRONMENT: string;
-  RESOURCE_DOMAIN: string;
   ASSETS: typeof fetch;
 };
 
@@ -53,14 +53,10 @@ app.on(
   async (c) => {
     // including first / like `/com`
     const urlPath = c.req.path;
-    const resourceDomain = import.meta.env.DEV
+    const storage = import.meta.env.DEV
       ? import.meta.env.VITE_RESOURCE_DOMAIN
-      : c.env.RESOURCE_DOMAIN;
-    const result = await fetchResource(
-      urlPath,
-      resourceDomain,
-      c.req.raw.headers,
-    );
+      : c.env.MAVEN_R2;
+    const result = await fetchResource(urlPath, storage, c.req.raw.headers);
     switch (result.result) {
       case "directory": {
         const dotPath = `maven.${urlPath.replace(/^\//, "").replace(/\/$/, "").replaceAll("/", ".")}`;
