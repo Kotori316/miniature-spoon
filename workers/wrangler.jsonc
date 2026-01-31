@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "kotori316-maven-worker",
+  "main": "dist-worker-server/index.js",
+  "compatibility_date": "2024-12-24",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "send_metrics": false,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": false
+  },
+  "vars": {
+    "ENVIRONMENT": "production",
+    "RESOURCE_DOMAIN": "https://storage.googleapis.com/kotori316-maven-storage/maven"
+  },
+  "r2_buckets": [
+    {
+      "binding": "WORKER_MATERIAL",
+      "bucket_name": "kotori316-maven-worker-material",
+      "preview_bucket_name": "kotori316-maven-worker-material"
+    }
+  ]
+}
