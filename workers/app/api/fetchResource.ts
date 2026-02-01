@@ -96,7 +96,7 @@ export async function fetchResourceFromR2(
   requestHeader: HeadersInit,
   overrideMineType?: string,
 ): Promise<FetchResponse> {
-  const key = urlPath.replace(/^\//, "");
+  const key = "maven/" +  urlPath.replace(/^\//, "");
   const requestHeaders = new Headers(requestHeader);
   const fileObject = await storage.get(key, {
     onlyIf: requestHeaders,
