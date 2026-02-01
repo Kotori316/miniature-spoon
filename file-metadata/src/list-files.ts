@@ -1,6 +1,6 @@
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "path-browserify";
-import type {DirectoryLeaf, FileLeaf, Repositories} from "./types";
-import {mkdir, writeFile} from "node:fs/promises";
+import type { DirectoryLeaf, FileLeaf, Repositories } from "./types";
 
 export interface ListFiles<Parameter> {
   listFiles(parameter: Parameter): Promise<{
@@ -9,7 +9,9 @@ export interface ListFiles<Parameter> {
 
   parseDirectoryTree(files: FileLeaf[]): ReturnType<typeof parseDirectoryTree>;
 
-  findRepositories(directories: DirectoryLeaf[]): ReturnType<typeof findRepositories>;
+  findRepositories(
+    directories: DirectoryLeaf[],
+  ): ReturnType<typeof findRepositories>;
 }
 
 export async function parseDirectoryTree(files: FileLeaf[]): Promise<{
@@ -31,11 +33,13 @@ export async function parseDirectoryTree(files: FileLeaf[]): Promise<{
     directoriesWithoutChildDir.push({
       type: "directory",
       fullPath: directory,
-      name: path.basename(directory),
-      childrenFiles: children.sort((a, b) => a.name.localeCompare(b.name)),
+      childrenFiles: children.sort((a, b) => {
+        return path
+          .basename(a.fullPath)
+          .localeCompare(path.basename(b.fullPath));
+      }),
       parent: {
         fullPath: parentPath,
-        name: path.basename(parentPath),
       },
     });
   }
@@ -45,7 +49,6 @@ export async function parseDirectoryTree(files: FileLeaf[]): Promise<{
       .filter((c) => c.parent.fullPath === d.fullPath)
       .map((c) => ({
         fullPath: c.fullPath,
-        name: c.name,
       }));
     return {
       ...d,
@@ -53,25 +56,31 @@ export async function parseDirectoryTree(files: FileLeaf[]): Promise<{
     };
   });
 
-  return {directories};
+  return { directories };
 }
 
-export async function writeDirectoryFiles(outputDir: string, directories: DirectoryLeaf[]) {
-  return Promise.all(directories.map(async (d) => {
-    const filePath = `${outputDir}/${d.fullPath}.json`;
-    await mkdir(path.dirname(filePath), {recursive: true});
-    const content = JSON.stringify(d, null, 2);
-    await writeFile(filePath, content, "utf-8");
-  }))
+export async function writeDirectoryFiles(
+  outputDir: string,
+  directories: DirectoryLeaf[],
+) {
+  return Promise.all(
+    directories.map(async (d) => {
+      const filePath = `${outputDir}/${d.fullPath}.json`;
+      await mkdir(path.dirname(filePath), { recursive: true });
+      const content = JSON.stringify(d, null, 2);
+      await writeFile(filePath, content, "utf-8");
+    }),
+  );
 }
 
-export async function findRepositories(directories: DirectoryLeaf[]): Promise<Repositories> {
+export async function findRepositories(
+  directories: DirectoryLeaf[],
+): Promise<Repositories> {
   return {
-    list: directories.filter(isRepository).map(directory => ({
-      name: directory.name,
+    list: directories.filter(isRepository).map((directory) => ({
       fullPath: directory.fullPath,
       repositoryName: getRepositoryName(directory.fullPath),
-    }))
+    })),
   };
 }
 
@@ -80,12 +89,12 @@ function isRepository(directory: DirectoryLeaf): boolean {
     // repo must have files
     return false;
   }
-  if (directory.name.includes("SNAPSHOT")) {
+  if (path.basename(directory.fullPath).includes("SNAPSHOT")) {
     // SNAPSHOT is added for a version in repo
     return false;
   }
-  return (
-    directory.childrenFiles.some((f) => f.name === "maven-metadata.xml")
+  return directory.childrenFiles.some(
+    (f) => path.basename(f.fullPath) === "maven-metadata.xml",
   );
 }
 
@@ -96,9 +105,16 @@ export function getRepositoryName(fullPath: string): string {
     .replaceAll("/", ".");
 }
 
-export async function writeRepositories(outputDir: string, repositories: Repositories) {
-  await mkdir(outputDir, {recursive: true});
-  return writeFile(`${outputDir}/repositories.json`, JSON.stringify(repositories, null, 2), "utf-8");
+export async function writeRepositories(
+  outputDir: string,
+  repositories: Repositories,
+) {
+  await mkdir(outputDir, { recursive: true });
+  return writeFile(
+    `${outputDir}/repositories.json`,
+    JSON.stringify(repositories, null, 2),
+    "utf-8",
+  );
 }
 
 export const IGNORE_FILE_LIST: readonly string[] = [".DS_Store"] as const;

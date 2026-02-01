@@ -13,7 +13,7 @@ import {
 } from "./list-files";
 import { logger } from "./main";
 import { getMineType } from "./mineTypes";
-import type {DirectoryLeaf, FileLeaf} from "./types";
+import type { FileLeaf } from "./types";
 
 type S3ListFilesParameter = {
   bucketName: string;
@@ -55,8 +55,12 @@ async function listFilesInBucket(
       files.push(
         ...response.Contents.flatMap((o) => convertObjectToFileLeaf(o, param)),
       );
-      if(count === 1 || count % 10 == 0) {
-        logger.info("S3 ListObjectsV2Command %d: %d files", count, files.length);
+      if (count === 1 || count % 10 === 0) {
+        logger.info(
+          "S3 ListObjectsV2Command %d: %d files",
+          count,
+          files.length,
+        );
       }
     } else {
       logger.warn("S3 ListObjectsV2Command %d: No files", count);
@@ -86,7 +90,6 @@ function convertObjectToFileLeaf(
     {
       type: "file",
       fullPath: filePath,
-      name: name,
       url: `${param.publicDomain}/${filePath}`,
       size: o.Size,
       contentType: getMineType(filePath, undefined),
