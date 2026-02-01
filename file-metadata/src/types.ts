@@ -1,7 +1,6 @@
 export type FileLeaf = {
   type: "file";
   fullPath: string;
-  name: string;
   url: string;
   size: string | number | undefined;
   contentType: string;
@@ -11,13 +10,12 @@ export type FileLeaf = {
 export type DirectoryLeaf = {
   type: "directory";
   fullPath: string;
-  name: string;
   parent: DirectoryOnlyName;
   childrenFiles: FileLeaf[];
   childrenDirectories: DirectoryOnlyName[];
 };
 
-export type DirectoryOnlyName = Pick<DirectoryLeaf, "fullPath" | "name">;
+export type DirectoryOnlyName = Pick<DirectoryLeaf, "fullPath">;
 
 export type Repository = DirectoryOnlyName & {
   repositoryName: string;

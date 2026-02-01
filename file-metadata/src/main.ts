@@ -1,9 +1,7 @@
+import { type ParseArgsConfig, parseArgs } from "node:util";
 import winston from "winston";
-import { parseArgs } from "node:util";
+import { writeDirectoryFiles, writeRepositories } from "./list-files";
 import { listFiles } from "./s3-list-files";
-import {mkdir, writeFile} from "node:fs/promises";
-import {ParseArgsConfig} from "util";
-import {writeDirectoryFiles, writeRepositories} from "./list-files";
 
 const cliOptions = {
   bucket: {
@@ -52,8 +50,12 @@ async function main() {
   const outputPath = `${outputDir}/d.json`;
 
   if (!bucketName || !publicDomain) {
-    logger().error("No bucket specified. Use --bucket/-b or S3_BUCKET_NAME env var");
-    logger().error("No domain specified. Use --domain/-d or PUBLIC_DOMAIN env var");
+    logger().error(
+      "No bucket specified. Use --bucket/-b or S3_BUCKET_NAME env var",
+    );
+    logger().error(
+      "No domain specified. Use --domain/-d or PUBLIC_DOMAIN env var",
+    );
     process.exit(1);
   }
   const s3listFiles = listFiles();
@@ -65,7 +67,9 @@ async function main() {
   const directories = await s3listFiles.parseDirectoryTree(files.files);
   logger().info("Found %d directories", directories.directories.length);
   await writeDirectoryFiles(outputDir, directories.directories);
-  const repositories = await s3listFiles.findRepositories(directories.directories);
+  const repositories = await s3listFiles.findRepositories(
+    directories.directories,
+  );
   await writeRepositories(outputDir, repositories);
   logger().info("Output written to %s", outputPath);
   logger().info("End main");
