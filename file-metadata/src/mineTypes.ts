@@ -1,5 +1,17 @@
 import path from "path-browserify";
-import { knownMineType } from "./types";
+
+const knownMineType: Record<string, string> = {
+  ".module": "application/json",
+  ".pom": "text/xml",
+  ".xml": "text/xml",
+  ".md5": "text/plain",
+  ".sha1": "text/plain",
+  ".sha256": "text/plain",
+  ".sha512": "text/plain",
+  ".asc": "text/plain",
+  ".jar": "application/java-archive",
+  ".txt": "text/plain",
+};
 
 export function getMineType(
   fileName: string,

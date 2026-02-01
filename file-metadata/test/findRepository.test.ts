@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getRepositoryName } from "../src/findRepository";
+import {getRepositoryName} from "../src/list-files";
 
 test("dummy", () => {
   expect(1 + 2).toBe(3);
