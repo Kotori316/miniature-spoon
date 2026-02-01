@@ -2,6 +2,7 @@ import { type ParseArgsConfig, parseArgs } from "node:util";
 import winston from "winston";
 import { writeDirectoryFiles, writeRepositories } from "./list-files";
 import { listFiles } from "./s3-list-files";
+import { CURRENT_VERSION } from "./types";
 
 const cliOptions = {
   bucket: {
@@ -21,6 +22,11 @@ const cliOptions = {
     type: "boolean",
     short: "p",
     default: true,
+  },
+  version: {
+    type: "string",
+    short: "v",
+    default: CURRENT_VERSION,
   },
 } as const satisfies ParseArgsConfig["options"];
 
@@ -54,6 +60,7 @@ async function main() {
   const publicDomain = values.domain || process.env.PUBLIC_DOMAIN;
   const outputDir = values.output;
   const pretty = values.pretty;
+  const version = values.version;
 
   logger().info("Parameters:");
   logger().info(
@@ -68,6 +75,7 @@ async function main() {
   );
   logger().info("- Output dir: %s", outputDir);
   logger().info("- Pretty: %s", pretty);
+  logger().info("- Version: %s", version);
 
   if (!bucketName || !publicDomain) {
     logger().error(
@@ -86,11 +94,16 @@ async function main() {
   logger().info("Found %d files", files.files.length);
   const directories = await s3listFiles.parseDirectoryTree(files.files);
   logger().info("Found %d directories", directories.directories.length);
-  await writeDirectoryFiles(outputDir, directories.directories, pretty);
+  await writeDirectoryFiles(
+    outputDir,
+    version,
+    directories.directories,
+    pretty,
+  );
   const repositories = await s3listFiles.findRepositories(
     directories.directories,
   );
-  await writeRepositories(outputDir, repositories, pretty);
+  await writeRepositories(outputDir, version, repositories, pretty);
   logger().info("Output written to %s", outputDir);
   logger().info("End main");
 }

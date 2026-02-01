@@ -61,12 +61,13 @@ export async function parseDirectoryTree(files: FileLeaf[]): Promise<{
 
 export async function writeDirectoryFiles(
   outputDir: string,
+  version: string,
   directories: DirectoryLeaf[],
   pretty: boolean,
 ) {
   return Promise.all(
     directories.map(async (d) => {
-      const filePath = `${outputDir}/directories/${d.fullPath}.json`;
+      const filePath = `${outputDir}/${version}/directories/${d.fullPath}.json`;
       await mkdir(path.dirname(filePath), { recursive: true });
       const content = pretty ? JSON.stringify(d, null, 2) : JSON.stringify(d);
       await writeFile(filePath, content, "utf-8");
@@ -108,14 +109,19 @@ export function getRepositoryName(fullPath: string): string {
 
 export async function writeRepositories(
   outputDir: string,
+  version: string,
   repositories: Repositories,
   pretty: boolean,
 ) {
-  await mkdir(outputDir, { recursive: true });
+  await mkdir(`${outputDir}/${version}`, { recursive: true });
   const content = pretty
     ? JSON.stringify(repositories, null, 2)
     : JSON.stringify(repositories);
-  return writeFile(`${outputDir}/repositories.json`, content, "utf-8");
+  return writeFile(
+    `${outputDir}/${version}/repositories.json`,
+    content,
+    "utf-8",
+  );
 }
 
 export const IGNORE_FILE_LIST: readonly string[] = [".DS_Store"] as const;

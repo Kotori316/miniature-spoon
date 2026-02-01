@@ -1,4 +1,4 @@
-import type { DirectoryLeaf } from "file-metadata/src/types";
+import { CURRENT_VERSION, type DirectoryLeaf } from "file-metadata/src/types";
 
 type ListFilesResultOk = {
   type: "ok";
@@ -16,10 +16,10 @@ export async function listFiles(
   bucket: R2Bucket | undefined,
   fullPath: string,
 ): Promise<ListFilesResult> {
-  const fileName = `directories/${fullPath}.json`;
+  const fileName = `${CURRENT_VERSION}/directories/${fullPath}.json`;
   if (import.meta.env.DEV) {
     const file = import.meta.glob<DirectoryLeaf>(
-      "../../../file-metadata/output/directories/*.json",
+      "../../../file-metadata/output/v2/directories/*.json",
     );
     const key = `../../../file-metadata/output/${fileName}`;
     if (key in file) {
