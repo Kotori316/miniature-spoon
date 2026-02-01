@@ -2,6 +2,7 @@ import type { Repositories } from "file-metadata/src/types";
 import { hc } from "hono/client";
 import { cx } from "hono/css";
 import { type FC, useEffect, useState } from "hono/jsx";
+import path from "path-browserify";
 import type { ApiRepositoryIndex } from "../api/route/repository-index";
 import { repositoryItem, repositoryText, repositoryUl, title } from "../css";
 
@@ -25,10 +26,11 @@ export const RepositoryList: FC = () => {
   }
   return (
     <ul class={repositoryUl}>
-      {data.list.map(({ name, repositoryName, dotPath }) => {
+      {data.list.map(({ fullPath, repositoryName }) => {
+        const name = path.basename(fullPath);
         return (
           <li key={name} class="">
-            <a class={repositoryItem} href={`/files?path=${dotPath}`}>
+            <a class={repositoryItem} href={`/files?path=${fullPath}`}>
               {repositoryName}
             </a>
           </li>
