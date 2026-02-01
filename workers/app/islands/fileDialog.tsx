@@ -1,4 +1,4 @@
-import type { FileLeaf } from "file-metadata/src/types";
+import type { FileLeaf } from "file-types/src/types";
 import { cx } from "hono/css";
 import {
   type FC,

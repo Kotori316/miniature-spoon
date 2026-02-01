@@ -1,6 +1,10 @@
 import { mkdir, writeFile } from "node:fs/promises";
+import type {
+  DirectoryLeaf,
+  FileLeaf,
+  Repositories,
+} from "file-types/src/types";
 import path from "path-browserify";
-import type { DirectoryLeaf, FileLeaf, Repositories } from "./types";
 
 export interface ListFiles<Parameter> {
   listFiles(parameter: Parameter): Promise<{

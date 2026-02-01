@@ -1,4 +1,4 @@
-import type { Repositories } from "file-metadata/src/types";
+import type { Repositories } from "file-types/src/types";
 import { hc } from "hono/client";
 import { cx } from "hono/css";
 import { type FC, useEffect, useState } from "hono/jsx";

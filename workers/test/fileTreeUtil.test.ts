@@ -1,4 +1,4 @@
-import type { FileLeaf } from "file-metadata/src/types";
+import type { FileLeaf } from "file-types/src/types";
 import { describe, expect, test } from "vitest";
 import { getFileSize, isDirectory } from "../app/api/fileTreeUtil";
 

@@ -3,6 +3,8 @@ import {
   S3Client,
   type _Object as S3Object,
 } from "@aws-sdk/client-s3";
+import { getMineType } from "file-types/src/mineTypes";
+import type { FileLeaf } from "file-types/src/types";
 import path from "path-browserify";
 import type winston from "winston";
 import {
@@ -12,8 +14,6 @@ import {
   parseDirectoryTree,
 } from "./list-files";
 import { logger } from "./main";
-import { getMineType } from "./mineTypes";
-import type { FileLeaf } from "./types";
 
 type S3ListFilesParameter = {
   bucketName: string;

@@ -1,8 +1,8 @@
 import { type ParseArgsConfig, parseArgs } from "node:util";
+import { CURRENT_VERSION } from "file-types/src/types";
 import winston from "winston";
 import { writeDirectoryFiles, writeRepositories } from "./list-files";
 import { listFiles } from "./s3-list-files";
-import { CURRENT_VERSION } from "./types";
 
 const cliOptions = {
   bucket: {
