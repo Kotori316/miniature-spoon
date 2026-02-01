@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@hono/zod-validator": "^0.7.0",
-    "file-metadata": "file:../file-metadata",
+    "file-types": "file:../file-types",
     "hono": "^4.0.0",
     "honox": "^0.1.27",
     "path-browserify": "^1.0.1",

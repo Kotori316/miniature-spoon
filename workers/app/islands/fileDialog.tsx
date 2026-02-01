@@ -1,4 +1,4 @@
-import type { FileTree } from "file-metadata/src/types";
+import type { FileLeaf } from "file-types/src/types";
 import { cx } from "hono/css";
 import {
   type FC,
@@ -8,7 +8,8 @@ import {
   useRef,
   useState,
 } from "hono/jsx";
-import { getFileCreatedAt, getFileSize } from "../api/fileTreeUtil";
+import path from "path-browserify";
+import { getFileSize, getFileUpdatedAt } from "../api/fileTreeUtil";
 import { highlight } from "../client/highlighter";
 import {
   codeBlock,
@@ -25,7 +26,7 @@ import {
 
 export const FileDialog: FC<{
   dialogRef: RefObject<HTMLDialogElement>;
-  selectedFile: FileTree | undefined;
+  selectedFile: FileLeaf | undefined;
 }> = ({ dialogRef, selectedFile }) => {
   const [content, setContent] = useState<string>();
 
@@ -70,7 +71,7 @@ export const FileDialog: FC<{
       setContent("Preview is not available for this file type");
     }
   }, [selectedFile.url]);
-  const date = getFileCreatedAt(selectedFile);
+  const date = getFileUpdatedAt(selectedFile);
 
   return (
     <Dialog
@@ -98,7 +99,7 @@ export const FileDialog: FC<{
       </h1>
       <div class={separateDirectoryAndFiles} />
       <div class={cx(fileText, fileGrid)}>
-        <div>{selectedFile.name}</div>
+        <div>{path.basename(selectedFile.fullPath)}</div>
         <div>{selectedFile.contentType}</div>
         <div>{getFileSize(selectedFile)}</div>
         <div>{date}</div>

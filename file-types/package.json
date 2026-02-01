@@ -1,0 +1,15 @@
+{
+  "name": "file-types",
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "format": "npx @biomejs/biome check --write --unsafe",
+    "ci": "npx @biomejs/biome ci && tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.13",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}
