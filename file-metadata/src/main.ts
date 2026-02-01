@@ -1,44 +1,74 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import { createDirectoryTrees } from "./createDirectoryTrees";
-import { findRepository } from "./findRepository";
-import { getTree } from "./getTree";
-import type { DirectoryWithTypedChildren, Repositories } from "./types";
+import winston from "winston";
+import { parseArgs } from "node:util";
+import { listFiles } from "./s3-list-files";
+import {mkdir, writeFile} from "node:fs/promises";
+import {ParseArgsConfig} from "util";
+import {writeDirectoryFiles, writeRepositories} from "./list-files";
+
+const cliOptions = {
+  bucket: {
+    type: "string",
+    short: "b",
+  },
+  domain: {
+    type: "string",
+    short: "d",
+  },
+  output: {
+    type: "string",
+    short: "o",
+    default: "output",
+  },
+} as const satisfies ParseArgsConfig["options"];
+
+const _logger = winston.createLogger({
+  level: "info",
+  transports: [new winston.transports.Console()],
+  format: winston.format.combine(
+    winston.format.splat(),
+    winston.format.timestamp(),
+    winston.format.colorize(),
+    winston.format.padLevels(),
+    winston.format.printf(
+      (info) => `${info.timestamp} ${info.level}:${info.message}`,
+    ),
+  ),
+});
+
+export function logger() {
+  return _logger;
+}
 
 async function main() {
-  console.log("Start main");
-  if (!process.env.S3_BUCKET_NAME) {
-    console.log("No bucket specified for S3_BUCKET_NAME");
+  logger().info("Start main");
+
+  const { values } = parseArgs({
+    options: cliOptions,
+  });
+
+  const bucketName = values.bucket || process.env.S3_BUCKET_NAME;
+  const publicDomain = values.domain || process.env.PUBLIC_DOMAIN;
+  const outputDir = values.output;
+  const outputPath = `${outputDir}/d.json`;
+
+  if (!bucketName || !publicDomain) {
+    logger().error("No bucket specified. Use --bucket/-b or S3_BUCKET_NAME env var");
+    logger().error("No domain specified. Use --domain/-d or PUBLIC_DOMAIN env var");
     process.exit(1);
   }
-  const tree = await getTree(
-    process.env.S3_BUCKET_NAME,
-    "https://maven.kotori316.com",
-  );
-  console.log("Loaded tree");
-  const separated = createDirectoryTrees(tree);
-  const repositories = findRepository(separated);
-  console.log("Transformed");
-
-  await mkdir("output/directories", { recursive: true });
-  console.log("Created directory");
-  await Promise.all([
-    ...writeDirectoryTrees(separated),
-    writeRepositories(repositories),
-  ]);
-  console.log("Wrote JSON files");
-  console.log("End main");
-}
-
-function writeDirectoryTrees(directories: DirectoryWithTypedChildren[]) {
-  return directories.map((directory) => {
-    const fileName = `output/directories/${directory.dotPath}.json`;
-    return writeFile(fileName, JSON.stringify(directory, null, 2));
+  const s3listFiles = listFiles();
+  const files = await s3listFiles.listFiles({
+    bucketName: bucketName,
+    publicDomain: publicDomain,
   });
+  logger().info("Found %d files", files.files.length);
+  const directories = await s3listFiles.parseDirectoryTree(files.files);
+  logger().info("Found %d directories", directories.directories.length);
+  await writeDirectoryFiles(outputDir, directories.directories);
+  const repositories = await s3listFiles.findRepositories(directories.directories);
+  await writeRepositories(outputDir, repositories);
+  logger().info("Output written to %s", outputPath);
+  logger().info("End main");
 }
 
-function writeRepositories(repositories: Repositories) {
-  const fileName = "output/repositories.json";
-  return writeFile(fileName, JSON.stringify(repositories, null, 2));
-}
-
-main().catch(console.error);
+main().catch(logger().error);
