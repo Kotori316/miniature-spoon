@@ -1,3 +1,5 @@
+export const CURRENT_VERSION = "v2";
+
 export type FileLeaf = {
   type: "file";
   fullPath: string;
