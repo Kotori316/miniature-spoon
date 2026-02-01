@@ -1,4 +1,4 @@
-import type { FileLeaf } from "file-metadata/src/types";
+import type { FileLeaf } from "file-types/src/types";
 
 import type { HighlighterCore } from "shiki";
 import { createHighlighterCore } from "shiki/core";

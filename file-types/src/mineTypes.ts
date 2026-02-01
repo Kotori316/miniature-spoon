@@ -1,5 +1,3 @@
-import path from "path-browserify";
-
 const knownMineType: Record<string, string> = {
   ".module": "application/json",
   ".pom": "text/xml",
@@ -17,8 +15,12 @@ export function getMineType(
   fileName: string,
   providedContentType?: string,
 ): string {
-  const ext = path.extname(fileName);
+  for (const [key, mineType] of Object.entries(knownMineType)) {
+    if (fileName.endsWith(key)) {
+      return mineType
+    }
+  }
   return (
-    knownMineType[ext] || providedContentType || "application/octet-stream"
+    providedContentType || "application/octet-stream"
   );
 }

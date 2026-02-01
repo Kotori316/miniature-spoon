@@ -1,4 +1,4 @@
-import { CURRENT_VERSION, type Repositories } from "file-metadata/src/types";
+import { CURRENT_VERSION, type Repositories } from "file-types/src/types";
 
 export async function getRepositoryIndexList(
   bucket: R2Bucket | undefined,

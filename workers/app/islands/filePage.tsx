@@ -2,7 +2,7 @@ import type {
   DirectoryLeaf,
   DirectoryOnlyName,
   FileLeaf,
-} from "file-metadata/src/types";
+} from "file-types/src/types";
 import { hc } from "hono/client";
 import { cx } from "hono/css";
 import { type FC, useEffect, useRef, useState } from "hono/jsx";

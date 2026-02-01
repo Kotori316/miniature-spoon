@@ -1,5 +1,5 @@
-import * as path from "node:path";
-import { getMineType } from "file-metadata/src/mineTypes";
+import { getMineType } from "file-types/src/mineTypes";
+import path from "path-browserify";
 import { isDirectory } from "./fileTreeUtil";
 
 type FetchResponseOk = {

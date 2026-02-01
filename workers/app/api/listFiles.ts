@@ -1,4 +1,4 @@
-import { CURRENT_VERSION, type DirectoryLeaf } from "file-metadata/src/types";
+import { CURRENT_VERSION, type DirectoryLeaf } from "file-types/src/types";
 
 type ListFilesResultOk = {
   type: "ok";
