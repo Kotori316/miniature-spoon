@@ -15,6 +15,7 @@ export async function getRepositoryIndexList(
   }
   const data = await bucket.get("repositories.json");
   if (!data) {
+    console.log("No such item(repositories.json)");
     return { list: [] };
   }
   return data.json<Repositories>();
