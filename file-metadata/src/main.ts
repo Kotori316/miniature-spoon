@@ -21,7 +21,7 @@ const cliOptions = {
   pretty: {
     type: "boolean",
     short: "p",
-    default: true,
+    default: false,
   },
   version: {
     type: "string",
