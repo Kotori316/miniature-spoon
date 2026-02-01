@@ -1,4 +1,4 @@
-import type { FileTree } from "file-metadata/src/types";
+import type { FileLeaf } from "file-metadata/src/types";
 import { describe, expect, test } from "vitest";
 import { getFileSize, isDirectory } from "../app/api/fileTreeUtil";
 
@@ -49,13 +49,11 @@ describe("getFileSize", () => {
       result: "SIZE",
     },
   ])("$size", ({ size, result }) => {
-    const file: FileTree = {
+    const file: FileLeaf = {
       type: "file",
-      name: "test file",
       url: "https://maven.kotori316.com",
       contentType: "text/html",
       size,
-      createdAt: undefined,
       updatedAt: undefined,
       fullPath: "test file",
     };

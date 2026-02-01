@@ -1,10 +1,10 @@
 import { FilePage } from "../islands/filePage";
 
-export function filePage(dotPath: string) {
+export function filePage(path: string) {
   return (
     <div>
       <title>Files</title>
-      <FilePage initialDotPath={dotPath} />
+      <FilePage initialPath={path} />
     </div>
   );
 }

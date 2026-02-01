@@ -1,8 +1,8 @@
-import type { DirectoryWithTypedChildren } from "file-metadata/src/types";
+import type { DirectoryLeaf } from "file-metadata/src/types";
 
 type ListFilesResultOk = {
   type: "ok";
-  result: DirectoryWithTypedChildren;
+  result: DirectoryLeaf;
 };
 
 type ListFilesError = {
@@ -14,11 +14,11 @@ export type ListFilesResult = ListFilesResultOk | ListFilesError;
 
 export async function listFiles(
   bucket: R2Bucket | undefined,
-  dotPath: string,
+  fullPath: string,
 ): Promise<ListFilesResult> {
-  const fileName = `directories/${dotPath}.json`;
+  const fileName = `directories/${fullPath}.json`;
   if (import.meta.env.DEV) {
-    const file = import.meta.glob<DirectoryWithTypedChildren>(
+    const file = import.meta.glob<DirectoryLeaf>(
       "../../../file-metadata/output/directories/*.json",
     );
     const key = `../../../file-metadata/output/${fileName}`;
@@ -48,7 +48,7 @@ export async function listFiles(
       reason: "No such item",
     };
   }
-  const result = await content.json<DirectoryWithTypedChildren>();
+  const result = await content.json<DirectoryLeaf>();
   return {
     type: "ok",
     result,

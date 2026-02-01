@@ -1,12 +1,13 @@
 import type {
-  ArrayElement,
-  DirectoryWithTypedChildren,
-  FileTree,
+  DirectoryLeaf,
+  DirectoryOnlyName,
+  FileLeaf,
 } from "file-metadata/src/types";
 import { hc } from "hono/client";
 import { cx } from "hono/css";
 import { type FC, useEffect, useRef, useState } from "hono/jsx";
-import { getFileCreatedAt, getFileSize } from "../api/fileTreeUtil";
+import path from "path-browserify";
+import { getFileSize, getFileUpdatedAt } from "../api/fileTreeUtil";
 import type { ApiListFile } from "../api/route/list-file";
 import * as css from "../css";
 import {
@@ -21,18 +22,16 @@ import {
 import { Header } from "../pages";
 import { FileDialog } from "./fileDialog";
 
-export const FilePage: FC<{ initialDotPath: string }> = ({
-  initialDotPath,
-}) => {
-  const [dotPath, setDotPath] = useState(initialDotPath);
-  const [data, setData] = useState<DirectoryWithTypedChildren>();
+export const FilePage: FC<{ initialPath: string }> = ({ initialPath }) => {
+  const [fullPath, setFullPath] = useState(initialPath);
+  const [data, setData] = useState<DirectoryLeaf>();
   const [hasError, setHasError] = useState<boolean>();
-  const [selectedFile, setSelectedFileInternal] = useState<FileTree>();
+  const [selectedFile, setSelectedFileInternal] = useState<FileLeaf>();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const fetchApi = async () => {
     const client = hc<ApiListFile>("/api/list-file");
-    const res = await client.index.$post({ json: { dotPath } }, {});
+    const res = await client.index.$post({ json: { fullPath } }, {});
     if (res.status >= 500) {
       console.log("Error in fetch files", res.status, res.statusText);
       setHasError(true);
@@ -47,21 +46,21 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
         break;
       case "ok":
         setData(result.result);
-        document.title = `Files in ${result.result.name}`;
+        document.title = `Files in ${path.basename(result.result.fullPath)}`;
         break;
       default:
         throw new Error(`Unreachable${result satisfies never}`);
     }
   };
 
-  const setSelectedFile = (file: FileTree) => {
+  const setSelectedFile = (file: FileLeaf) => {
     setSelectedFileInternal(file);
     dialogRef.current?.showModal();
   };
 
   useEffect(() => {
     fetchApi().catch(console.error);
-  }, [dotPath]);
+  }, [fullPath]);
   if (!data) {
     return (
       <div>
@@ -88,7 +87,7 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
       <div class={css.box}>
         <FileList
           data={data}
-          setPath={setDotPath}
+          setPath={setFullPath}
           setSelectedFile={setSelectedFile}
         />
       </div>
@@ -98,13 +97,13 @@ export const FilePage: FC<{ initialDotPath: string }> = ({
 };
 
 const FileList: FC<{
-  data: DirectoryWithTypedChildren;
+  data: DirectoryLeaf;
   setPath: (p: string) => void;
-  setSelectedFile: (file: FileTree) => void;
+  setSelectedFile: (file: FileLeaf) => void;
 }> = ({ data, setPath, setSelectedFile }) => {
-  const parent = data.parentDirectory
+  const parent = data.parent
     ? {
-        ...data.parentDirectory,
+        ...data.parent,
         name: "../",
       }
     : undefined;
@@ -115,11 +114,15 @@ const FileList: FC<{
         {parent && (
           <Directory directory={parent} setPath={setPath} key="parent" />
         )}
-        {data.childDirectories
-          .toSorted((a, b) =>
-            a.name.localeCompare(b.name, undefined, { numeric: true }),
+        {data.childrenDirectories
+          .toSorted((a: DirectoryOnlyName, b: DirectoryOnlyName) =>
+            path
+              .basename(a.fullPath)
+              .localeCompare(path.basename(b.fullPath), undefined, {
+                numeric: true,
+              }),
           )
-          .map((d) => {
+          .map((d: DirectoryOnlyName) => {
             return (
               <Directory directory={d} setPath={setPath} key={d.fullPath} />
             );
@@ -127,11 +130,15 @@ const FileList: FC<{
       </div>
       <div class={separateDirectoryAndFiles} />
       <div class={cx(fileText, fileGrid)}>
-        {data.childFiles
-          .toSorted((a, b) =>
-            a.name.localeCompare(b.name, undefined, { numeric: true }),
+        {data.childrenFiles
+          .toSorted((a: FileLeaf, b: FileLeaf) =>
+            path
+              .basename(a.fullPath)
+              .localeCompare(path.basename(b.fullPath), undefined, {
+                numeric: true,
+              }),
           )
-          .map((f) => {
+          .map((f: FileLeaf) => {
             return (
               <File
                 file={f}
@@ -146,42 +153,44 @@ const FileList: FC<{
 };
 
 const Directory: FC<{
-  directory: ArrayElement<DirectoryWithTypedChildren["childDirectories"]>;
+  directory: DirectoryOnlyName & { name?: string };
   setPath: (p: string) => void;
   key: string;
 }> = ({ directory }) => {
-  const newUrl = `/files?path=${directory.dotPath}`;
+  const dotPath = directory.fullPath.replaceAll("/", ".");
+  const newUrl = `/files?path=${dotPath}`;
   /*const setUrl = () => {
     window.location.href = newUrl;
-    /!*setPath(directory.dotPath);
+    /!*setPath(dotPath);
     window.history.pushState({}, "", newUrl);*!/
   };*/
 
   return (
     <div>
       <a href={newUrl} class={repositoryItem}>
-        {directory.name}
+        {directory.name ?? path.basename(directory.fullPath)}
       </a>
     </div>
   );
 };
 
 const File: FC<{
-  file: ArrayElement<DirectoryWithTypedChildren["childFiles"]>;
-  setSelectedFile: (file: FileTree) => void;
+  file: FileLeaf;
+  setSelectedFile: (file: FileLeaf) => void;
   key: string;
 }> = ({ file, setSelectedFile }) => {
-  const date = getFileCreatedAt(file);
+  const date = getFileUpdatedAt(file);
+  const fileName = path.basename(file.fullPath);
   return (
     <>
       <div>
         <button
           type="button"
-          id={`file-name-${file.name}`}
+          id={`file-name-${fileName}`}
           class={css.underline}
           onClick={() => setSelectedFile(file)}
         >
-          {file.name}
+          {fileName}
         </button>
       </div>
       <div>{file.contentType}</div>
