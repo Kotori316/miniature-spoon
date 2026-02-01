@@ -153,12 +153,12 @@ const FileList: FC<{
 };
 
 const Directory: FC<{
+  // The name prop is used to override the display name, such as "../"
   directory: DirectoryOnlyName & { name?: string };
   setPath: (p: string) => void;
   key: string;
 }> = ({ directory }) => {
-  const dotPath = directory.fullPath.replaceAll("/", ".");
-  const newUrl = `/files?path=${dotPath}`;
+  const newUrl = `/files?path=${directory.fullPath}`;
   /*const setUrl = () => {
     window.location.href = newUrl;
     /!*setPath(dotPath);

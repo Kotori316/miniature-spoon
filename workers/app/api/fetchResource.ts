@@ -42,10 +42,7 @@ export async function fetchResource(
     return { result: "directory" };
   }
 
-  const overrideMineType: string | undefined = getMineType(
-    "urlPath",
-    undefined,
-  );
+  const overrideMineType: string | undefined = getMineType(urlPath, undefined);
   if (typeof storage === "string") {
     return fetchResourceFromUrl(
       urlPath,
