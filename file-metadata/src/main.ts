@@ -55,6 +55,20 @@ async function main() {
   const outputDir = values.output;
   const pretty = values.pretty;
 
+  logger().info("Parameters:");
+  logger().info(
+    "- Bucket: %s (from %s)",
+    bucketName || "N/A",
+    values.bucket ? "CLI" : "env",
+  );
+  logger().info(
+    "- Domain: %s (from %s)",
+    publicDomain || "N/A",
+    values.domain ? "CLI" : "env",
+  );
+  logger().info("- Output dir: %s", outputDir);
+  logger().info("- Pretty: %s", pretty);
+
   if (!bucketName || !publicDomain) {
     logger().error(
       "No bucket specified. Use --bucket/-b or S3_BUCKET_NAME env var",
