@@ -1,4 +1,8 @@
-import { ListObjectsV2Command, S3Client, type _Object as S3Object } from "@aws-sdk/client-s3";
+import {
+  ListObjectsV2Command,
+  S3Client,
+  type _Object as S3Object,
+} from "@aws-sdk/client-s3";
 import path from "path-browserify";
 import { getMineType } from "./mineTypes";
 import type { DirectoryTree, FileTree } from "./types";
@@ -17,10 +21,13 @@ function createDirectory(
   };
 }
 
-export async function getTree(bucketName: string, publicUrlBase: string): Promise<DirectoryTree> {
+export async function getTree(
+  bucketName: string,
+  publicUrlBase: string,
+): Promise<DirectoryTree> {
   const s3Client = new S3Client({});
   const tree = createDirectory("[root]", "", undefined);
-  let continuationToken: string | undefined = undefined;
+  let continuationToken: string | undefined;
 
   do {
     const command: ListObjectsV2Command = new ListObjectsV2Command({
@@ -59,8 +66,8 @@ function addTreeLeaf(
   let cursor = tree;
   const strings = parsed.dir.split("/");
   if (strings.length !== 1) {
-    let full: string | undefined = undefined;
-    let preKey: string | undefined = undefined;
+    let full: string | undefined;
+    let preKey: string | undefined;
     for (const key of strings) {
       const preFull = full;
       full = full === undefined ? key : `${full}/${key}`;

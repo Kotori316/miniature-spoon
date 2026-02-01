@@ -10,7 +10,10 @@ async function main() {
     console.log("No bucket specified for S3_BUCKET_NAME");
     process.exit(1);
   }
-  const tree = await getTree(process.env.S3_BUCKET_NAME, "https://maven.kotori316.com");
+  const tree = await getTree(
+    process.env.S3_BUCKET_NAME,
+    "https://maven.kotori316.com",
+  );
   console.log("Loaded tree");
   const separated = createDirectoryTrees(tree);
   const repositories = findRepository(separated);
