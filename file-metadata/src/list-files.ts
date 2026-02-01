@@ -66,7 +66,7 @@ export async function writeDirectoryFiles(
 ) {
   return Promise.all(
     directories.map(async (d) => {
-      const filePath = `${outputDir}/${d.fullPath}.json`;
+      const filePath = `${outputDir}/directories/${d.fullPath}.json`;
       await mkdir(path.dirname(filePath), { recursive: true });
       const content = pretty ? JSON.stringify(d, null, 2) : JSON.stringify(d);
       await writeFile(filePath, content, "utf-8");
