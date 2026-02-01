@@ -4,11 +4,14 @@ services:
     volumes:
       - ./workers:/root/workers
       - ./file-metadata/:/root/file-metadata
+      - ./file-types/:/root/file-types
       - container_node_modules:/root/workers/node_modules
       - container_node_modules_file_metadata:/root/file-metadata/node_modules
+      - container_node_modules_file_types:/root/file-types/node_modules
     init: true
     command: sleep inf
 
 volumes:
   container_node_modules: {}
   container_node_modules_file_metadata: {}
+  container_node_modules_file_types: {}

@@ -17,10 +17,8 @@ export function getMineType(
 ): string {
   for (const [key, mineType] of Object.entries(knownMineType)) {
     if (fileName.endsWith(key)) {
-      return mineType
+      return mineType;
     }
   }
-  return (
-    providedContentType || "application/octet-stream"
-  );
+  return providedContentType || "application/octet-stream";
 }
