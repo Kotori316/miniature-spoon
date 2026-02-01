@@ -6,11 +6,11 @@ import type { DirectoryWithTypedChildren, Repositories } from "./types";
 
 async function main() {
   console.log("Start main");
-  if (!process.env.GOOGLE_STORAGE_BUCKET_NAME) {
-    console.log("No bucket specified for GOOGLE_STORAGE_BUCKET_NAME");
+  if (!process.env.S3_BUCKET_NAME) {
+    console.log("No bucket specified for S3_BUCKET_NAME");
     process.exit(1);
   }
-  const tree = await getTree(process.env.GOOGLE_STORAGE_BUCKET_NAME);
+  const tree = await getTree(process.env.S3_BUCKET_NAME, "https://maven.kotori316.com");
   console.log("Loaded tree");
   const separated = createDirectoryTrees(tree);
   const repositories = findRepository(separated);

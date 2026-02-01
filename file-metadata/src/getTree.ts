@@ -1,9 +1,7 @@
-import { type File, Storage } from "@google-cloud/storage";
+import { ListObjectsV2Command, S3Client, type _Object as S3Object } from "@aws-sdk/client-s3";
 import path from "path-browserify";
 import { getMineType } from "./mineTypes";
 import type { DirectoryTree, FileTree } from "./types";
-
-const storage = new Storage();
 
 function createDirectory(
   name: string,
@@ -19,22 +17,40 @@ function createDirectory(
   };
 }
 
-export async function getTree(bucketName: string): Promise<DirectoryTree> {
-  const [files] = await storage
-    .bucket(bucketName)
-    .getFiles({ autoPaginate: true });
+export async function getTree(bucketName: string, publicUrlBase: string): Promise<DirectoryTree> {
+  const s3Client = new S3Client({});
   const tree = createDirectory("[root]", "", undefined);
-  for (const file of files) {
-    addTreeLeaf(file, tree);
-  }
+  let continuationToken: string | undefined = undefined;
+
+  do {
+    const command: ListObjectsV2Command = new ListObjectsV2Command({
+      Bucket: bucketName,
+      ContinuationToken: continuationToken,
+    });
+
+    const response = await s3Client.send(command);
+
+    if (response.Contents) {
+      for (const object of response.Contents) {
+        addTreeLeaf(object, tree, publicUrlBase);
+      }
+    }
+
+    continuationToken = response.NextContinuationToken;
+  } while (continuationToken);
+
   return tree;
 }
 
-function addTreeLeaf(file: File, tree: DirectoryTree) {
-  if (!file) {
+function addTreeLeaf(
+  object: S3Object,
+  tree: DirectoryTree,
+  publicUrlBase: string,
+) {
+  if (!object || !object.Key) {
     return;
   }
-  const parsed = path.parse(file.name);
+  const parsed = path.parse(object.Key);
   if (parsed.base === ".DS_Store") {
     // Ignore .DS_Store file
     return;
@@ -43,8 +59,8 @@ function addTreeLeaf(file: File, tree: DirectoryTree) {
   let cursor = tree;
   const strings = parsed.dir.split("/");
   if (strings.length !== 1) {
-    let full: string | undefined;
-    let preKey: string | undefined;
+    let full: string | undefined = undefined;
+    let preKey: string | undefined = undefined;
     for (const key of strings) {
       const preFull = full;
       full = full === undefined ? key : `${full}/${key}`;
@@ -64,27 +80,24 @@ function addTreeLeaf(file: File, tree: DirectoryTree) {
         cursor = t;
       } else {
         throw new Error(
-          `Invalid directory name. Maybe you tried to create a directory in a file. ${file.name}`,
+          `Invalid directory name. Maybe you tried to create a directory in a file. ${object.Key}`,
         );
       }
       preKey = key;
     }
   }
+
+  // Generate public URL for R2/S3
+  const publicUrl = `${publicUrlBase}/${object.Key}`;
+
   cursor.children[parsed.base] = {
     type: "file",
-    fullPath: file.name,
+    fullPath: object.Key,
     name: parsed.base,
-    url: file.publicUrl().replaceAll("%2F", "/"),
-    size: file.metadata.size,
-    contentType: getMineType(file.name, file.metadata.contentType),
-    createdAt: convertToIsoTime(file.metadata.timeCreated),
-    updatedAt: convertToIsoTime(file.metadata.updated),
+    url: publicUrl,
+    size: object.Size,
+    contentType: getMineType(object.Key, undefined),
+    createdAt: object.LastModified?.toISOString(),
+    updatedAt: object.LastModified?.toISOString(),
   } satisfies FileTree;
-}
-
-function convertToIsoTime(time: string | undefined): string | undefined {
-  if (!time) {
-    return undefined;
-  }
-  return new Date(time).toISOString();
 }

@@ -14,7 +14,7 @@
   },
   "private": true,
   "dependencies": {
-    "@google-cloud/storage": "^7.14.0",
+    "@aws-sdk/client-s3": "^3.980.0",
     "path-browserify": "^1.0.1"
   },
   "devDependencies": {
@@ -24,9 +24,6 @@
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^4.0.0"
-  },
-  "overrides": {
-    "fast-xml-parser": "^5.3.4"
   },
   "volta": {
     "node": "24.13.0"
