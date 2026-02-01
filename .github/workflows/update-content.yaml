@@ -45,7 +45,13 @@ jobs:
         working-directory: file-metadata
       - name: Fetch maven storage
         env:
-          GOOGLE_STORAGE_BUCKET_NAME: 'kotori316-maven-storage'
+          AWS_ENDPOINT_URL: ${{steps.get-secrets.outputs.cloudflare_s3_endpoint}}
+          AWS_ACCESS_KEY_ID: ${{steps.get-secrets.outputs.cloudflare_access_key}}
+          AWS_SECRET_ACCESS_KEY: ${{steps.get-secrets.outputs.cloudflare_secret_key}}
+          AWS_REGION: 'auto'
+          AWS_REQUEST_CHECKSUM_CALCULATION: 'WHEN_REQUIRED'
+          AWS_RESPONSE_CHECKSUM_VALIDATION: 'WHEN_REQUIRED'
+          S3_BUCKET_NAME: 'kotori316-maven-r2'
         run: npm run dev
         working-directory: file-metadata
       - name: Upload to r2

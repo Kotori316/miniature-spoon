@@ -14,7 +14,7 @@
   },
   "private": true,
   "dependencies": {
-    "@google-cloud/storage": "^7.14.0",
+    "@aws-sdk/client-s3": "^3.980.0",
     "path-browserify": "^1.0.1"
   },
   "devDependencies": {

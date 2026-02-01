@@ -17,14 +17,18 @@
     "run_worker_first": false
   },
   "vars": {
-    "ENVIRONMENT": "production",
-    "RESOURCE_DOMAIN": "https://storage.googleapis.com/kotori316-maven-storage/maven"
+    "ENVIRONMENT": "production"
   },
   "r2_buckets": [
     {
       "binding": "WORKER_MATERIAL",
       "bucket_name": "kotori316-maven-worker-material",
       "preview_bucket_name": "kotori316-maven-worker-material"
+    },
+    {
+      "binding": "MAVEN_R2",
+      "bucket_name": "kotori316-maven-r2",
+      "preview_bucket_name": "kotori316-maven-r2"
     }
   ],
   "workers_dev": false
