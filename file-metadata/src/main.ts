@@ -17,6 +17,11 @@ const cliOptions = {
     short: "o",
     default: "output",
   },
+  pretty: {
+    type: "boolean",
+    short: "p",
+    default: true,
+  },
 } as const satisfies ParseArgsConfig["options"];
 
 const _logger = winston.createLogger({
@@ -42,12 +47,13 @@ async function main() {
 
   const { values } = parseArgs({
     options: cliOptions,
+    allowNegative: true,
   });
 
   const bucketName = values.bucket || process.env.S3_BUCKET_NAME;
   const publicDomain = values.domain || process.env.PUBLIC_DOMAIN;
   const outputDir = values.output;
-  const outputPath = `${outputDir}/d.json`;
+  const pretty = values.pretty;
 
   if (!bucketName || !publicDomain) {
     logger().error(
@@ -66,12 +72,12 @@ async function main() {
   logger().info("Found %d files", files.files.length);
   const directories = await s3listFiles.parseDirectoryTree(files.files);
   logger().info("Found %d directories", directories.directories.length);
-  await writeDirectoryFiles(outputDir, directories.directories);
+  await writeDirectoryFiles(outputDir, directories.directories, pretty);
   const repositories = await s3listFiles.findRepositories(
     directories.directories,
   );
-  await writeRepositories(outputDir, repositories);
-  logger().info("Output written to %s", outputPath);
+  await writeRepositories(outputDir, repositories, pretty);
+  logger().info("Output written to %s", outputDir);
   logger().info("End main");
 }
 
