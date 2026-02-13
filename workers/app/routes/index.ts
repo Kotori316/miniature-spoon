@@ -59,8 +59,9 @@ app.on(
     const result = await fetchResource(urlPath, storage, c.req.raw.headers);
     switch (result.result) {
       case "directory": {
-        const dotPath = `maven.${urlPath.replace(/^\//, "").replace(/\/$/, "").replaceAll("/", ".")}`;
-        return c.redirect(`/files?path=${dotPath}`);
+        // remove first / like `com`
+        const path = urlPath.slice(1);
+        return c.redirect(`/files?path=${path}`);
       }
       case "error":
         return c.notFound();
