@@ -30,17 +30,23 @@ export async function parseDirectoryTree(files: FileLeaf[]): Promise<{
     directoryToChildren.set(parent, children);
   }
   // Get the parent directory of each directory without files
-  for (const directory of directoryToChildren.keys()) {
-    let cursor: string = path.dirname(directory);
-    // Skip the root directory. For an absolute path, the final is "/", and for a relative path, the final is "."
-    while (
-      cursor !== "/" &&
-      cursor !== "" &&
-      cursor !== "." &&
-      !directoryToChildren.has(cursor)
-    ) {
-      directoryToChildren.set(cursor, []);
-      cursor = path.dirname(cursor);
+  {
+    let breakerCount = 0;
+    for (const directory of directoryToChildren.keys()) {
+      let cursor: string = path.dirname(directory);
+      // Skip the root directory. For an absolute path, the final is "/", and for a relative path, the final is "."
+      while (
+        cursor !== "/" &&
+        cursor !== "" &&
+        cursor !== "." &&
+        !directoryToChildren.has(cursor)
+      ) {
+        directoryToChildren.set(cursor, []);
+        cursor = path.dirname(cursor);
+        if (breakerCount++ > 100) {
+          throw new Error("Infinite loop detected in directory traversal");
+        }
+      }
     }
   }
   const directoriesWithoutChildDir: Omit<
