@@ -1,4 +1,4 @@
-import type { FileTree } from "file-metadata/src/types";
+import type { FileLeaf } from "file-types/src/types";
 
 import type { HighlighterCore } from "shiki";
 import { createHighlighterCore } from "shiki/core";
@@ -10,7 +10,7 @@ import shikiMinLight from "shiki/themes/min-light.mjs";
 let _highlighter: HighlighterCore | null = null;
 
 export async function highlight(
-  file: FileTree,
+  file: FileLeaf,
   content: string,
 ): Promise<string> {
   const highlighter = await getHighlighter();
@@ -31,9 +31,9 @@ async function getHighlighter() {
   return _highlighter;
 }
 
-async function detectLanguage(file: FileTree) {
+async function detectLanguage(file: FileLeaf) {
   const path = await import("path-browserify");
-  const ext = path.extname(file.name);
+  const ext = path.extname(file.fullPath);
   const extensionMap: Record<string, string> = {
     ".module": "json",
     ".json": "json",

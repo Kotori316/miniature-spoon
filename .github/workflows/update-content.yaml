@@ -52,6 +52,7 @@ jobs:
           AWS_REQUEST_CHECKSUM_CALCULATION: 'WHEN_REQUIRED'
           AWS_RESPONSE_CHECKSUM_VALIDATION: 'WHEN_REQUIRED'
           S3_BUCKET_NAME: 'kotori316-maven-r2'
+          PUBLIC_DOMAIN: 'https://maven.kotori316.com'
         run: npm run dev
         working-directory: file-metadata
       - name: Upload to r2

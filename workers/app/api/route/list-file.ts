@@ -5,15 +5,15 @@ import type { Bindings } from "../../routes";
 import { listFiles } from "../listFiles";
 
 const bodySchema = z.object({
-  dotPath: z.string(),
+  fullPath: z.string(),
 });
 
 const app = new Hono<{ Bindings: Bindings }>().post(
   "/",
   zValidator("json", bodySchema),
   async (c) => {
-    const { dotPath } = c.req.valid("json");
-    const result = await listFiles(c.env.WORKER_MATERIAL, dotPath);
+    const { fullPath } = c.req.valid("json");
+    const result = await listFiles(c.env.WORKER_MATERIAL, fullPath);
     switch (result.type) {
       case "error":
         return c.json(result, 404);

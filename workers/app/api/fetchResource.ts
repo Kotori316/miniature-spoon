@@ -1,5 +1,5 @@
-import * as path from "node:path";
-import { knownMineType } from "file-metadata/src/types";
+import { getMineType } from "file-types/src/mineTypes";
+import path from "path-browserify";
 import { isDirectory } from "./fileTreeUtil";
 
 type FetchResponseOk = {
@@ -42,7 +42,7 @@ export async function fetchResource(
     return { result: "directory" };
   }
 
-  const overrideMineType: string | undefined = knownMineType[extension];
+  const overrideMineType: string | undefined = getMineType(urlPath, undefined);
   if (typeof storage === "string") {
     return fetchResourceFromUrl(
       urlPath,
