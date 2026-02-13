@@ -12,12 +12,14 @@ import {
   IGNORE_FILE_LIST,
   type ListFiles,
   parseDirectoryTree,
+  withCache,
 } from "./list-files";
 import { logger } from "./main";
 
 type S3ListFilesParameter = {
   bucketName: string;
   publicDomain: string;
+  cacheDir?: string;
 };
 
 export const listFiles: () => ListFiles<S3ListFilesParameter> = () => {
@@ -25,7 +27,15 @@ export const listFiles: () => ListFiles<S3ListFilesParameter> = () => {
 
   return {
     listFiles(parameter: S3ListFilesParameter): Promise<{ files: FileLeaf[] }> {
-      return listFilesInBucket(logger(), client, parameter);
+      // Create the origin function that fetches from S3
+      const originFn = (param: S3ListFilesParameter) =>
+        listFilesInBucket(logger(), client, param);
+
+      // Wrap it with cache functionality
+      const cachedFn = withCache(originFn, parameter.cacheDir);
+
+      // Call the cached function
+      return cachedFn(parameter);
     },
     parseDirectoryTree: parseDirectoryTree,
 

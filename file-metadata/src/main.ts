@@ -28,6 +28,11 @@ const cliOptions = {
     short: "v",
     default: CURRENT_VERSION,
   },
+  cache: {
+    type: "string",
+    short: "c",
+    default: "cache",
+  },
 } as const satisfies ParseArgsConfig["options"];
 
 const _logger = winston.createLogger({
@@ -61,6 +66,7 @@ async function main() {
   const outputDir = values.output;
   const pretty = values.pretty;
   const version = values.version;
+  const cacheDir = values.cache;
 
   logger().info("Parameters:");
   logger().info(
@@ -76,6 +82,7 @@ async function main() {
   logger().info("- Output dir: %s", outputDir);
   logger().info("- Pretty: %s", pretty);
   logger().info("- Version: %s", version);
+  logger().info("- Cache dir: %s", cacheDir || "N/A");
 
   if (!bucketName || !publicDomain) {
     logger().error(
@@ -90,6 +97,7 @@ async function main() {
   const files = await s3listFiles.listFiles({
     bucketName: bucketName,
     publicDomain: publicDomain,
+    cacheDir: cacheDir,
   });
   logger().info("Found %d files", files.files.length);
   const directories = await s3listFiles.parseDirectoryTree(files.files);

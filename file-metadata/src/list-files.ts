@@ -1,10 +1,12 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import type {
   DirectoryLeaf,
   FileLeaf,
   Repositories,
 } from "file-types/src/types";
 import path from "path-browserify";
+import { logger } from "./main";
 
 export interface ListFiles<Parameter> {
   listFiles(parameter: Parameter): Promise<{
@@ -16,6 +18,70 @@ export interface ListFiles<Parameter> {
   findRepositories(
     directories: DirectoryLeaf[],
   ): ReturnType<typeof findRepositories>;
+}
+
+async function readCachedFiles(
+  cacheDir: string,
+): Promise<{ files: FileLeaf[] } | null> {
+  const cacheFilePath = `${cacheDir}/files-cache.json`;
+  if (!existsSync(cacheFilePath)) {
+    return null;
+  }
+  try {
+    const content = await readFile(cacheFilePath, "utf-8");
+    return JSON.parse(content);
+  } catch (_error) {
+    return null;
+  }
+}
+
+async function writeCachedFiles(
+  cacheDir: string,
+  files: FileLeaf[],
+): Promise<void> {
+  const cacheFilePath = `${cacheDir}/files-cache.json`;
+  await mkdir(cacheDir, { recursive: true });
+  const content = JSON.stringify({ files }, null, 2);
+  await writeFile(cacheFilePath, content, "utf-8");
+}
+
+/**
+ * Wrapper function that adds caching capability to any origin function.
+ * @param originFn - The original function to fetch data from the source
+ * @param cacheDir - Optional cache directory path
+ * @returns A wrapped function that checks cache first, then calls origin if needed
+ */
+export function withCache<P, R extends { files: FileLeaf[] }>(
+  originFn: (parameter: P) => Promise<R>,
+  cacheDir?: string,
+): (parameter: P) => Promise<R> {
+  return async (parameter: P): Promise<R> => {
+    // If no cache directory, just call origin
+    if (!cacheDir) {
+      return originFn(parameter);
+    }
+
+    // Check cache
+    logger().info("Checking cache directory: %s", cacheDir);
+    const cachedData = await readCachedFiles(cacheDir);
+    if (cachedData) {
+      logger().info(
+        "Cache hit! Loaded %d files from cache",
+        cachedData.files.length,
+      );
+      return cachedData as R;
+    }
+    logger().info("Cache miss. Fetching from origin...");
+
+    // Fetch from origin
+    const result = await originFn(parameter);
+
+    // Save to cache
+    logger().info("Saving %d files to cache", result.files.length);
+    await writeCachedFiles(cacheDir, result.files);
+
+    return result;
+  };
 }
 
 export async function parseDirectoryTree(files: FileLeaf[]): Promise<{
