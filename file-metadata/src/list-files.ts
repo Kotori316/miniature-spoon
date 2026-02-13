@@ -22,11 +22,26 @@ export async function parseDirectoryTree(files: FileLeaf[]): Promise<{
   directories: DirectoryLeaf[];
 }> {
   const directoryToChildren = new Map<string, FileLeaf[]>();
+  // Get the parent directory of each file
   for (const file of files) {
     const parent = path.dirname(file.fullPath);
     const children = directoryToChildren.get(parent) || [];
     children.push(file);
     directoryToChildren.set(parent, children);
+  }
+  // Get the parent directory of each directory without files
+  for (const directory of directoryToChildren.keys()) {
+    let cursor: string = path.dirname(directory);
+    // Skip the root directory. For an absolute path, the final is "/", and for a relative path, the final is "."
+    while (
+      cursor !== "/" &&
+      cursor !== "" &&
+      cursor !== "." &&
+      !directoryToChildren.has(cursor)
+    ) {
+      directoryToChildren.set(cursor, []);
+      cursor = path.dirname(cursor);
+    }
   }
   const directoriesWithoutChildDir: Omit<
     DirectoryLeaf,
@@ -71,6 +86,9 @@ export async function writeDirectoryFiles(
 ) {
   return Promise.all(
     directories.map(async (d) => {
+      if (d.fullPath === "." || d.fullPath === ".." || d.fullPath === "/") {
+        throw new Error(`Invalid directory: ${d.fullPath}`);
+      }
       const filePath = `${outputDir}/${version}/directories/${d.fullPath}.json`;
       await mkdir(path.dirname(filePath), { recursive: true });
       const content = pretty ? JSON.stringify(d, null, 2) : JSON.stringify(d);

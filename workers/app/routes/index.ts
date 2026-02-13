@@ -33,7 +33,11 @@ const app = new Hono<{ Bindings: Bindings }>()
       return c.redirect("/");
     }),
     (c) => {
-      return c.render(filePage(c.req.valid("query").path));
+      const path = c.req.valid("query").path;
+      if (path === "." || path === "/") {
+        return c.redirect("/");
+      }
+      return c.render(filePage(path));
     },
   )
   .route("/robots.txt", apiRobots)
