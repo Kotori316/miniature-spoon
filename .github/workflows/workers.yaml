@@ -4,6 +4,7 @@ on:
     paths:
       - 'workers/**'
       - 'file-metadata/**'
+      - 'file-types/**'
       - '.github/workflows/workers.yaml'
     branches:
       - main
@@ -11,6 +12,7 @@ on:
     paths:
       - 'workers/**'
       - 'file-metadata/**'
+      - 'file-types/**'
       - '.github/workflows/workers.yaml'
 
 permissions:
