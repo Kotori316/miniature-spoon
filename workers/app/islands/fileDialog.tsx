@@ -64,6 +64,10 @@ export const FileDialog: FC<{
         const res = await fetch(relativeLink);
         if (res.ok) {
           setContent(await highlight(selectedFile, await res.text()));
+        } else if (res.status === 404) {
+          setContent("Sorry, the file is deleted");
+        } else {
+          setContent("Failed to load file content");
         }
       };
       getHighlightedContent().catch(console.error);
