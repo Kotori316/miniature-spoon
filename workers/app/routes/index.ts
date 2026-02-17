@@ -37,6 +37,9 @@ const app = new Hono<{ Bindings: Bindings }>()
       if (path === "." || path === "/") {
         return c.redirect("/");
       }
+      if (path.endsWith("/")) {
+        return c.render(filePage(path.substring(0, path.length - 1)));
+      }
       return c.render(filePage(path));
     },
   )
