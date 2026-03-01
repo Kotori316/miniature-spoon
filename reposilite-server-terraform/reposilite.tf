@@ -27,6 +27,10 @@ resource "google_cloud_run_v2_service" "main" {
         name  = "REPOSILITE_OPTS"
         value = "--token admin:${random_password.admin_password.result}"
       }*/
+      env {
+        name  = "REPOSILITE_OPTS"
+        value = "--no-color"
+      }
       volume_mounts {
         name       = google_storage_bucket.setting_bucket.name
         mount_path = "/app/data"
