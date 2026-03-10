@@ -30,7 +30,7 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
       - name: Build Copy Task
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         id: build-action-get
         with:
           push: false
@@ -62,7 +62,7 @@ jobs:
       - name: Hash ${{github.sha}}
         run: echo "${{github.sha}}"
       - name: Build Copy Task
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         id: build-action-get
         with:
           push: true
