@@ -15,6 +15,10 @@ on:
       - 'file-types/**'
       - '.github/workflows/workers.yaml'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
