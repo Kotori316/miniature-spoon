@@ -9,6 +9,7 @@
     ":disableDependencyDashboard",
     "customManagers:biomeVersions",
   ],
+  "minimumReleaseAge": "3 days",
   "customManagers": [
     {
       "customType": "regex",
