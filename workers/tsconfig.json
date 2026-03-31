@@ -8,29 +8,16 @@
     "exactOptionalPropertyTypes": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride":true,
-    "lib": [
-      "esnext",
-      "DOM"
-    ],
+    "noImplicitOverride": true,
+    "lib": ["esnext", "DOM"],
     "types": [
       "@cloudflare/workers-types",
-      "@cloudflare/workers-types/experimental",
+      "@cloudflare/workers-types/experimental"
     ],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
     "skipLibCheck": true
   },
-  "include": [
-    "app/**/*.ts",
-    "app/**/*.tsx",
-    "test/**/*.ts",
-    "test/**/*.tsx"
-  ],
-  "exclude": [
-    "dist",
-    "dist-worker-server",
-    "node_modules",
-    "**/*.spec.ts"
-  ]
+  "include": ["app/**/*.ts", "app/**/*.tsx", "test/**/*.ts", "test/**/*.tsx"],
+  "exclude": ["dist", "dist-worker-server", "node_modules", "**/*.spec.ts"]
 }

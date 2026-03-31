@@ -5,6 +5,7 @@
       "src/**/*.ts",
       "test/**/*.ts",
       "**/package.json",
+      "**/tsconfig.json",
       "**/*.ts",
       "!**/output"
     ]

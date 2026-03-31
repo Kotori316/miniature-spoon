@@ -6,6 +6,7 @@
       "app/**/*.tsx",
       "test/**/*.ts",
       "**/package.json",
+      "**/tsconfig.json",
       "**/*.ts",
       "!**/global.d.ts"
     ]
