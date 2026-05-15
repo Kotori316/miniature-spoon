@@ -37,12 +37,19 @@ export const FilePage: FC<{ initialPath: string }> = ({ initialPath }) => {
       setHasError(true);
       return;
     }
+    const errorFlow = () => {
+      console.log("Error in fetch files", res.status, JSON.stringify(result));
+      setData(undefined);
+      setHasError(true);
+    };
+    if (res.status === 400) {
+      errorFlow();
+      return;
+    }
     const result = await res.json();
     switch (result.type) {
       case "error":
-        console.log("Error in fetch files", res.status, JSON.stringify(result));
-        setData(undefined);
-        setHasError(true);
+        errorFlow();
         break;
       case "ok":
         setData(result.result);
