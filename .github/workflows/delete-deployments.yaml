@@ -11,13 +11,13 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - uses: google-github-actions/auth@v3
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: ${{secrets.GCP_IDENTITY_PROVIDER}}
           service_account: ${{secrets.GCP_SERVICE_ACCOUNT}}
       - name: Get credentials
         id: get-secrets
-        uses: google-github-actions/get-secretmanager-secrets@v3
+        uses: google-github-actions/get-secretmanager-secrets@bc9c54b29fdffb8a47776820a7d26e77b379d262 # v3.0.0
         with:
           secrets: |-
             cloudflare_token:kotori316-mods-resources/cloudflare_token
@@ -56,7 +56,7 @@ jobs:
           PROJECT: 'kotori316-maven-page'
       - name: Upload log
         if: ${{ !cancelled() }}
-        uses: google-github-actions/upload-cloud-storage@v3
+        uses: google-github-actions/upload-cloud-storage@6397bd7208e18d13ba2619ee21b9873edc94427a # v3.0.0
         with:
           path: /tmp/${{steps.log.outputs.name}}
           destination: kotori316-logs/${{steps.log.outputs.repo}}

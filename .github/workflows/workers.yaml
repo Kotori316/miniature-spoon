@@ -27,7 +27,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: flatt-security/setup-takumi-guard-npm@9a5d797c2085b6326d3a2985c08e3a114b9b88c1 # v1.1.1
+      - run: echo './file-types' './workers' './file-metadata' | xargs -n1 cp ./.npmrc
       - run: docker compose run --rm -w /root/file-types node npm ci
       - run: docker compose run --rm -w /root/file-types node npm run ci
       - run: docker compose run --rm -w /root/file-types node npm run test
@@ -40,7 +42,7 @@ jobs:
 
   scan-pr:
     if: ${{ github.event_name == 'pull_request' }}
-    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v2.3.8"
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@9a498708959aeaef5ef730655706c5a1df1edbc2" # v2.3.8
     permissions:
       contents: read
       actions: read
