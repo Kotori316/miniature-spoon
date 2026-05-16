@@ -56,11 +56,11 @@ resource "cloudflare_worker" "main" {
       enabled            = true
       head_sampling_rate = 1
       invocation_logs    = true
-      destinations       = []
+      destinations       = null
     }
     traces = {
       enabled      = false
-      destinations = []
+      destinations = null
     }
   }
 
