@@ -13,7 +13,7 @@ jobs:
       id-token: write
       contents: read
     concurrency:
-      group: ${{ inputs.branch || 'main' }}-update
+      group: main-update
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2

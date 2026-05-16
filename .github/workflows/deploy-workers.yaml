@@ -4,7 +4,7 @@ on:
     inputs:
       branch:
         type: string
-        required: true
+        required: false
         default: 'preview'
   workflow_dispatch:
     inputs:
@@ -51,11 +51,11 @@ jobs:
         id: action
         run: |
           log_name="$(date "+%Y%m%d-%H%M%S")-npm-deploy.log"
-          echo "${{ github.actor }}" >> "/tmp/${log_name}"
-          echo "branch=${{ inputs.branch || 'main' }}" >> "/tmp/${log_name}"
-          echo "name=${log_name}" >> $GITHUB_OUTPUT
-          echo "repo=$(basename "${{github.repository}}")" >> $GITHUB_OUTPUT
-          npm run deploy >>"/tmp/${log_name}" 2>&1 && echo "Published successfully" || (echo "Failed to publish"; false)
+          echo "$GITHUB_ACTOR" >> "/tmp/${log_name}"
+          echo "branch=$BRANCH" >> "/tmp/${log_name}"
+          echo "name=${log_name}" >> "$GITHUB_OUTPUT"
+          echo "repo=$(basename "$GITHUB_REPOSITORY")" >> "$GITHUB_OUTPUT"
+          if npm run deploy >>"/tmp/${log_name}" 2>&1; then echo "Published successfully"; else echo "Failed to publish"; false; fi
         env:
           CLOUDFLARE_API_TOKEN: ${{steps.get-secrets.outputs.cloudflare_token}}
           NO_COLOR: true

@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 3
 
     steps:
-      - run: echo "${{ github.actor }}"
+      - run: echo "$GITHUB_ACTOR"
       - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
         with:
           terraform_wrapper: 'false'
@@ -64,9 +64,9 @@ jobs:
         id: log
         run: |
           log_name="$(date "+%Y%m%d-%H%M%S")-terraform.log"
-          echo "${{ github.actor }}" >> "/tmp/${log_name}"
-          echo "name=${log_name}" >> $GITHUB_OUTPUT
-          echo "repo=$(basename "${{github.repository}}")" >> $GITHUB_OUTPUT
+          echo "$GITHUB_ACTOR" >> "/tmp/${log_name}"
+          echo "name=${log_name}" >> "$GITHUB_OUTPUT"
+          echo "repo=$(basename "$GITHUB_REPOSITORY")" >> "$GITHUB_OUTPUT"
       - name: Init main config
         run: terraform init
         working-directory: terraform
@@ -76,7 +76,7 @@ jobs:
       - name: Check plan(main)
         run: |
           echo "Cloudflare pages terraform" >>"/tmp/${{steps.log.outputs.name}}"
-          terraform plan -detailed-exitcode -lock=false -no-color >>"/tmp/${{steps.log.outputs.name}}" 2>&1 && echo "No changes" || (echo "Plan detected changes"; false)
+          if terraform plan -detailed-exitcode -lock=false -no-color >>"/tmp/${{steps.log.outputs.name}}" 2>&1; then echo "No changes"; else echo "Plan detected changes"; false; fi
         working-directory: terraform
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -89,7 +89,7 @@ jobs:
       - name: Check plan(reposilite)
         run: |
           echo "Reposilite terraform" >>"/tmp/${{steps.log.outputs.name}}"
-          terraform plan -detailed-exitcode -lock=false -no-color >>"/tmp/${{steps.log.outputs.name}}" 2>&1 && echo "No changes" || (echo "Plan detected changes"; false)
+          if terraform plan -detailed-exitcode -lock=false -no-color >>"/tmp/${{steps.log.outputs.name}}" 2>&1; then echo "No changes"; else echo "Plan detected changes"; false; fi
         working-directory: reposilite-server-terraform
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
