@@ -37,7 +37,7 @@
       "automerge": true,
     },
     {
-      "matchPackageNames": ["@cloudflare/workers-types", "wrangler"],
+      "matchPackageNames": ["@cloudflare/workers-types", "wrangler", "@aws-sdk/client-s3"],
       "schedule": ["* * 1,15 * *"],
     }
   ],
