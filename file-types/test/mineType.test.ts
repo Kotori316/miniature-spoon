@@ -72,11 +72,12 @@ describe("mineType", () => {
       fileName: "README",
       description: "file without extension",
     },
-  ])("returns default application/octet-stream for $description", ({
-    fileName,
-  }) => {
-    expect(getMineType(fileName)).toBe("application/octet-stream");
-  });
+  ])(
+    "returns default application/octet-stream for $description",
+    ({ fileName }) => {
+      expect(getMineType(fileName)).toBe("application/octet-stream");
+    },
+  );
 
   test.each([
     {
