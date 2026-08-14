@@ -28,7 +28,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: flatt-security/setup-takumi-guard-npm@9a5d797c2085b6326d3a2985c08e3a114b9b88c1 # v1.1.1
+      - uses: flatt-security/setup-takumi-guard-npm@6d4182745c1e474c35a023573c2612c085be45a4 # v1.2.0
       - run: echo './file-types' './workers' './file-metadata' | xargs -n1 cp ./.npmrc
       - run: docker compose run --rm -w /root/file-types node npm ci
       - run: docker compose run --rm -w /root/file-types node npm run ci
