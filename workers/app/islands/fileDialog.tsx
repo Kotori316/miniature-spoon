@@ -25,7 +25,7 @@ import {
 } from "../css";
 
 export const FileDialog: FC<{
-  dialogRef: RefObject<HTMLDialogElement>;
+  dialogRef: RefObject<HTMLDialogElement | null>;
   selectedFile: FileLeaf | undefined;
 }> = ({ dialogRef, selectedFile }) => {
   const [content, setContent] = useState<string>();
@@ -118,8 +118,8 @@ export const FileDialog: FC<{
 const Dialog: FC<
   PropsWithChildren<{
     onDialogClick: (event: Event) => void;
-    dialogRef: RefObject<HTMLDialogElement>;
-    innerContainer: RefObject<HTMLDivElement>;
+    dialogRef: RefObject<HTMLDialogElement | null>;
+    innerContainer: RefObject<HTMLDivElement | null>;
   }>
 > = ({ dialogRef, onDialogClick, innerContainer, children }) => {
   return (
