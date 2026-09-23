@@ -21,6 +21,14 @@ resource "google_storage_bucket" "maven_bucket" {
     enabled = false
     // terminal_storage_class = "ARCHIVE"
   }
+  lifecycle_rule {
+    condition {
+      age = 1
+    }
+    action {
+      type = "AbortIncompleteMultipartUpload"
+    }
+  }
 }
 
 import {
@@ -38,6 +46,22 @@ resource "google_storage_bucket" "maven_test_bucket" {
   autoclass {
     enabled = false
     // terminal_storage_class = "ARCHIVE"
+  }
+  lifecycle_rule {
+    condition {
+      age = 1
+    }
+    action {
+      type = "AbortIncompleteMultipartUpload"
+    }
+  }
+  lifecycle_rule {
+    action {
+      type = "Delete"
+    }
+    condition {
+      age = 30
+    }
   }
 }
 
