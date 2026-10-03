@@ -94,11 +94,12 @@ locals {
 }
 
 resource "cloudflare_dns_record" "records" {
-  name    = "${local.dns_data["name"]}.${var.cloudflare_zone_name}"
-  type    = local.dns_data["type"]
-  zone_id = data.cloudflare_zone.zone.zone_id
-  proxied = false
-  ttl     = 1
+  name                    = "${local.dns_data["name"]}.${var.cloudflare_zone_name}"
+  type                    = local.dns_data["type"]
+  zone_id                 = data.cloudflare_zone.zone.zone_id
+  proxied                 = false
+  ttl                     = 1
+  include_shadow_metadata = false
 
   content = (local.dns_data["type"] == "CNAME"
     # Remove last period
