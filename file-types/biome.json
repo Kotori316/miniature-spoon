@@ -14,7 +14,7 @@
         "noUnusedFunctionParameters": "error"
       },
       "nursery": {
-        "useSortedClasses": {
+        "useTailwindSortedClasses": {
           "level": "error",
           "fix": "unsafe",
           "options": {}
